@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "rpgcrafting:block/crafting_tab_2_provider_block"
+    }
+  }
+}

@@ -1,31 +1,31 @@
 {
 	"schemaVersion": 1,
-	"id": "bamcrafting",
+	"id": "rpgcrafting",
 	"version": "${version}",
-	"name": "Better Adventure Mode - Crafting",
+	"name": "RPG Crafting",
 	"description": "This mod adds a new way of crafting, inspired by Valheim",
 	"authors": [
 		"TheRedBrain"
 	],
 	"contact": {
-		"sources": "https://github.com/TheRedBrain/better_adventure_mode_crafting"
+		"sources": "https://github.com/TheRedBrain/rpg-crafting"
 	},
 
 	"license": "MIT",
-	"icon": "assets/bamcrafting/icon.png",
+	"icon": "assets/rpgcrafting/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.github.theredbrain.bamcrafting.BetterAdventureModeCrafting"
+			"com.github.theredbrain.rpgcrafting.RPGCrafting"
 		],
 		"client": [
-			"com.github.theredbrain.bamcrafting.BetterAdventureModeCraftingClient"
+			"com.github.theredbrain.rpgcrafting.RPGCraftingClient"
 		]
 	},
 	"mixins": [
-      "bamcrafting.mixins.json",
+      "rpgcrafting.mixins.json",
 		{
-			"config": "bamcrafting.client.mixins.json",
+			"config": "rpgcrafting.client.mixins.json",
 			"environment": "client"
 		}
 	],
@@ -33,9 +33,8 @@
 		"fabricloader": ">=0.14.22",
 		"minecraft": "~1.20.1",
 		"java": ">=17",
-		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
+		"fabric-api": "*",
+		"cloth-config": ">=11.1.106",
+		"slotcustomizationapi": "1.0.0-1.20.1"
 	}
 }

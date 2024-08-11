@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "rpgcrafting:block/storage_area_2_provider_block"
+    }
+  }
+}

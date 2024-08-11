@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "particle": "#up",
+    "down": "rpgcrafting:block/wip_block_down",
+    "up": "rpgcrafting:block/wip_block_up",
+    "north": "rpgcrafting:block/wip_block_north",
+    "east": "rpgcrafting:block/wip_block_east",
+    "south": "rpgcrafting:block/wip_block_south",
+    "west": "rpgcrafting:block/wip_block_west"
+  }
+}

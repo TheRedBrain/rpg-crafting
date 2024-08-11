@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "rpgcrafting:block/crafting_root_block"
+    }
+  }
+}
