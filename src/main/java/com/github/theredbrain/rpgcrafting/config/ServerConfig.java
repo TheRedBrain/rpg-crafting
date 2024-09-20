@@ -20,10 +20,10 @@ public class ServerConfig implements ConfigData {
             the 'provides_crafting_tab_0_level' block tag.
             """)
     public RootBlockProvidedScreen crafting_root_block_provided_screen = RootBlockProvidedScreen.NONE;
-    @Comment("Additional debug log is shown in the console.")
-    public boolean show_debug_log = false;
-    @Comment("Additional debug messages are send in game.")
-    public boolean show_debug_messages = false;
+    @Comment("The crafting list screen can be accessed via hotkey")
+    public boolean is_crafting_list_screen_hotkey_enabled = true;
+    @Comment("The hand crafting screen can be accessed via hotkey")
+    public boolean is_hand_crafting_screen_hotkey_enabled = true;
     public ServerConfig() {
 
     }

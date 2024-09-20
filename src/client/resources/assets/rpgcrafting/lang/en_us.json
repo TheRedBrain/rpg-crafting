@@ -1,4 +1,20 @@
 {
+	"block.rpgcrafting.crafting_root_block": "Crafting Root Block",
+	"block.rpgcrafting.storage_area_0_provider_block": "Storage Area 0 Provider",
+	"block.rpgcrafting.storage_area_1_provider_block": "Storage Area 1 Provider",
+	"block.rpgcrafting.storage_area_2_provider_block": "Storage Area 2 Provider",
+	"block.rpgcrafting.storage_area_3_provider_block": "Storage Area 3 Provider",
+	"block.rpgcrafting.storage_area_4_provider_block": "Storage Area 4 Provider",
+	"block.rpgcrafting.crafting_tab_0_provider_block": "Crafting Tab 0 Provider",
+	"block.rpgcrafting.crafting_tab_1_provider_block": "Crafting Tab 1 Provider",
+	"block.rpgcrafting.crafting_tab_2_provider_block": "Crafting Tab 2 Provider",
+	"block.rpgcrafting.crafting_tab_3_provider_block": "Crafting Tab 3 Provider",
+
+	"category.rpgcrafting.category": "RPG Crafting",
+
+	"gamerule.keepStashInventory": "Keep stash inventory on death",
+	"gamerule.clearStashInventoryOnDeath": "Stash is cleared on death",
+
 	"gui.crafting_bench.no_crafting_root_block_nearby": "No Crafting Root Block Nearby",
 	"gui.crafting_bench.toggle_use_stash_for_crafting_button_label.on": "Stash Crafting: On",
 	"gui.crafting_bench.toggle_use_stash_for_crafting_button_label.off": "Stash Crafting: Off",
@@ -19,19 +35,15 @@
 	"gui.crafting_bench.special_craft_button_label.2": "Upgrade",
 	"gui.crafting_bench.special_craft_button_label.3": "Upgrade",
 
-	"block.rpgcrafting.crafting_root_block": "Crafting Root Block",
-	"block.rpgcrafting.storage_area_0_provider_block": "Storage Area 0 Provider",
-	"block.rpgcrafting.storage_area_1_provider_block": "Storage Area 1 Provider",
-	"block.rpgcrafting.storage_area_2_provider_block": "Storage Area 2 Provider",
-	"block.rpgcrafting.storage_area_3_provider_block": "Storage Area 3 Provider",
-	"block.rpgcrafting.storage_area_4_provider_block": "Storage Area 4 Provider",
-	"block.rpgcrafting.crafting_tab_0_provider_block": "Crafting Tab 0 Provider",
-	"block.rpgcrafting.crafting_tab_1_provider_block": "Crafting Tab 1 Provider",
-	"block.rpgcrafting.crafting_tab_2_provider_block": "Crafting Tab 2 Provider",
-	"block.rpgcrafting.crafting_tab_3_provider_block": "Crafting Tab 3 Provider",
+	"gui.crafting_list.title": "Crafting List",
+	"gui.crafting_list.hotkey_disabled_by_server": "This hotkey was disabled by a server setting",
 
-	"gamerule.keepStashInventory": "Keep stash inventory on death",
-	"gamerule.clearStashInventoryOnDeath": "Stash is cleared on death",
+	"gui.hand_crafting.hand_craft_button_label": "Craft",
+	"gui.hand_crafting.title": "Hand Crafting",
+	"gui.hand_crafting.hotkey_disabled_by_server": "This hotkey was disabled by a server setting",
 
-	"itemGroup.rpgcrafting.rpg_crafting_blocks": "RPG Crafting Blocks"
+	"itemGroup.rpgcrafting.rpg_crafting_blocks": "RPG Crafting Blocks",
+
+	"key.rpgcrafting.craftingListScreen": "Open Crafting List Screen",
+	"key.rpgcrafting.handCraftingScreen": "Open Hand Crafting Screen"
 }
