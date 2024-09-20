@@ -17,7 +17,7 @@ public class ItemGroupRegistry {
     public static void init() {
         Registry.register(Registries.ITEM_GROUP, RPG_CRAFTING_BLOCKS, FabricItemGroup.builder()
                 .icon(() -> new ItemStack(Items.IRON_SWORD))
-                .displayName(Text.translatable("itemGroup.rpgcrafting.rpg_crafting_block"))
+                .displayName(Text.translatable("itemGroup.rpgcrafting.rpg_crafting_blocks"))
                 .build());
     }
 }
