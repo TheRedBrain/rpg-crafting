@@ -3,17 +3,21 @@ package com.github.theredbrain.rpgcrafting.screen;
 import com.github.theredbrain.rpgcrafting.data.CraftingRecipe;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.network.packet.CraftFromCraftingBenchPacket;
-import com.github.theredbrain.rpgcrafting.registry.CraftingRecipeRegistry;
+import com.github.theredbrain.rpgcrafting.registry.CraftingRecipesRegistry;
 import com.github.theredbrain.rpgcrafting.registry.ScreenHandlerTypesRegistry;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.advancement.Advancement;
+import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.screen.Property;
 import net.minecraft.screen.ScreenHandler;
@@ -68,8 +72,9 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
     private final EnderChestInventory enderChestInventory;
     private final SimpleInventory stashInventory;
 
-    public CraftingBenchBlockScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
-        this(syncId, playerInventory, playerInventory.player.getEnderChestInventory(), ((DuckPlayerEntityMixin)playerInventory.player).rpgcrafting$getStashInventory(), buf.readBlockPos(), buf.readInt(), buf.readByte(), buf.readByte(), buf.readIntArray());
+    public CraftingBenchBlockScreenHandler(int syncId, PlayerInventory playerInventory, CraftingBenchBlockData data) {
+
+        this(syncId, playerInventory, playerInventory.player.getEnderChestInventory(), ((DuckPlayerEntityMixin)playerInventory.player).rpgcrafting$getStashInventory(), data.blockPos, data.initialTab, data.tabProvidersInReach, data.storageProvidersInReach, data.tabLevels);
     }
 
     public CraftingBenchBlockScreenHandler(int syncId, PlayerInventory playerInventory, EnderChestInventory enderChestInventory, SimpleInventory stashInventory, BlockPos blockPos, int  initialTab, byte tabProvidersInReach, byte storageProvidersInReach, int[] tabLevels) {
@@ -93,7 +98,7 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
         this.enderChestInventory = enderChestInventory;
         this.stashInventory = stashInventory;
 
-        this.craftingRecipesIdentifierList = CraftingRecipeRegistry.getCraftingRecipeIdentifiers();
+        this.craftingRecipesIdentifierList = CraftingRecipesRegistry.registeredCraftingRecipes.keySet().stream().toList(); // TODO rework?
 
         int i;
         // hotbar 0 - 8
@@ -274,7 +279,6 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 
     public void calculateUnlockedRecipes() {
 
-//        ClientAdvancementManager advancementHandler = null;
         PlayerAdvancementTracker playerAdvancementTracker = null;
         ServerAdvancementLoader serverAdvancementLoader = null;
 
@@ -286,10 +290,6 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
             }
         }
         String unlockAdvancementIdentifier;
-
-//        if (this.world.isClient && this.playerInventory.player instanceof ClientPlayerEntity clientPlayerEntity) {
-//            advancementHandler = clientPlayerEntity.networkHandler.getAdvancementHandler();
-//        }
 
         if (playerAdvancementTracker != null && serverAdvancementLoader != null) {
             this.tab0StandardCraftingRecipesIdentifierList.clear();
@@ -303,20 +303,18 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 
             for (int i = 0; i < this.craftingRecipesIdentifierList.size(); i++) {
 
-                CraftingRecipe craftingRecipe = CraftingRecipeRegistry.getCraftingRecipe(this.craftingRecipesIdentifierList.get(i));
-                unlockAdvancementIdentifier = craftingRecipe.getUnlockAdvancement();
+                CraftingRecipe craftingRecipe = CraftingRecipesRegistry.registeredCraftingRecipes.get(this.craftingRecipesIdentifierList.get(i));
+                unlockAdvancementIdentifier = craftingRecipe.unlockAdvancement();
 
-//                AdvancementEntry unlockAdvancementEntry = null;
-                Advancement unlockAdvancement = null;
-                if (!unlockAdvancementIdentifier.equals("")) {
-                    unlockAdvancement = serverAdvancementLoader.get(Identifier.tryParse(unlockAdvancementIdentifier));
+                AdvancementEntry unlockAdvancementEntry = null;
+                if (!unlockAdvancementIdentifier.isEmpty()) {
+                    unlockAdvancementEntry = serverAdvancementLoader.get(Identifier.tryParse(unlockAdvancementIdentifier));
                 }
-//                boolean bl = !this.world.getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING) || unlockAdvancementIdentifier.equals("") || (unlockAdvancementEntry != null && ((DuckClientAdvancementManagerMixin) advancementHandler.getManager()).rpgcrafting$getAdvancementProgress(unlockAdvancementEntry).isDone());
-                boolean bl = !this.world.getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING) || unlockAdvancementIdentifier.equals("") || (unlockAdvancement != null && playerAdvancementTracker.getProgress(unlockAdvancement).isDone());
+                boolean bl = !this.world.getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING) || unlockAdvancementIdentifier.isEmpty() || (unlockAdvancementEntry != null && playerAdvancementTracker.getProgress(unlockAdvancementEntry).isDone());
 
                 if (bl) {
-                    int tab = craftingRecipe.getTab();
-                    RecipeType recipeType = craftingRecipe.getRecipeType();
+                    int tab = craftingRecipe.tab();
+                    RecipeType recipeType = craftingRecipe.recipeType();
                     if (tab == 0) {
                         if (recipeType == RecipeType.STANDARD) {
                             this.tab0StandardCraftingRecipesIdentifierList.add(this.craftingRecipesIdentifierList.get(i));
@@ -347,6 +345,29 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
         }
     }
 
+    public record CraftingBenchBlockData(
+            BlockPos blockPos,
+            int initialTab,
+            byte tabProvidersInReach,
+            byte storageProvidersInReach,
+            int[] tabLevels
+    ) {
+
+        public static final PacketCodec<RegistryByteBuf, CraftingBenchBlockData> PACKET_CODEC = PacketCodec.of(CraftingBenchBlockData::write, CraftingBenchBlockData::new);
+
+        public CraftingBenchBlockData(RegistryByteBuf registryByteBuf) {
+            this(registryByteBuf.readBlockPos(), registryByteBuf.readInt(), registryByteBuf.readByte(), registryByteBuf.readByte(), registryByteBuf.readIntArray());
+        }
+
+        private void write(RegistryByteBuf registryByteBuf) {
+            registryByteBuf.writeBlockPos(blockPos);
+            registryByteBuf.writeInt(initialTab);
+            registryByteBuf.writeByte(tabProvidersInReach);
+            registryByteBuf.writeByte(storageProvidersInReach);
+            registryByteBuf.writeIntArray(tabLevels);
+        }
+    }
+
     public static enum RecipeType implements StringIdentifiable {
         STANDARD("standard"),
         SPECIAL("special");
@@ -361,6 +382,8 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
         public String asString() {
             return this.name;
         }
+
+        public static final Codec<RecipeType> CODEC = Codec.STRING.xmap(RecipeType::valueOf, Enum::name);
 
         public static Optional<RecipeType> byName(String name) {
             return Arrays.stream(RecipeType.values()).filter(recipeType -> recipeType.asString().equals(name)).findFirst();

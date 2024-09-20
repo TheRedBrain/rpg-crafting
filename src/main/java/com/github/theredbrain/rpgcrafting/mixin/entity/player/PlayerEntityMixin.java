@@ -35,8 +35,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements DuckPlay
     }
 
     @Inject(method = "initDataTracker", at = @At("RETURN"))
-    protected void rpgcrafting$initDataTracker(CallbackInfo ci) {
-        this.dataTracker.startTracking(USE_STASH_FOR_CRAFTING, true);
+    protected void rpgcrafting$initDataTracker(DataTracker.Builder builder, CallbackInfo ci) {
+        builder.add(USE_STASH_FOR_CRAFTING, true);
 
     }
 
@@ -56,7 +56,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements DuckPlay
     public void rpgcrafting$readCustomDataFromNbt(NbtCompound nbt, CallbackInfo ci) {
 
         if (nbt.contains("stash_items", NbtElement.LIST_TYPE)) {
-            this.stashInventory.readNbtList(nbt.getList("stash_items", NbtElement.COMPOUND_TYPE));
+            this.stashInventory.readNbtList(nbt.getList("stash_items", NbtElement.COMPOUND_TYPE), this.getRegistryManager());
         }
 
         if (nbt.contains("use_stash_for_crafting", NbtElement.BYTE_TYPE)) {
@@ -67,7 +67,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements DuckPlay
     @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
     public void rpgcrafting$writeCustomDataToNbt(NbtCompound nbt, CallbackInfo ci) {
 
-        nbt.put("stash_items", this.stashInventory.toNbtList());
+        nbt.put("stash_items", this.stashInventory.toNbtList(this.getRegistryManager()));
 
         nbt.putBoolean("use_stash_for_crafting", this.rpgcrafting$useStashForCrafting());
     }

@@ -7,9 +7,8 @@ import com.github.theredbrain.rpgcrafting.gui.widget.ItemButtonWidget;
 import com.github.theredbrain.rpgcrafting.network.packet.ToggleUseStashForCraftingPacket;
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateCraftingBenchScreenHandlerPropertyPacket;
 import com.github.theredbrain.rpgcrafting.registry.BlockRegistry;
-import com.github.theredbrain.rpgcrafting.registry.CraftingRecipeRegistry;
+import com.github.theredbrain.rpgcrafting.registry.CraftingRecipesRegistry;
 import com.github.theredbrain.rpgcrafting.screen.CraftingBenchBlockScreenHandler;
-import com.github.theredbrain.rpgcrafting.utils.ItemUtils;
 import com.github.theredbrain.slotcustomizationapi.api.SlotCustomization;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -303,9 +302,9 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
             List<Identifier> activeRecipeList = this.handler.getCurrentCraftingRecipesList();
             int selectedRecipe = this.handler.getSelectedRecipe();
             if (selectedRecipe >= 0) {
-                CraftingRecipe craftingRecipe = CraftingRecipeRegistry.getCraftingRecipe(activeRecipeList.get(selectedRecipe));
+                CraftingRecipe craftingRecipe = CraftingRecipesRegistry.registeredCraftingRecipes.get(activeRecipeList.get(selectedRecipe));
                 if (craftingRecipe != null) {
-                    if (this.handler.getTabLevels()[this.currentTab] >= craftingRecipe.getLevel()) {
+                    if (this.handler.getTabLevels()[this.currentTab] >= craftingRecipe.level()) {
 
                         int playerInventorySize = this.handler.getPlayerInventory().size();
 
@@ -354,15 +353,15 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
                         boolean bl = true;
                         ItemStack itemStack;
 
-                        for (ItemUtils.VirtualItemStack ingredient : craftingRecipe.getIngredients()) {
+                        for (ItemStack ingredient : craftingRecipe.ingredients()) {
 
-                            Item virtualItem = ItemUtils.getItemStackFromVirtualItemStack(ingredient).getItem();
+                            Item item = ingredient.getItem();
                             int ingredientCount = ingredient.getCount();
 
                             // TODO play test which inventory normally contains the most crafting ingredients and should be checked first
 
                             for (j = 0; j < playerInventorySize; j++) {
-                                if (playerInventoryCopy.getStack(j).isOf(virtualItem)) {
+                                if (playerInventoryCopy.getStack(j).isOf(item)) {
                                     itemStack = playerInventoryCopy.getStack(j).copy();
                                     int stackCount = itemStack.getCount();
                                     if (stackCount >= ingredientCount) {
@@ -381,7 +380,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
                             }
 
                             for (j = 0; j < stash0InventorySize; j++) {
-                                if (stash0InventoryCopy.getStack(j).isOf(virtualItem)) {
+                                if (stash0InventoryCopy.getStack(j).isOf(item)) {
                                     itemStack = stash0InventoryCopy.getStack(j).copy();
                                     int stackCount = itemStack.getCount();
                                     if (stackCount >= ingredientCount) {
@@ -400,7 +399,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
                             }
 
                             for (j = 0; j < stash1InventorySize; j++) {
-                                if (stash1InventoryCopy.getStack(j).isOf(virtualItem)) {
+                                if (stash1InventoryCopy.getStack(j).isOf(item)) {
                                     itemStack = stash1InventoryCopy.getStack(j).copy();
                                     int stackCount = itemStack.getCount();
                                     if (stackCount >= ingredientCount) {
@@ -419,7 +418,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
                             }
 
                             for (j = 0; j < stash2InventorySize; j++) {
-                                if (stash2InventoryCopy.getStack(j).isOf(virtualItem)) {
+                                if (stash2InventoryCopy.getStack(j).isOf(item)) {
                                     itemStack = stash2InventoryCopy.getStack(j).copy();
                                     int stackCount = itemStack.getCount();
                                     if (stackCount >= ingredientCount) {
@@ -438,7 +437,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
                             }
 
                             for (j = 0; j < stash3InventorySize; j++) {
-                                if (stash3InventoryCopy.getStack(j).isOf(virtualItem)) {
+                                if (stash3InventoryCopy.getStack(j).isOf(item)) {
                                     itemStack = stash3InventoryCopy.getStack(j).copy();
                                     int stackCount = itemStack.getCount();
                                     if (stackCount >= ingredientCount) {
@@ -457,7 +456,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
                             }
 
                             for (j = 0; j < stash4InventorySize; j++) {
-                                if (stash4InventoryCopy.getStack(j).isOf(virtualItem)) {
+                                if (stash4InventoryCopy.getStack(j).isOf(item)) {
                                     itemStack = stash4InventoryCopy.getStack(j).copy();
                                     int stackCount = itemStack.getCount();
                                     if (stackCount >= ingredientCount) {
@@ -535,7 +534,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY/*, double horizontalAmount*/, double verticalAmount) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         if (this.shouldScroll()) {
             int i = this.getMaxScroll();
             float f = (float)verticalAmount / (float)i;
@@ -577,13 +576,13 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
                 if (i > recipeList.size()) {
                     break;
                 }
-                CraftingRecipe craftingRecipe = CraftingRecipeRegistry.getCraftingRecipe(recipeList.get(i));
+                CraftingRecipe craftingRecipe = CraftingRecipesRegistry.registeredCraftingRecipes.get(recipeList.get(i));
                 if (craftingRecipe != null) {
 
                     x = this.x + 62 + (index % 3 * 18);
                     y = this.y + 63 + (index / 3) * 18;
 
-                    ItemStack resultItemStack = ItemUtils.getItemStackFromVirtualItemStack(craftingRecipe.getResult());
+                    ItemStack resultItemStack = craftingRecipe.result();
                     k = x + y * this.backgroundWidth;
                     Identifier identifier;
                     if (i == this.handler.getSelectedRecipe()) {
@@ -593,8 +592,8 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
                     } else {
                         identifier = RECIPE_TEXTURE;
                     }
-//                    context.drawGuiTexture(identifier, x, y, 18, 18);
-                    context.drawTexture(identifier, x, y, 0, 0, 18, 18);
+                    context.drawGuiTexture(identifier, x, y, 18, 18);
+//                    context.drawTexture(identifier, x, y, 0, 0, 18, 18);
                     context.drawItemWithoutEntity(resultItemStack, x + 1, y + 1/*, k*/);
                     context.drawItemInSlot(this.textRenderer, resultItemStack, x + 1, y + 1);
 
@@ -605,13 +604,13 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
             y = this.y;
             k = (int)(65.0F * this.scrollAmount);
             Identifier identifier = this.shouldScroll() ? SCROLLER_VERTICAL_6_7_TEXTURE : SCROLLER_VERTICAL_6_7_DISABLED_TEXTURE;
-//            context.drawGuiTexture(identifier, x + 119, y + 63 + k, 6, 7);
-            context.drawTexture(identifier, x + 119, y + 63 + k, 0, 0, 6, 7);
+            context.drawGuiTexture(identifier, x + 119, y + 63 + k, 6, 7);
+//            context.drawTexture(identifier, x + 119, y + 63 + k, 0, 0, 6, 7);
 
             int selectedRecipe = this.handler.getSelectedRecipe();
             if (selectedRecipe != -1) {
-                CraftingRecipe craftingRecipe = CraftingRecipeRegistry.getCraftingRecipe(recipeList.get(selectedRecipe));
-                ItemStack resultItemStack = ItemUtils.getItemStackFromVirtualItemStack(craftingRecipe.getResult());
+                CraftingRecipe craftingRecipe = CraftingRecipesRegistry.registeredCraftingRecipes.get(recipeList.get(selectedRecipe));
+                ItemStack resultItemStack = craftingRecipe.result();
 
                 x = this.x + 135;
                 y = this.y + 20;

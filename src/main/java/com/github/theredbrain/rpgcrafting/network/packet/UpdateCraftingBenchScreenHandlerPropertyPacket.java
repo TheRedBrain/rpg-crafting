@@ -1,34 +1,24 @@
 package com.github.theredbrain.rpgcrafting.network.packet;
 
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
-import net.fabricmc.fabric.api.networking.v1.FabricPacket;
-import net.fabricmc.fabric.api.networking.v1.PacketType;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 
-public class UpdateCraftingBenchScreenHandlerPropertyPacket implements FabricPacket {
-    public static final PacketType<UpdateCraftingBenchScreenHandlerPropertyPacket> TYPE = PacketType.create(
-            RPGCrafting.identifier("update_crafting_bench_screen_handler_property"),
-            UpdateCraftingBenchScreenHandlerPropertyPacket::new
-    );
+public record UpdateCraftingBenchScreenHandlerPropertyPacket(int shouldScreenCalculateCraftingStatus) implements CustomPayload {
+    public static final CustomPayload.Id<UpdateCraftingBenchScreenHandlerPropertyPacket> PACKET_ID = new CustomPayload.Id<>(RPGCrafting.identifier("update_crafting_bench_screen_handler"));
+    public static final PacketCodec<RegistryByteBuf, UpdateCraftingBenchScreenHandlerPropertyPacket> PACKET_CODEC = PacketCodec.of(UpdateCraftingBenchScreenHandlerPropertyPacket::write, UpdateCraftingBenchScreenHandlerPropertyPacket::new);
 
-    public final int shouldScreenCalculateCraftingStatus;
-
-    public UpdateCraftingBenchScreenHandlerPropertyPacket(int shouldScreenCalculateCraftingStatus) {
-        this.shouldScreenCalculateCraftingStatus = shouldScreenCalculateCraftingStatus;
+    public UpdateCraftingBenchScreenHandlerPropertyPacket(RegistryByteBuf registryByteBuf) {
+        this(registryByteBuf.readInt());
     }
 
-    public UpdateCraftingBenchScreenHandlerPropertyPacket(PacketByteBuf buf) {
-        this(buf.readInt());
+    private void write(RegistryByteBuf registryByteBuf) {
+        registryByteBuf.writeInt(shouldScreenCalculateCraftingStatus);
     }
 
     @Override
-    public PacketType<?> getType() {
-        return TYPE;
+    public CustomPayload.Id<? extends CustomPayload> getId() {
+        return PACKET_ID;
     }
-
-    @Override
-    public void write(PacketByteBuf buf) {
-        buf.writeInt(this.shouldScreenCalculateCraftingStatus);
-    }
-
 }

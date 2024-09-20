@@ -1,10 +1,8 @@
 package com.github.theredbrain.rpgcrafting.network.packet;
 
 import com.github.theredbrain.rpgcrafting.data.CraftingRecipe;
-import com.github.theredbrain.rpgcrafting.registry.CraftingRecipeRegistry;
+import com.github.theredbrain.rpgcrafting.registry.CraftingRecipesRegistry;
 import com.github.theredbrain.rpgcrafting.screen.CraftingBenchBlockScreenHandler;
-import com.github.theredbrain.rpgcrafting.utils.ItemUtils;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -12,17 +10,19 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworking.PlayPacketHandler<CraftFromCraftingBenchPacket> {
+public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworking.PlayPayloadHandler<CraftFromCraftingBenchPacket> {
     @Override
-    public void receive(CraftFromCraftingBenchPacket packet, ServerPlayerEntity player, PacketSender responseSender) {
+    public void receive(CraftFromCraftingBenchPacket payload, ServerPlayNetworking.Context context) {
 
-        String recipeIdentifier = packet.recipeIdentifier;
+        String recipeIdentifier = payload.recipeIdentifier();
 
-        boolean useStorageInventory = packet.useStorageInventory;
+        boolean useStorageInventory = payload.useStorageInventory();
+
+        ServerPlayerEntity player = context.player();
 
         ScreenHandler screenHandler = player.currentScreenHandler;
 
-        CraftingRecipe craftingRecipe = CraftingRecipeRegistry.getCraftingRecipe(new Identifier(recipeIdentifier));
+        CraftingRecipe craftingRecipe = CraftingRecipesRegistry.registeredCraftingRecipes.get(Identifier.of(recipeIdentifier));
 
         if (craftingRecipe != null && screenHandler instanceof CraftingBenchBlockScreenHandler craftingBenchBlockScreenHandler) {
 
@@ -41,9 +41,9 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
             boolean bl = true;
             ItemStack itemStack;
 
-            for (ItemUtils.VirtualItemStack ingredient : craftingRecipe.getIngredients()) {
+            for (ItemStack ingredient : craftingRecipe.ingredients()) {
 
-                Item virtualItem = ItemUtils.getItemStackFromVirtualItemStack(ingredient).getItem();
+                Item virtualItem = ingredient.getItem();
                 int ingredientCount = ingredient.getCount();
                 int j;
 
@@ -165,7 +165,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
                 }
             }
             if (bl) {
-                player.getInventory().offerOrDrop(ItemUtils.getItemStackFromVirtualItemStack(craftingRecipe.getResult()));
+                player.getInventory().offerOrDrop(craftingRecipe.result());
                 craftingBenchBlockScreenHandler.calculateUnlockedRecipes();
                 craftingBenchBlockScreenHandler.setShouldScreenCalculateCraftingStatus(1);
             }

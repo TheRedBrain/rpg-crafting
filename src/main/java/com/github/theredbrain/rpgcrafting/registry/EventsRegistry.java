@@ -1,18 +1,27 @@
 package com.github.theredbrain.rpgcrafting.registry;
 
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import com.github.theredbrain.rpgcrafting.network.packet.CraftingRecipesSyncPacket;
+import com.github.theredbrain.rpgcrafting.network.packet.ServerConfigSyncPacket;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.network.PacketByteBuf;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public class EventsRegistry {
-    private static PacketByteBuf serverConfigSerialized = PacketByteBufs.create();
     public static void initializeEvents() {
-        serverConfigSerialized = ServerPacketRegistry.ServerConfigSync.write(RPGCrafting.serverConfig);
-
+        PayloadTypeRegistry.playS2C().register(ServerConfigSyncPacket.PACKET_ID, ServerConfigSyncPacket.PACKET_CODEC);
+        PayloadTypeRegistry.playS2C().register(CraftingRecipesSyncPacket.PACKET_ID, CraftingRecipesSyncPacket.PACKET_CODEC);
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            sender.sendPacket(ServerPacketRegistry.ServerConfigSync.ID, serverConfigSerialized); // TODO convert to packet
-            sender.sendPacket(ServerPacketRegistry.SYNC_CRAFTING_RECIPES, CraftingRecipeRegistry.getEncodedRegistry()); // TODO convert to packet
+            ServerPlayNetworking.send(handler.player, new ServerConfigSyncPacket(RPGCrafting.serverConfig));
+            ServerPlayNetworking.send(handler.player, new CraftingRecipesSyncPacket(CraftingRecipesRegistry.registeredCraftingRecipes));
+        });
+        ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> {
+            for (ServerPlayerEntity player : PlayerLookup.all(server)) {
+                ServerPlayNetworking.send(player, new CraftingRecipesSyncPacket(CraftingRecipesRegistry.registeredCraftingRecipes));
+            }
         });
     }
 }

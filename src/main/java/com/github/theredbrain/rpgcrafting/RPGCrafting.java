@@ -3,7 +3,7 @@ package com.github.theredbrain.rpgcrafting;
 import com.github.theredbrain.rpgcrafting.config.ServerConfig;
 import com.github.theredbrain.rpgcrafting.config.ServerConfigWrapper;
 import com.github.theredbrain.rpgcrafting.registry.BlockRegistry;
-import com.github.theredbrain.rpgcrafting.registry.CraftingRecipeRegistry;
+import com.github.theredbrain.rpgcrafting.registry.CraftingRecipesRegistry;
 import com.github.theredbrain.rpgcrafting.registry.EventsRegistry;
 import com.github.theredbrain.rpgcrafting.registry.GameRulesRegistry;
 import com.github.theredbrain.rpgcrafting.registry.ItemGroupRegistry;
@@ -38,7 +38,7 @@ public class RPGCrafting implements ModInitializer {
 		// Registry
 		BlockRegistry.init();
 		ItemGroupRegistry.init();
-		CraftingRecipeRegistry.init();
+		CraftingRecipesRegistry.init();
 		EventsRegistry.initializeEvents();
 		GameRulesRegistry.init();
 		ScreenHandlerTypesRegistry.registerAll();

@@ -19,12 +19,21 @@ public class ServerConfig implements ConfigData {
             Optionally add 'rpgcrafting:crafting_root_block' to
             the 'provides_crafting_tab_0_level' block tag.
             """)
-    public boolean crafting_root_block_provides_crafting_tab = false;
+    public RootBlockProvidedScreen crafting_root_block_provided_screen = RootBlockProvidedScreen.NONE;
     @Comment("Additional debug log is shown in the console.")
     public boolean show_debug_log = false;
     @Comment("Additional debug messages are send in game.")
     public boolean show_debug_messages = false;
     public ServerConfig() {
 
+    }
+
+    public enum RootBlockProvidedScreen {
+        NONE,
+        CRAFTING_GRID_3X3,
+        CRAFTING_TAB_0;
+
+        RootBlockProvidedScreen() {
+        }
     }
 }

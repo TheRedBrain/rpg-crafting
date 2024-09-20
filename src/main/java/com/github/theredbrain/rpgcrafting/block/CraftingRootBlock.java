@@ -1,6 +1,7 @@
 package com.github.theredbrain.rpgcrafting.block;
 
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
+import com.github.theredbrain.rpgcrafting.config.ServerConfig;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.registry.BlockRegistry;
 import com.github.theredbrain.rpgcrafting.registry.Tags;
@@ -11,12 +12,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -39,14 +38,14 @@ public class CraftingRootBlock extends Block {
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if (world.isClient) {
             return ActionResult.SUCCESS;
         }
-        if (RPGCrafting.serverConfig.crafting_root_block_provides_crafting_tab) {
-            player.openHandledScreen(createCraftingRootBlockScreenHandlerFactory(state, world, pos, 0));
-        } else {
-            player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
+        switch (RPGCrafting.serverConfig.crafting_root_block_provided_screen) {
+            case CRAFTING_TAB_0 ->
+                    player.openHandledScreen(createCraftingRootBlockScreenHandlerFactory(state, world, pos, 0));
+            case CRAFTING_GRID_3X3 -> player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
         }
 //        player.incrementStat(Stats.INTERACT_WITH_CRAFTING_TABLE); // TODO stats
         return ActionResult.CONSUME;
@@ -105,7 +104,7 @@ public class CraftingRootBlock extends Block {
 
                         isStorageTabProviderInReach = isStorageArea0ProviderInReach || isStorageArea1ProviderInReach || isStorageArea2ProviderInReach || isStorageArea3ProviderInReach || isStorageArea4ProviderInReach;
 
-                        if (blockState.isOf(BlockRegistry.CRAFTING_TAB_0_PROVIDER_BLOCK) || (RPGCrafting.serverConfig.crafting_root_block_provides_crafting_tab && blockState.isOf(BlockRegistry.CRAFTING_TAB_0_PROVIDER_BLOCK))) {
+                        if (blockState.isOf(BlockRegistry.CRAFTING_TAB_0_PROVIDER_BLOCK) || (RPGCrafting.serverConfig.crafting_root_block_provided_screen == ServerConfig.RootBlockProvidedScreen.CRAFTING_TAB_0 && blockState.isOf(BlockRegistry.CRAFTING_TAB_0_PROVIDER_BLOCK))) {
                             isCraftingTab0ProviderInReach = true;
                         }
                         if (blockState.isOf(BlockRegistry.CRAFTING_TAB_1_PROVIDER_BLOCK)) {
@@ -153,14 +152,10 @@ public class CraftingRootBlock extends Block {
 
         byte finalTabProvidersInReach = tabProvidersInReach;
         byte finalStorageProvidersInReach = storageProvidersInReach;
-        return new ExtendedScreenHandlerFactory() {
+        return new ExtendedScreenHandlerFactory<>() {
             @Override
-            public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-                buf.writeBlockPos(pos);
-                buf.writeInt(initialTab);
-                buf.writeByte(finalTabProvidersInReach);
-                buf.writeByte(finalStorageProvidersInReach);
-                buf.writeIntArray(tabLevels);
+            public CraftingBenchBlockScreenHandler.CraftingBenchBlockData getScreenOpeningData(ServerPlayerEntity player) {
+                return new CraftingBenchBlockScreenHandler.CraftingBenchBlockData(pos, initialTab, finalTabProvidersInReach, finalStorageProvidersInReach, tabLevels);
             }
 
             @Override
