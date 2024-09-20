@@ -3,7 +3,8 @@
 	"package": "com.github.theredbrain.rpgcrafting.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"entity.player.PlayerEntityMixin"
+		"entity.player.PlayerEntityMixin",
+		"screen.CraftingScreenHandlerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
