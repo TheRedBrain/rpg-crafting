@@ -16,6 +16,7 @@
 
 	"gamerule.keepStashInventory": "Keep stash inventory on death",
 	"gamerule.clearStashInventoryOnDeath": "Stash is cleared on death",
+	"gamerule.showAllRecipesInCraftingList": "Crafting list shows locked recipes",
 
 	"gui.crafting_bench.no_crafting_root_block_nearby": "No Crafting Root Block Nearby",
 	"gui.crafting_bench.toggle_use_stash_for_crafting_button_label.on": "Stash Crafting: On",

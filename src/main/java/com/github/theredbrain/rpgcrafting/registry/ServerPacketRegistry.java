@@ -12,6 +12,8 @@ import com.github.theredbrain.rpgcrafting.network.packet.ToggleUseStashForCrafti
 import com.github.theredbrain.rpgcrafting.network.packet.ToggleUseStashForCraftingPacketReceiver;
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateCraftingBenchScreenHandlerPropertyPacket;
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateCraftingBenchScreenHandlerPropertyPacketReceiver;
+import com.github.theredbrain.rpgcrafting.network.packet.UpdateHandCraftingScreenHandlerPropertyPacket;
+import com.github.theredbrain.rpgcrafting.network.packet.UpdateHandCraftingScreenHandlerPropertyPacketReceiver;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
@@ -35,6 +37,9 @@ public class ServerPacketRegistry {
 
 		PayloadTypeRegistry.playC2S().register(UpdateCraftingBenchScreenHandlerPropertyPacket.PACKET_ID, UpdateCraftingBenchScreenHandlerPropertyPacket.PACKET_CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(UpdateCraftingBenchScreenHandlerPropertyPacket.PACKET_ID, new UpdateCraftingBenchScreenHandlerPropertyPacketReceiver());
+
+		PayloadTypeRegistry.playC2S().register(UpdateHandCraftingScreenHandlerPropertyPacket.PACKET_ID, UpdateHandCraftingScreenHandlerPropertyPacket.PACKET_CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(UpdateHandCraftingScreenHandlerPropertyPacket.PACKET_ID, new UpdateHandCraftingScreenHandlerPropertyPacketReceiver());
 
 	}
 }

@@ -9,5 +9,7 @@ public class GameRulesRegistry {
             GameRuleRegistry.register("keepStashInventory", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(false));
     public static final GameRules.Key<GameRules.BooleanRule> CLEAR_STASH_INVENTORY_ON_DEATH =
             GameRuleRegistry.register("clearStashInventoryOnDeath", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(false));
+    public static final GameRules.Key<GameRules.BooleanRule> SHOW_ALL_RECIPES_IN_CRAFTING_LIST =
+            GameRuleRegistry.register("showAllRecipesInCraftingList", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(false));
     public static void init() {}
 }
