@@ -1,0 +1,11 @@
+{
+	"ingredients": [
+		{
+			"id": "minecraft:oak_log"
+		}
+	],
+	"result": {
+		"id": "minecraft:oak_planks",
+		"count": 4
+	}
+}

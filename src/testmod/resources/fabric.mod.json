@@ -1,0 +1,21 @@
+{
+	"schemaVersion": 1,
+	"id": "rpgcrafting_test",
+	"version": "${version}",
+	"name": "Test Mod",
+	"description": "Test Mod for RPG Crafting",
+	"authors": [],
+	"contact": {},
+	"license": "None",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.github.theredbrain.rpgcrafting_test.RPGCraftingTest"
+		],
+		"client": [
+			"com.github.theredbrain.rpgcrafting_test.RPGCraftingTestClient"
+		]
+	},
+	"mixins": [],
+	"depends": {}
+}
