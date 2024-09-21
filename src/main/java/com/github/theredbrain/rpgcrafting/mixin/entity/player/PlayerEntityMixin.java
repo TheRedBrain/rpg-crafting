@@ -1,5 +1,6 @@
 package com.github.theredbrain.rpgcrafting.mixin.entity.player;
 
+import com.github.theredbrain.rpgcrafting.RPGCrafting;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.inventory.StashInventory;
 import com.github.theredbrain.rpgcrafting.registry.GameRulesRegistry;
@@ -91,4 +92,15 @@ public abstract class PlayerEntityMixin extends LivingEntity implements DuckPlay
     public void rpgcrafting$setStashInventory(StashInventory stashInventory) {
         this.stashInventory = stashInventory;
     }
+
+    @Override
+    public int rpgcrafting$getActiveHandCraftingLevel() {
+        return Math.max(0, Math.max(0, RPGCrafting.serverConfig.default_hand_crafting_level) + this.rpgcrafting$getHandCraftingLevel());
+    }
+
+    @Override
+    public int rpgcrafting$getHandCraftingLevel() {
+        return (int) this.getAttributeValue(RPGCrafting.HAND_CRAFTING_LEVEL);
+    }
+
 }

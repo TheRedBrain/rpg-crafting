@@ -1,4 +1,6 @@
 {
+	"attribute.name.generic.hand_crafting_level": "Hand Crafting Level",
+
 	"block.rpgcrafting.crafting_root_block": "Crafting Root Block",
 	"block.rpgcrafting.storage_area_0_provider_block": "Storage Area 0 Provider",
 	"block.rpgcrafting.storage_area_1_provider_block": "Storage Area 1 Provider",

@@ -5,6 +5,8 @@ import net.minecraft.text.Text;
 
 public interface DuckPlayerEntityMixin {
 
+    int rpgcrafting$getActiveHandCraftingLevel();
+    int rpgcrafting$getHandCraftingLevel();
     boolean rpgcrafting$useStashForCrafting();
     void rpgcrafting$setUseStashForCrafting(boolean useStashForCrafting);
     StashInventory rpgcrafting$getStashInventory();

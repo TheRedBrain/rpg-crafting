@@ -14,6 +14,10 @@ public class ServerConfig implements ConfigData {
             """)
     public int crafting_root_block_reach_radius = 10;
     @Comment("""
+            The default hand crafting level.
+            """)
+    public int default_hand_crafting_level = 1;
+    @Comment("""
             When set to true, interacting with the Crafting Root block
             opens the crafting screen on tab 0.
             Optionally add 'rpgcrafting:crafting_root_block' to
