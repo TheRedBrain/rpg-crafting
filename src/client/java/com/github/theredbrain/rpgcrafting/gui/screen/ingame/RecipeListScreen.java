@@ -1,20 +1,18 @@
 package com.github.theredbrain.rpgcrafting.gui.screen.ingame;
 
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
-import com.github.theredbrain.rpgcrafting.network.packet.CraftFromHandCraftingPacket;
-import com.github.theredbrain.rpgcrafting.network.packet.UpdateHandCraftingScreenHandlerPropertyPacket;
-import com.github.theredbrain.rpgcrafting.network.packet.UpdateHandCraftingScreenHandlerSelectedRecipePacket;
+import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
+import com.github.theredbrain.rpgcrafting.network.packet.UpdateRecipeListScreenHandlerPropertyPacket;
+import com.github.theredbrain.rpgcrafting.network.packet.UpdateRecipeListScreenHandlerSelectedRecipePacket;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
-import com.github.theredbrain.rpgcrafting.screen.HandCraftingScreenHandler;
+import com.github.theredbrain.rpgcrafting.screen.RecipeListScreenHandler;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeEntry;
@@ -28,27 +26,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
-public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler> {
+public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
     private static final int RECIPE_FIELD_HEIGTH = 4;
     private static final int RECIPE_FIELD_WIDTH = 3;
-    private static final Text HAND_CRAFT_BUTTON_LABEL_TEXT = Text.translatable("gui.hand_crafting.hand_craft_button_label");
     private static final Identifier RECIPE_SELECTED_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe_selected");
     private static final Identifier RECIPE_HIGHLIGHTED_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe_highlighted");
     private static final Identifier RECIPE_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe");
     private static final Identifier SCROLLER_VERTICAL_6_7_TEXTURE = RPGCrafting.identifier("scroll_bar/scroller_vertical_6_7");
     private static final Identifier SCROLLER_VERTICAL_6_7_DISABLED_TEXTURE = RPGCrafting.identifier("scroll_bar/scroller_vertical_6_7_disabled");
+    public static final Identifier CRAFTING_LIST_BACKGROUND_TEXTURE = RPGCrafting.identifier("textures/gui/container/crafting_bench/crafting_list_background.png");
 
     private List<RecipeEntry<RPGCraftingRecipe>> recipeList = new ArrayList<>();
 
-    private ButtonWidget craftButton;
     private float scrollAmount;
     private boolean mouseClicked;
     private int scrollPosition;
-    private final PlayerEntity playerEntity;
 
-    public HandCraftingScreen(HandCraftingScreenHandler handler, PlayerInventory inventory, Text title) {
+    public RecipeListScreen(RecipeListScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
-        this.playerEntity = inventory.player;
     }
 
     @Override
@@ -60,101 +55,63 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
         this.playerInventoryTitleY = 139;
         super.init();
 
-        this.craftButton = this.addDrawableChild(ButtonWidget.builder(HAND_CRAFT_BUTTON_LABEL_TEXT, button -> this.craft()).dimensions(this.x + 130, this.y + 116, 147, 20).build());
-
         this.updateRecipeList();
-//        this.handler.calculateUnlockedRecipes();
-        ClientPlayNetworking.send(new UpdateHandCraftingScreenHandlerPropertyPacket(
+
+        ClientPlayNetworking.send(new UpdateRecipeListScreenHandlerPropertyPacket(
                 1
         ));
     }
 
     @Override
     protected void handledScreenTick() {
-        if (this.handler.shouldScreenCalculateCraftingStatus() != 0) {
+        if (this.handler.shouldScreenCalculateRecipeList() != 0) {
             int oldSelectedRecipe = this.handler.getSelectedRecipe();
             int oldRecipeListHash = this.recipeList.hashCode();
-            ClientPlayNetworking.send(new UpdateHandCraftingScreenHandlerPropertyPacket(
+            ClientPlayNetworking.send(new UpdateRecipeListScreenHandlerPropertyPacket(
                     0
             ));
             this.updateRecipeList();
-            this.calculateCraftingStatus();
             int newSelectedRecipe = oldSelectedRecipe;
             if (oldRecipeListHash != this.recipeList.hashCode()) {
                 newSelectedRecipe = -1;
             }
-            ClientPlayNetworking.send(new UpdateHandCraftingScreenHandlerSelectedRecipePacket(
+            ClientPlayNetworking.send(new UpdateRecipeListScreenHandlerSelectedRecipePacket(
                     newSelectedRecipe
             ));
         }
     }
 
-    // TODO find a way to check for advancements on client side
-//    private void updateRecipeList() {
-//        if (this.client != null && this.client.player != null) {
-//            this.recipeList.clear();
-//            List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();
-//            ClientAdvancementManager advancementManager = this.client.player.networkHandler.getAdvancementHandler();
-//            Advancement advancement = null;
-//            for (RecipeEntry<RPGCraftingRecipe> recipeEntry : newList) {
-//                String string = recipeEntry.value().unlockAdvancement;
-//                RPGCrafting.info(recipeEntry.id().toString() + " unlockAdvancement: " + string);
-//                AdvancementEntry advancementEntry = advancementManager.get(Identifier.of(string));
-////                PlacedAdvancement placedAdvancement = advancementManager.getManager().get(Identifier.of(string));
-//                if (advancementEntry != null) {
-//                    RPGCrafting.info("advancementEntry.id: " + advancementEntry.id());
-//                    advancement = advancementEntry.value();
-//                } else {
-//                    RPGCrafting.info("advancementEntry == null");
-//                }
-//                RPGCrafting.info("advancement: " + advancement);
-//                if ((advancement != null && ((DuckClientAdvancementManagerMixin) advancementManager).rpgcrafting$getAdvancementProgress(advancement).isDone()) || string.isEmpty() || !this.handler.getWorld().getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING)) {
-//                    this.recipeList.add(recipeEntry);
-//                }
-//            }
-//            RPGCrafting.info("updatedRecipeList: " + this.recipeList);
-//        }
-//    }
-
     private void updateRecipeList() {
-        this.recipeList.clear();
-        List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();
-        this.recipeList.addAll(newList);
-    }
-
-    private void craft() {
-        int selectedRecipe = this.handler.getSelectedRecipe();
-        if (this.client != null && this.client.player != null && this.client.interactionManager != null && selectedRecipe < recipeList.size()) {
-            MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_STONECUTTER_TAKE_RESULT, 1.0F));
-            ClientPlayNetworking.send(new CraftFromHandCraftingPacket(
-                    this.recipeList.get(selectedRecipe).id().toString()
-            ));
+        if (this.client != null && this.client.player != null) {
+            this.recipeList.clear();
+            World world = this.handler.getPlayerInventory().player.getWorld();
+            List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();
+            for (RecipeEntry<RPGCraftingRecipe> recipeEntry : newList) {
+                if (recipeEntry.value().hasIngredient(this.handler.getRecipeListInputInventory(), world)) {
+                    this.recipeList.add(recipeEntry);
+                }
+            }
         }
     }
 
-    private void calculateCraftingStatus() {
-            boolean craftButtonActive = false;
-            World world = this.handler.getPlayerInventory().player.getWorld();
-            List<RecipeEntry<RPGCraftingRecipe>> activeRecipeList = this.recipeList;
-            int selectedRecipe = this.handler.getSelectedRecipe();
-            if (selectedRecipe >= 0 && selectedRecipe < activeRecipeList.size()) {
-                RecipeEntry<RPGCraftingRecipe> craftingRecipeEntry = activeRecipeList.get(selectedRecipe);
-                craftButtonActive = craftingRecipeEntry.value().matches(this.handler.getCraftingInputInventory(), world);
-            }
-        this.craftButton.active = craftButtonActive;
-    }
+//    private void updateRecipeList() {
+//        this.recipeList.clear();
+//        List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();
+//        this.recipeList.addAll(newList);
+//    }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         this.mouseClicked = false;
+//        if (this.currentTab >= 0) {
             int i = this.x + 62;
             int j = this.y + 63;
-        int k = this.scrollPosition + (RECIPE_FIELD_HEIGTH * RECIPE_FIELD_WIDTH);
+            int k = this.scrollPosition + (RECIPE_FIELD_HEIGTH * RECIPE_FIELD_WIDTH);
 
             for(int l = this.scrollPosition; l < k; ++l) {
                 int m = l - this.scrollPosition;
-                double d = mouseX - (double) (i + m % RECIPE_FIELD_WIDTH * 18);
-                double e = mouseY - (double) (j + m / RECIPE_FIELD_WIDTH * 18);
+                double d = mouseX - (double)(i + m % RECIPE_FIELD_WIDTH * 18);
+                double e = mouseY - (double)(j + m / RECIPE_FIELD_WIDTH * 18);
                 if (d >= 0.0 && e >= 0.0 && d < 18.0 && e < 18.0 && this.client != null && this.client.interactionManager != null && this.handler.onButtonClick(this.client.player, l - this.scrollPosition)) {
                     MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_STONECUTTER_SELECT_RECIPE, 1.0F));
                     if (this.isInBounds(l - this.scrollPosition)) {
@@ -163,7 +120,7 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
                         this.client.interactionManager.clickButton(this.handler.syncId, -1);
                     }
 
-                    ClientPlayNetworking.send(new UpdateHandCraftingScreenHandlerPropertyPacket(
+                    ClientPlayNetworking.send(new UpdateRecipeListScreenHandlerPropertyPacket(
                             1
                     ));
                     return true;
@@ -171,8 +128,8 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
             }
 
             i = this.x + 119;
-            j = this.y + 63;
-            if (mouseX >= (double)i && mouseX < (double)(i + 6) && mouseY >= (double)j && mouseY < (double)(j + 72)) {
+            j = this.y + 27;
+            if (mouseX >= (double)i && mouseX < (double)(i + 6) && mouseY >= (double)j && mouseY < (double)(j + 108)) {
                 this.mouseClicked = true;
             }
 
@@ -181,7 +138,7 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        if (this.mouseClicked && this.shouldScroll()) {
+        if (this.mouseClicked && this.shouldScroll()) { // TODO
             int i = this.y + 62;
             int j = i + 54;
             this.scrollAmount = ((float)mouseY - (float)i - 7.5F) / ((float)(j - i) - 15.0F);
@@ -210,7 +167,7 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
         int x = this.x;
         int y = this.y;
 
-            context.drawTexture(RPGCrafting.identifier("textures/gui/container/crafting_bench/tab_0_background.png"), x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
+            context.drawTexture(CRAFTING_LIST_BACKGROUND_TEXTURE, x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
             int k;
             int index = 0;
         List<RecipeEntry<RPGCraftingRecipe>> recipeList = this.recipeList;

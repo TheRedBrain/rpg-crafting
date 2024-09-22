@@ -1,7 +1,7 @@
 package com.github.theredbrain.rpgcrafting;
 
 import com.github.theredbrain.rpgcrafting.gui.screen.ingame.CraftingBenchBlockScreen;
-import com.github.theredbrain.rpgcrafting.gui.screen.ingame.CraftingListScreen;
+import com.github.theredbrain.rpgcrafting.gui.screen.ingame.RecipeListScreen;
 import com.github.theredbrain.rpgcrafting.gui.screen.ingame.HandCraftingScreen;
 import com.github.theredbrain.rpgcrafting.network.packet.OpenCraftingListScreenPacket;
 import com.github.theredbrain.rpgcrafting.network.packet.OpenHandCraftingScreenPacket;
@@ -18,7 +18,7 @@ public class RPGCraftingClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		KeyBindingsRegistry.registerKeyBindings();
 		HandledScreens.register(ScreenHandlerTypesRegistry.CRAFTING_BENCH_BLOCK_SCREEN_HANDLER, CraftingBenchBlockScreen::new);
-		HandledScreens.register(ScreenHandlerTypesRegistry.CRAFTING_LIST_SCREEN_HANDLER, CraftingListScreen::new);
+		HandledScreens.register(ScreenHandlerTypesRegistry.CRAFTING_LIST_SCREEN_HANDLER, RecipeListScreen::new);
 		HandledScreens.register(ScreenHandlerTypesRegistry.HAND_CRAFTING_SCREEN_HANDLER, HandCraftingScreen::new);
 
 		ClientPacketRegistry.init();

@@ -7,13 +7,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.util.collection.DefaultedList;
 
-public class CraftingListInputInventory implements Inventory {
+public class RecipeListInputInventory implements Inventory {
 	private final ScreenHandler handler;
 	private final DefaultedList<ItemStack> stacks;
 
-	public CraftingListInputInventory(ScreenHandler handler) {
+	public RecipeListInputInventory(int size, ScreenHandler handler) {
 		this.handler = handler;
-		this.stacks = DefaultedList.ofSize(1, ItemStack.EMPTY);
+		this.stacks = DefaultedList.ofSize(size, ItemStack.EMPTY);
 	}
 
 	@Override

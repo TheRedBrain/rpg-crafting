@@ -1,13 +1,14 @@
 package com.github.theredbrain.rpgcrafting.gui.screen.ingame;
 
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
-import com.github.theredbrain.rpgcrafting.data.CraftingRecipe;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.gui.widget.ItemButtonWidget;
+import com.github.theredbrain.rpgcrafting.network.packet.CraftFromCraftingBenchPacket;
 import com.github.theredbrain.rpgcrafting.network.packet.ToggleUseStashForCraftingPacket;
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateCraftingBenchScreenHandlerPropertyPacket;
+import com.github.theredbrain.rpgcrafting.network.packet.UpdateCraftingBenchScreenHandlerSelectedRecipePacket;
+import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
 import com.github.theredbrain.rpgcrafting.registry.BlockRegistry;
-import com.github.theredbrain.rpgcrafting.registry.CraftingRecipesRegistry;
 import com.github.theredbrain.rpgcrafting.screen.CraftingBenchBlockScreenHandler;
 import com.github.theredbrain.slotcustomizationapi.api.SlotCustomization;
 import net.fabricmc.api.EnvType;
@@ -21,19 +22,21 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockScreenHandler> {
+    private static final int RECIPE_FIELD_HEIGTH = 4;
+    private static final int RECIPE_FIELD_WIDTH = 3;
     private static final Text TOGGLE_USE_STASH_FOR_CRAFTING_ON_BUTTON_LABEL_TEXT = Text.translatable("gui.crafting_bench.toggle_use_stash_for_crafting_button_label.on");
     private static final Text TOGGLE_USE_STASH_FOR_CRAFTING_OFF_BUTTON_LABEL_TEXT = Text.translatable("gui.crafting_bench.toggle_use_stash_for_crafting_button_label.off");
     private static final Text TOGGLE_STANDARD_CRAFTING_TAB_0_BUTTON_LABEL_TEXT = Text.translatable("gui.crafting_bench.toggle_standard_crafting_button_label.0");
@@ -52,9 +55,9 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
     private static final Text SPECIAL_CRAFT_TAB_1_BUTTON_LABEL_TEXT = Text.translatable("gui.crafting_bench.special_craft_button_label.1");
     private static final Text SPECIAL_CRAFT_TAB_2_BUTTON_LABEL_TEXT = Text.translatable("gui.crafting_bench.special_craft_button_label.2");
     private static final Text SPECIAL_CRAFT_TAB_3_BUTTON_LABEL_TEXT = Text.translatable("gui.crafting_bench.special_craft_button_label.3");
-    private static final Identifier RECIPE_SELECTED_TEXTURE = RPGCrafting.identifier("container/crafting_bench_screen/recipe_selected");
-    private static final Identifier RECIPE_HIGHLIGHTED_TEXTURE = RPGCrafting.identifier("container/crafting_bench_screen/recipe_highlighted");
-    private static final Identifier RECIPE_TEXTURE = RPGCrafting.identifier("container/crafting_bench_screen/recipe");
+    private static final Identifier RECIPE_SELECTED_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe_selected");
+    private static final Identifier RECIPE_HIGHLIGHTED_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe_highlighted");
+    private static final Identifier RECIPE_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe");
     public static final Identifier STORAGE_TAB_BACKGROUND_TEXTURE = RPGCrafting.identifier("textures/gui/container/crafting_bench/storage_tab_background.png");
     public static final Identifier STASH_AREA_0_BACKGROUND_TEXTURE = RPGCrafting.identifier("textures/gui/container/crafting_bench/stash_area_0_background.png");
     public static final Identifier STASH_AREA_1_BACKGROUND_TEXTURE = RPGCrafting.identifier("textures/gui/container/crafting_bench/stash_area_1_background.png");
@@ -63,6 +66,8 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
     public static final Identifier STASH_AREA_4_BACKGROUND_TEXTURE = RPGCrafting.identifier("textures/gui/container/crafting_bench/stash_area_4_background.png");
     private static final Identifier SCROLLER_VERTICAL_6_7_TEXTURE = RPGCrafting.identifier("scroll_bar/scroller_vertical_6_7");
     private static final Identifier SCROLLER_VERTICAL_6_7_DISABLED_TEXTURE = RPGCrafting.identifier("scroll_bar/scroller_vertical_6_7_disabled");
+
+    private List<RecipeEntry<RPGCraftingRecipe>> recipeList = new ArrayList<>();
 
     private ButtonWidget toggleUseStashForCraftingButton;
 
@@ -128,7 +133,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
         this.toggleSpecialCraftingButton = this.addDrawableChild(ButtonWidget.builder(TOGGLE_SPECIAL_CRAFTING_TAB_0_BUTTON_LABEL_TEXT, button -> this.toggleRecipeType(false)).dimensions(this.x + 61, this.y + 41, 65, 20).build());
         this.craftButton = this.addDrawableChild(ButtonWidget.builder(STANDARD_CRAFT_TAB_0_BUTTON_LABEL_TEXT, button -> this.craft()).dimensions(this.x + 130, this.y + 116, 147, 20).build());
 
-        this.handler.calculateUnlockedRecipes();
+        this.updateRecipeList();
         this.updateWidgets();
 
         ClientPlayNetworking.send(new UpdateCraftingBenchScreenHandlerPropertyPacket(
@@ -139,11 +144,54 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
     @Override
     protected void handledScreenTick() {
         if (this.handler.shouldScreenCalculateCraftingStatus() != 0) {
+            int oldSelectedRecipe = this.handler.getSelectedRecipe();
+            int oldRecipeListHash = this.recipeList.hashCode();
             ClientPlayNetworking.send(new UpdateCraftingBenchScreenHandlerPropertyPacket(
                     0
             ));
+            this.updateRecipeList();
             this.calculateCraftingStatus();
+            int newSelectedRecipe = oldSelectedRecipe;
+            if (oldRecipeListHash != this.recipeList.hashCode()) {
+                newSelectedRecipe = -1;
+            }
+            ClientPlayNetworking.send(new UpdateCraftingBenchScreenHandlerSelectedRecipePacket(
+                    newSelectedRecipe
+            ));
         }
+    }
+
+    // TODO find a way to check for advancements on client side
+//    private void updateRecipeList() {
+//        if (this.client != null && this.client.player != null) {
+//            this.recipeList.clear();
+//            List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();
+//            ClientAdvancementManager advancementManager = this.client.player.networkHandler.getAdvancementHandler();
+//            Advancement advancement = null;
+//            for (RecipeEntry<RPGCraftingRecipe> recipeEntry : newList) {
+//                String string = recipeEntry.value().unlockAdvancement;
+//                RPGCrafting.info(recipeEntry.id().toString() + " unlockAdvancement: " + string);
+//                AdvancementEntry advancementEntry = advancementManager.get(Identifier.of(string));
+////                PlacedAdvancement placedAdvancement = advancementManager.getManager().get(Identifier.of(string));
+//                if (advancementEntry != null) {
+//                    RPGCrafting.info("advancementEntry.id: " + advancementEntry.id());
+//                    advancement = advancementEntry.value();
+//                } else {
+//                    RPGCrafting.info("advancementEntry == null");
+//                }
+//                RPGCrafting.info("advancement: " + advancement);
+//                if ((advancement != null && ((DuckClientAdvancementManagerMixin) advancementManager).rpgcrafting$getAdvancementProgress(advancement).isDone()) || string.isEmpty() || !this.handler.getWorld().getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING)) {
+//                    this.recipeList.add(recipeEntry);
+//                }
+//            }
+//            RPGCrafting.info("updatedRecipeList: " + this.recipeList);
+//        }
+//    }
+
+    private void updateRecipeList() {
+        this.recipeList.clear();
+        List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();
+        this.recipeList.addAll(newList);
     }
 
     private void updateWidgets() {
@@ -283,206 +331,28 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
     }
 
     private void craft() {
-        if (this.client != null && this.client.interactionManager != null) {
-            if (this.handler.onButtonClick(this.client.player, -1)) {
-                MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_STONECUTTER_TAKE_RESULT, 1.0F));
-                this.client.interactionManager.clickButton(this.handler.syncId, -1);
-            }
+        int selectedRecipe = this.handler.getSelectedRecipe();
+        if (this.client != null && this.client.player != null && this.client.interactionManager != null && selectedRecipe < recipeList.size()) {
+            MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_STONECUTTER_TAKE_RESULT, 1.0F));
+            ClientPlayNetworking.send(new CraftFromCraftingBenchPacket(
+                    this.recipeList.get(selectedRecipe).id().toString(),
+                    ((DuckPlayerEntityMixin) this.client.player).rpgcrafting$useStashForCrafting()
+            ));
         }
     }
 
     private void calculateCraftingStatus() {
-
-        RPGCrafting.info("calculateCraftingStatus");
-
+        boolean craftButtonActive = false;
         if (this.currentTab >= 0) {
-
-            boolean craftButtonActive = false;
-
-            List<Identifier> activeRecipeList = this.handler.getCurrentCraftingRecipesList();
+            World world = this.handler.getPlayerInventory().player.getWorld();
+            List<RecipeEntry<RPGCraftingRecipe>> activeRecipeList = this.recipeList;
             int selectedRecipe = this.handler.getSelectedRecipe();
-            if (selectedRecipe >= 0) {
-                CraftingRecipe craftingRecipe = CraftingRecipesRegistry.registeredCraftingRecipes.get(activeRecipeList.get(selectedRecipe));
-                if (craftingRecipe != null) {
-                    if (this.handler.getTabLevels()[this.currentTab] >= craftingRecipe.level()) {
-
-                        int playerInventorySize = this.handler.getPlayerInventory().size();
-
-                        int stash0InventorySize = this.useStashForCrafting && this.isStorageArea0ProviderInReach ? 6 : 0;
-
-                        int stash1InventorySize = this.useStashForCrafting && this.isStorageArea1ProviderInReach ? 8 : 0;
-
-                        int stash2InventorySize = this.useStashForCrafting && this.isStorageArea2ProviderInReach ? 12 : 0;
-
-                        int stash3InventorySize = this.useStashForCrafting && this.isStorageArea3ProviderInReach ? 14 : 0;
-
-                        int stash4InventorySize = this.useStashForCrafting && this.isStorageArea4ProviderInReach ? 21 : 0;
-
-                        Inventory playerInventoryCopy = new SimpleInventory(playerInventorySize);
-                        Inventory stash0InventoryCopy = new SimpleInventory(stash0InventorySize);
-                        Inventory stash1InventoryCopy = new SimpleInventory(stash1InventorySize);
-                        Inventory stash2InventoryCopy = new SimpleInventory(stash2InventorySize);
-                        Inventory stash3InventoryCopy = new SimpleInventory(stash3InventorySize);
-                        Inventory stash4InventoryCopy = new SimpleInventory(stash4InventorySize);
-
-                        int j;
-                        for (j = 0; j < playerInventorySize; j++) {
-                            playerInventoryCopy.setStack(j, this.handler.getPlayerInventory().getStack(j).copy());
-                        }
-
-                        for (j = 0; j < stash0InventorySize; j++) {
-                            stash0InventoryCopy.setStack(j, this.handler.getEnderChestInventory().getStack(j).copy());
-                        }
-
-                        for (j = 0; j < stash1InventorySize; j++) {
-                            stash1InventoryCopy.setStack(j, this.handler.getStashInventory().getStack(j).copy());
-                        }
-
-                        for (j = 0; j < stash2InventorySize; j++) {
-                            stash2InventoryCopy.setStack(j, this.handler.getStashInventory().getStack(8 + j).copy());
-                        }
-
-                        for (j = 0; j < stash3InventorySize; j++) {
-                            stash3InventoryCopy.setStack(j, this.handler.getStashInventory().getStack(20 + j).copy());
-                        }
-
-                        for (j = 0; j < stash4InventorySize; j++) {
-                            stash4InventoryCopy.setStack(j, this.handler.getEnderChestInventory().getStack(6 + j).copy());
-                        }
-
-                        boolean bl = true;
-                        ItemStack itemStack;
-
-                        for (ItemStack ingredient : craftingRecipe.ingredients()) {
-
-                            Item item = ingredient.getItem();
-                            int ingredientCount = ingredient.getCount();
-
-                            // TODO play test which inventory normally contains the most crafting ingredients and should be checked first
-
-                            for (j = 0; j < playerInventorySize; j++) {
-                                if (playerInventoryCopy.getStack(j).isOf(item)) {
-                                    itemStack = playerInventoryCopy.getStack(j).copy();
-                                    int stackCount = itemStack.getCount();
-                                    if (stackCount >= ingredientCount) {
-                                        itemStack.setCount(stackCount - ingredientCount);
-                                        playerInventoryCopy.setStack(j, itemStack);
-                                        ingredientCount = 0;
-                                        break;
-                                    } else {
-                                        playerInventoryCopy.setStack(j, ItemStack.EMPTY);
-                                        ingredientCount = ingredientCount - stackCount;
-                                    }
-                                }
-                            }
-                            if (ingredientCount == 0) {
-                                break;
-                            }
-
-                            for (j = 0; j < stash0InventorySize; j++) {
-                                if (stash0InventoryCopy.getStack(j).isOf(item)) {
-                                    itemStack = stash0InventoryCopy.getStack(j).copy();
-                                    int stackCount = itemStack.getCount();
-                                    if (stackCount >= ingredientCount) {
-                                        itemStack.setCount(stackCount - ingredientCount);
-                                        stash0InventoryCopy.setStack(j, itemStack);
-                                        ingredientCount = 0;
-                                        break;
-                                    } else {
-                                        stash0InventoryCopy.setStack(j, ItemStack.EMPTY);
-                                        ingredientCount = ingredientCount - stackCount;
-                                    }
-                                }
-                            }
-                            if (ingredientCount == 0) {
-                                break;
-                            }
-
-                            for (j = 0; j < stash1InventorySize; j++) {
-                                if (stash1InventoryCopy.getStack(j).isOf(item)) {
-                                    itemStack = stash1InventoryCopy.getStack(j).copy();
-                                    int stackCount = itemStack.getCount();
-                                    if (stackCount >= ingredientCount) {
-                                        itemStack.setCount(stackCount - ingredientCount);
-                                        stash1InventoryCopy.setStack(j, itemStack);
-                                        ingredientCount = 0;
-                                        break;
-                                    } else {
-                                        stash1InventoryCopy.setStack(j, ItemStack.EMPTY);
-                                        ingredientCount = ingredientCount - stackCount;
-                                    }
-                                }
-                            }
-                            if (ingredientCount == 0) {
-                                break;
-                            }
-
-                            for (j = 0; j < stash2InventorySize; j++) {
-                                if (stash2InventoryCopy.getStack(j).isOf(item)) {
-                                    itemStack = stash2InventoryCopy.getStack(j).copy();
-                                    int stackCount = itemStack.getCount();
-                                    if (stackCount >= ingredientCount) {
-                                        itemStack.setCount(stackCount - ingredientCount);
-                                        stash2InventoryCopy.setStack(j, itemStack);
-                                        ingredientCount = 0;
-                                        break;
-                                    } else {
-                                        stash2InventoryCopy.setStack(j, ItemStack.EMPTY);
-                                        ingredientCount = ingredientCount - stackCount;
-                                    }
-                                }
-                            }
-                            if (ingredientCount == 0) {
-                                break;
-                            }
-
-                            for (j = 0; j < stash3InventorySize; j++) {
-                                if (stash3InventoryCopy.getStack(j).isOf(item)) {
-                                    itemStack = stash3InventoryCopy.getStack(j).copy();
-                                    int stackCount = itemStack.getCount();
-                                    if (stackCount >= ingredientCount) {
-                                        itemStack.setCount(stackCount - ingredientCount);
-                                        stash3InventoryCopy.setStack(j, itemStack);
-                                        ingredientCount = 0;
-                                        break;
-                                    } else {
-                                        stash3InventoryCopy.setStack(j, ItemStack.EMPTY);
-                                        ingredientCount = ingredientCount - stackCount;
-                                    }
-                                }
-                            }
-                            if (ingredientCount == 0) {
-                                break;
-                            }
-
-                            for (j = 0; j < stash4InventorySize; j++) {
-                                if (stash4InventoryCopy.getStack(j).isOf(item)) {
-                                    itemStack = stash4InventoryCopy.getStack(j).copy();
-                                    int stackCount = itemStack.getCount();
-                                    if (stackCount >= ingredientCount) {
-                                        itemStack.setCount(stackCount - ingredientCount);
-                                        stash4InventoryCopy.setStack(j, itemStack);
-                                        ingredientCount = 0;
-                                        break;
-                                    } else {
-                                        stash4InventoryCopy.setStack(j, ItemStack.EMPTY);
-                                        ingredientCount = ingredientCount - stackCount;
-                                    }
-                                }
-                            }
-
-                            if (ingredientCount > 0) {
-                                bl = false;
-                            }
-                        }
-                        if (bl) {
-                            craftButtonActive = true;
-                        }
-                    }
-                }
+            if (selectedRecipe >= 0 && selectedRecipe < activeRecipeList.size()) {
+                RecipeEntry<RPGCraftingRecipe> craftingRecipeEntry = activeRecipeList.get(selectedRecipe);
+                craftButtonActive = craftingRecipeEntry.value().matches(this.handler.getCraftingInputInventory(((DuckPlayerEntityMixin) this.handler.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world);
             }
-            this.craftButton.active = craftButtonActive;
         }
+        this.craftButton.active = craftButtonActive;
     }
 
     @Override
@@ -491,16 +361,19 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
         if (this.currentTab >= 0) {
             int i = this.x + 62;
             int j = this.y + 63;
-            int k = this.scrollPosition + 12;
+            int k = this.scrollPosition + (RECIPE_FIELD_HEIGTH * RECIPE_FIELD_WIDTH);
 
-            for(int l = this.scrollPosition; l < k; ++l) {
+            for (int l = this.scrollPosition; l < k; ++l) {
                 int m = l - this.scrollPosition;
-                double d = mouseX - (double)(i + m % 3 * 18);
-                double e = mouseY - (double)(j + m / 3 * 18);
-                if (d >= 0.0 && e >= 0.0 && d < 18.0 && e < 18.0 && this.client != null && this.client.interactionManager != null && this.handler.onButtonClick(this.client.player, l)) {
+                double d = mouseX - (double) (i + m % RECIPE_FIELD_WIDTH * 18);
+                double e = mouseY - (double) (j + m / RECIPE_FIELD_WIDTH * 18);
+                if (d >= 0.0 && e >= 0.0 && d < 18.0 && e < 18.0 && this.client != null && this.client.interactionManager != null && this.handler.onButtonClick(this.client.player, l - this.scrollPosition)) {
                     MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_STONECUTTER_SELECT_RECIPE, 1.0F));
-                    this.client.interactionManager.clickButton(this.handler.syncId, l);
-//                    this.updateWidgets();
+                    if (this.isInBounds(l - this.scrollPosition)) {
+                        this.client.interactionManager.clickButton(this.handler.syncId, l - this.scrollPosition);
+                    } else {
+                        this.client.interactionManager.clickButton(this.handler.syncId, -1);
+                    }
 
                     ClientPlayNetworking.send(new UpdateCraftingBenchScreenHandlerPropertyPacket(
                             1
@@ -511,7 +384,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 
             i = this.x + 119;
             j = this.y + 63;
-            if (mouseX >= (double)i && mouseX < (double)(i + 6) && mouseY >= (double)j && mouseY < (double)(j + 72)) {
+            if (mouseX >= (double) i && mouseX < (double) (i + 6) && mouseY >= (double) j && mouseY < (double) (j + 72)) {
                 this.mouseClicked = true;
             }
         }
@@ -524,9 +397,9 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
         if (this.mouseClicked && this.shouldScroll()) {
             int i = this.y + 62;
             int j = i + 54;
-            this.scrollAmount = ((float)mouseY - (float)i - 7.5F) / ((float)(j - i) - 15.0F);
+            this.scrollAmount = ((float) mouseY - (float) i - 7.5F) / ((float) (j - i) - 15.0F);
             this.scrollAmount = MathHelper.clamp(this.scrollAmount, 0.0F, 1.0F);
-            this.scrollPosition = (int)((double)(this.scrollAmount * (float)this.getMaxScroll()) + 0.5) * 3;
+            this.scrollPosition = (int) ((double) (this.scrollAmount * (float) this.getMaxScroll()) + 0.5) * 3;
             return true;
         } else {
             return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
@@ -537,9 +410,9 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         if (this.shouldScroll()) {
             int i = this.getMaxScroll();
-            float f = (float)verticalAmount / (float)i;
+            float f = (float) verticalAmount / (float) i;
             this.scrollAmount = MathHelper.clamp(this.scrollAmount - f, 0.0F, 1.0F);
-            this.scrollPosition = (int)((double)(this.scrollAmount * (float)i) + 0.5) * 3;
+            this.scrollPosition = (int) ((double) (this.scrollAmount * (float) i) + 0.5) * 3;
         }
 
         return true;
@@ -570,20 +443,19 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
             context.drawTexture(RPGCrafting.identifier("textures/gui/container/crafting_bench/tab_" + this.currentTab + "_background.png"), x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
             int k;
             int index = 0;
-            List<Identifier> recipeList = this.handler.getCurrentCraftingRecipesList();
+            List<RecipeEntry<RPGCraftingRecipe>> recipeList = this.recipeList;
             int recipeCounter = recipeList.size();
-            for (int i = this.scrollPosition; i < Math.min(this.scrollPosition + 12, recipeCounter); i++) {
+            for (int i = this.scrollPosition; i < Math.min(this.scrollPosition + (RECIPE_FIELD_HEIGTH * RECIPE_FIELD_WIDTH), recipeCounter); i++) {
                 if (i > recipeList.size()) {
                     break;
                 }
-                CraftingRecipe craftingRecipe = CraftingRecipesRegistry.registeredCraftingRecipes.get(recipeList.get(i));
-                if (craftingRecipe != null) {
+                RPGCraftingRecipe craftingRecipe = recipeList.get(i).value();
+                if (craftingRecipe != null && this.client != null && this.client.world != null) {
 
-                    x = this.x + 62 + (index % 3 * 18);
-                    y = this.y + 63 + (index / 3) * 18;
+                    x = this.x + 62 + (index % RECIPE_FIELD_WIDTH * 18);
+                    y = this.y + 63 + (index / RECIPE_FIELD_WIDTH) * 18;
 
-                    ItemStack resultItemStack = craftingRecipe.result();
-                    k = x + y * this.backgroundWidth;
+                    ItemStack resultItemStack = craftingRecipe.getResult(this.client.world.getRegistryManager());
                     Identifier identifier;
                     if (i == this.handler.getSelectedRecipe()) {
                         identifier = RECIPE_SELECTED_TEXTURE;
@@ -593,8 +465,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
                         identifier = RECIPE_TEXTURE;
                     }
                     context.drawGuiTexture(identifier, x, y, 18, 18);
-//                    context.drawTexture(identifier, x, y, 0, 0, 18, 18);
-                    context.drawItemWithoutEntity(resultItemStack, x + 1, y + 1/*, k*/);
+                    context.drawItemWithoutEntity(resultItemStack, x + 1, y + 1);
                     context.drawItemInSlot(this.textRenderer, resultItemStack, x + 1, y + 1);
 
                     index++;
@@ -602,20 +473,19 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
             }
             x = this.x;
             y = this.y;
-            k = (int)(65.0F * this.scrollAmount);
+            k = (int) (65.0F * this.scrollAmount);
             Identifier identifier = this.shouldScroll() ? SCROLLER_VERTICAL_6_7_TEXTURE : SCROLLER_VERTICAL_6_7_DISABLED_TEXTURE;
             context.drawGuiTexture(identifier, x + 119, y + 63 + k, 6, 7);
 //            context.drawTexture(identifier, x + 119, y + 63 + k, 0, 0, 6, 7);
 
             int selectedRecipe = this.handler.getSelectedRecipe();
-            if (selectedRecipe != -1) {
-                CraftingRecipe craftingRecipe = CraftingRecipesRegistry.registeredCraftingRecipes.get(recipeList.get(selectedRecipe));
-                ItemStack resultItemStack = craftingRecipe.result();
+            if (selectedRecipe != -1 && this.client != null && this.client.world != null && selectedRecipe < recipeList.size()) {
+                RPGCraftingRecipe craftingRecipe = recipeList.get(selectedRecipe).value();
+                ItemStack resultItemStack = craftingRecipe.getResult(this.client.world.getRegistryManager());
 
                 x = this.x + 135;
                 y = this.y + 20;
-                k = x + y * this.backgroundWidth;
-                context.drawItemWithoutEntity(resultItemStack, x, y/*, k*/);
+                context.drawItemWithoutEntity(resultItemStack, x, y);
                 context.drawItemInSlot(this.textRenderer, resultItemStack, x, y);
 
                 context.drawText(this.textRenderer, resultItemStack.getName(), x + 20, y + 4, 4210752, false);
@@ -623,11 +493,20 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
         }
     }
 
+    private boolean isInBounds(int id) {
+        if (this.handler.getCurrentTab() >= 0) {
+            boolean bl = id < this.recipeList.size();
+            return id >= 0 && bl;
+        }
+        return false;
+    }
+
     private boolean shouldScroll() {
-        return this.handler.getCurrentCraftingRecipesList().size() > 12;
+        return this.recipeList.size() > (RECIPE_FIELD_HEIGTH * RECIPE_FIELD_WIDTH);
     }
 
     protected int getMaxScroll() {
-        return (this.handler.getCurrentCraftingRecipesList().size() + 3 - 1) / 3 - 3; // TODO ?
+//        return (this.recipeList.size() + 3 - 1) / 3 - 3; // TODO testing
+        return (this.recipeList.size() + RECIPE_FIELD_WIDTH - 1) / RECIPE_FIELD_WIDTH - RECIPE_FIELD_WIDTH;
     }
 }

@@ -12,8 +12,16 @@ import com.github.theredbrain.rpgcrafting.network.packet.ToggleUseStashForCrafti
 import com.github.theredbrain.rpgcrafting.network.packet.ToggleUseStashForCraftingPacketReceiver;
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateCraftingBenchScreenHandlerPropertyPacket;
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateCraftingBenchScreenHandlerPropertyPacketReceiver;
+import com.github.theredbrain.rpgcrafting.network.packet.UpdateCraftingBenchScreenHandlerSelectedRecipePacket;
+import com.github.theredbrain.rpgcrafting.network.packet.UpdateCraftingBenchScreenHandlerSelectedRecipePacketReceiver;
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateHandCraftingScreenHandlerPropertyPacket;
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateHandCraftingScreenHandlerPropertyPacketReceiver;
+import com.github.theredbrain.rpgcrafting.network.packet.UpdateHandCraftingScreenHandlerSelectedRecipePacket;
+import com.github.theredbrain.rpgcrafting.network.packet.UpdateHandCraftingScreenHandlerSelectedRecipePacketReceiver;
+import com.github.theredbrain.rpgcrafting.network.packet.UpdateRecipeListScreenHandlerPropertyPacket;
+import com.github.theredbrain.rpgcrafting.network.packet.UpdateRecipeListScreenHandlerPropertyPacketReceiver;
+import com.github.theredbrain.rpgcrafting.network.packet.UpdateRecipeListScreenHandlerSelectedRecipePacket;
+import com.github.theredbrain.rpgcrafting.network.packet.UpdateRecipeListScreenHandlerSelectedRecipePacketReceiver;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
@@ -38,8 +46,20 @@ public class ServerPacketRegistry {
 		PayloadTypeRegistry.playC2S().register(UpdateCraftingBenchScreenHandlerPropertyPacket.PACKET_ID, UpdateCraftingBenchScreenHandlerPropertyPacket.PACKET_CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(UpdateCraftingBenchScreenHandlerPropertyPacket.PACKET_ID, new UpdateCraftingBenchScreenHandlerPropertyPacketReceiver());
 
+		PayloadTypeRegistry.playC2S().register(UpdateCraftingBenchScreenHandlerSelectedRecipePacket.PACKET_ID, UpdateCraftingBenchScreenHandlerSelectedRecipePacket.PACKET_CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(UpdateCraftingBenchScreenHandlerSelectedRecipePacket.PACKET_ID, new UpdateCraftingBenchScreenHandlerSelectedRecipePacketReceiver());
+
 		PayloadTypeRegistry.playC2S().register(UpdateHandCraftingScreenHandlerPropertyPacket.PACKET_ID, UpdateHandCraftingScreenHandlerPropertyPacket.PACKET_CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(UpdateHandCraftingScreenHandlerPropertyPacket.PACKET_ID, new UpdateHandCraftingScreenHandlerPropertyPacketReceiver());
+
+		PayloadTypeRegistry.playC2S().register(UpdateHandCraftingScreenHandlerSelectedRecipePacket.PACKET_ID, UpdateHandCraftingScreenHandlerSelectedRecipePacket.PACKET_CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(UpdateHandCraftingScreenHandlerSelectedRecipePacket.PACKET_ID, new UpdateHandCraftingScreenHandlerSelectedRecipePacketReceiver());
+
+		PayloadTypeRegistry.playC2S().register(UpdateRecipeListScreenHandlerSelectedRecipePacket.PACKET_ID, UpdateRecipeListScreenHandlerSelectedRecipePacket.PACKET_CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(UpdateRecipeListScreenHandlerSelectedRecipePacket.PACKET_ID, new UpdateRecipeListScreenHandlerSelectedRecipePacketReceiver());
+
+		PayloadTypeRegistry.playC2S().register(UpdateRecipeListScreenHandlerPropertyPacket.PACKET_ID, UpdateRecipeListScreenHandlerPropertyPacket.PACKET_CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(UpdateRecipeListScreenHandlerPropertyPacket.PACKET_ID, new UpdateRecipeListScreenHandlerPropertyPacketReceiver());
 
 	}
 }

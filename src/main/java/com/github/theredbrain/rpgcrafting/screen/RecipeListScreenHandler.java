@@ -1,11 +1,12 @@
 package com.github.theredbrain.rpgcrafting.screen;
 
-import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
+import com.github.theredbrain.rpgcrafting.inventory.RecipeListInputInventory;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
 import com.github.theredbrain.rpgcrafting.recipe.input.MultipleStackRecipeInput;
 import com.github.theredbrain.rpgcrafting.registry.ScreenHandlerTypesRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeEntry;
@@ -17,19 +18,23 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HandCraftingScreenHandler extends ScreenHandler {
+public class RecipeListScreenHandler extends ScreenHandler {
 
     private final Property selectedRecipe = Property.create();
-    private final Property shouldScreenCalculateCraftingStatus = Property.create();
+    private final Property shouldScreenCalculateRecipeList = Property.create();
     private final World world;
     private List<RecipeEntry<RPGCraftingRecipe>> rpgCraftingRecipesList = new ArrayList<>(List.of());
-    private List<RecipeEntry<RPGCraftingRecipe>> handCraftingRecipesIdentifierList = new ArrayList<>(List.of());
+    private List<RecipeEntry<RPGCraftingRecipe>> craftingListRecipesIdentifierList = new ArrayList<>(List.of());
     private final PlayerInventory playerInventory;
+    private final RecipeListInputInventory input;
 
-    public HandCraftingScreenHandler(int syncId, PlayerInventory playerInventory) {
-        super(ScreenHandlerTypesRegistry.HAND_CRAFTING_SCREEN_HANDLER, syncId);
+    public RecipeListScreenHandler(int syncId, PlayerInventory playerInventory) {
+        super(ScreenHandlerTypesRegistry.CRAFTING_LIST_SCREEN_HANDLER, syncId);
         this.playerInventory = playerInventory;
         this.world = playerInventory.player.getWorld();
+        this.input = new RecipeListInputInventory(1, this);
+
+//        this.craftingRecipesIdentifierList = CraftingRecipesRegistry.registeredCraftingRecipes.keySet().stream().toList(); // TODO rework?
 
         this.updateRPGCraftingRecipesList();
 
@@ -44,11 +49,20 @@ public class HandCraftingScreenHandler extends ScreenHandler {
                 this.addSlot(new Slot(playerInventory, j + (i + 1) * 9, 62 + j * 18, 151 + i * 18));
             }
         }
+        // input 36
+        this.addSlot(new Slot(this.input, 0, 22, 62));
         this.addProperty(this.selectedRecipe);
         this.selectedRecipe.set(-1);
-        this.addProperty(this.shouldScreenCalculateCraftingStatus);
-        this.shouldScreenCalculateCraftingStatus.set(0);
+        this.addProperty(this.shouldScreenCalculateRecipeList);
+        this.shouldScreenCalculateRecipeList.set(0);
         this.populateRecipeLists();
+    }
+
+    public void onContentChanged(Inventory inventory) {
+        if (inventory.equals(this.input)) {
+            this.shouldScreenCalculateRecipeList.set(1);
+            this.selectedRecipe.set(-1);
+        }
     }
 
     @Override
@@ -64,16 +78,7 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 
     @Override
     public boolean onButtonClick(PlayerEntity player, int id) {
-//        if (id == -1) {
-//            if (this.selectedRecipe.get() > -1 && player instanceof ServerPlayerEntity serverPlayerEntity) {
-//                List<Identifier> currentRecipeList = this.getCurrentCraftingRecipesList();
-//                ServerPlayNetworking.send(serverPlayerEntity,
-//                        new CraftFromHandCraftingPacket(
-//                                currentRecipeList.get(this.selectedRecipe.get()).toString()
-//                        )
-//                );
-//            }
-//        } else if (this.isInBounds(id)) {
+//        if (this.isInBounds(id)) {
             this.selectedRecipe.set(id);
 //        }
         return true;
@@ -91,41 +96,34 @@ public class HandCraftingScreenHandler extends ScreenHandler {
         return this.playerInventory;
     }
 
-    public List<RecipeEntry<RPGCraftingRecipe>> getCurrentCraftingRecipesList() {
-        return this.handCraftingRecipesIdentifierList;
+    public RecipeListInputInventory getInput() {
+        return input;
     }
 
-	public int getHandCraftingLevels() {
-        return ((DuckPlayerEntityMixin) this.playerInventory.player).rpgcrafting$getActiveHandCraftingLevel();
-	}
+    public MultipleStackRecipeInput getRecipeListInputInventory() {
 
-    public int shouldScreenCalculateCraftingStatus() {
-        return this.shouldScreenCalculateCraftingStatus.get();
-    }
-
-    public void setShouldScreenCalculateCraftingStatus(int shouldScreenCalculateCraftingStatus) {
-        this.shouldScreenCalculateCraftingStatus.set(shouldScreenCalculateCraftingStatus);
-    }
-
-    public MultipleStackRecipeInput getCraftingInputInventory() {
-
-        int playerInventorySize = 27; // TODO inventory size attributes
-
-        int playerHotbarSize = 9; // TODO inventory size attributes
+        int inputSize = this.getInput().size();
 
         SimpleInventory craftingInputInventory = new SimpleInventory(
-                playerInventorySize
-                        + playerHotbarSize
+                inputSize
         );
 
-        int k = 0;
-        int j;
-        for (j = 0; j < playerInventorySize; j++) { // TODO inventory size attributes
-            craftingInputInventory.setStack(k + j, this.getPlayerInventory().getStack(j).copy());
+        for (int j = 0; j < inputSize; j++) {
+            craftingInputInventory.setStack(j, this.getInput().getStack(j).copy());
         }
-        k = k + playerInventorySize;
-
         return new MultipleStackRecipeInput(craftingInputInventory.getHeldStacks(), craftingInputInventory.size());
+    }
+
+    public List<RecipeEntry<RPGCraftingRecipe>> getCurrentCraftingRecipesList() {
+        return this.craftingListRecipesIdentifierList;
+    }
+
+    public int shouldScreenCalculateRecipeList() {
+        return this.shouldScreenCalculateRecipeList.get();
+    }
+
+    public void setShouldScreenCalculateRecipeList(int shouldScreenCalculateRecipeList) {
+        this.shouldScreenCalculateRecipeList.set(shouldScreenCalculateRecipeList);
     }
 
     public void updateRPGCraftingRecipesList() {
@@ -135,17 +133,7 @@ public class HandCraftingScreenHandler extends ScreenHandler {
     }
 
     public void populateRecipeLists() {
-
-            this.handCraftingRecipesIdentifierList.clear();
-
-        for (RecipeEntry<RPGCraftingRecipe> rpgCraftingRecipeEntry : this.rpgCraftingRecipesList) {
-//
-            // TODO recipe levels
-            RPGCraftingRecipe rpgCraftingRecipe = rpgCraftingRecipeEntry.value();
-            int tab = rpgCraftingRecipe.tab;
-            if (tab == 0) {
-                this.handCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
-            }
-		}
-	}
+        this.craftingListRecipesIdentifierList.clear();
+		this.craftingListRecipesIdentifierList.addAll(this.rpgCraftingRecipesList);
+    }
 }
