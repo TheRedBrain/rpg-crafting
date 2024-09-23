@@ -87,7 +87,7 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
             World world = this.handler.getPlayerInventory().player.getWorld();
             List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();
             for (RecipeEntry<RPGCraftingRecipe> recipeEntry : newList) {
-                if (recipeEntry.value().hasIngredient(this.handler.getRecipeListInputInventory(), world)) {
+                if (recipeEntry.value().hasIngredient(this.handler.getRecipeListInputInventory(), world) && (this.client.player.getRecipeBook().shouldDisplay(recipeEntry) || RPGCrafting.serverConfig.show_locked_recipes_in_recipe_list)) {
                     this.recipeList.add(recipeEntry);
                 }
             }
@@ -103,7 +103,6 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         this.mouseClicked = false;
-//        if (this.currentTab >= 0) {
             int i = this.x + 62;
             int j = this.y + 63;
             int k = this.scrollPosition + (RECIPE_FIELD_HEIGTH * RECIPE_FIELD_WIDTH);

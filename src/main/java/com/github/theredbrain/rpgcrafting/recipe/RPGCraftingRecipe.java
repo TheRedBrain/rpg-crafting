@@ -27,20 +27,15 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 	public int level;
 	public int tab;
 	public final String recipeType;
-//	public final String unlockAdvancement;
+	public final boolean showNotification;
 
-	public RPGCraftingRecipe(List<Ingredient> ingredients, ItemStack result, int level, int tab, String recipeType/*, String unlockAdvancement*/) {
+	public RPGCraftingRecipe(List<Ingredient> ingredients, ItemStack result, int level, int tab, String recipeType, boolean showNotification) {
 		this.ingredients = ingredients;
 		this.result = result;
 		this.level = level;
 		this.tab = tab;
 		this.recipeType = recipeType;
-//		this.unlockAdvancement = unlockAdvancement;
-	}
-
-	@Override
-	public boolean isIgnoredInRecipeBook() {
-		return true;
+		this.showNotification = showNotification;
 	}
 
 	@Override
@@ -143,8 +138,8 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 								ItemStack.VALIDATED_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
 								Codec.INT.optionalFieldOf("level", 0).forGetter(recipe -> recipe.level),
 								Codec.INT.optionalFieldOf("tab", 0).forGetter(recipe -> recipe.tab),
-								Codec.STRING.optionalFieldOf("recipeType", "").forGetter(recipe -> recipe.recipeType)/*,
-								Codec.STRING.optionalFieldOf("unlockAdvancement", "").forGetter(recipe -> recipe.unlockAdvancement)*/
+								Codec.STRING.optionalFieldOf("recipeType", "").forGetter(recipe -> recipe.recipeType),
+								Codec.BOOL.optionalFieldOf("showNotification", true).forGetter(recipe -> recipe.showNotification)
 				).apply(instance, RPGCraftingRecipe::new)
 		);
 		public static final PacketCodec<RegistryByteBuf, RPGCraftingRecipe> PACKET_CODEC = PacketCodec.ofStatic(
@@ -171,8 +166,8 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 			int level = buf.readInt();
 			int tab = buf.readInt();
 			String recipeType = buf.readString();
-//			String unlockAdvancement = buf.readString();
-			return new RPGCraftingRecipe(ingredients, result, level, tab, recipeType/*, unlockAdvancement*/);
+			boolean showNotification = buf.readBoolean();
+			return new RPGCraftingRecipe(ingredients, result, level, tab, recipeType, showNotification);
 		}
 
 		private static void write(RegistryByteBuf buf, RPGCraftingRecipe recipe) {
@@ -184,7 +179,13 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 			buf.writeInt(recipe.level);
 			buf.writeInt(recipe.tab);
 			buf.writeString(recipe.recipeType);
-//			buf.writeString(recipe.unlockAdvancement);
+			buf.writeBoolean(recipe.showNotification);
 		}
 	}
+
+	@Override
+	public boolean showNotification() {
+		return this.showNotification;
+	}
+
 }

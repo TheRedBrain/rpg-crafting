@@ -19,6 +19,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -161,37 +162,16 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
         }
     }
 
-    // TODO find a way to check for advancements on client side
-//    private void updateRecipeList() {
-//        if (this.client != null && this.client.player != null) {
-//            this.recipeList.clear();
-//            List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();
-//            ClientAdvancementManager advancementManager = this.client.player.networkHandler.getAdvancementHandler();
-//            Advancement advancement = null;
-//            for (RecipeEntry<RPGCraftingRecipe> recipeEntry : newList) {
-//                String string = recipeEntry.value().unlockAdvancement;
-//                RPGCrafting.info(recipeEntry.id().toString() + " unlockAdvancement: " + string);
-//                AdvancementEntry advancementEntry = advancementManager.get(Identifier.of(string));
-////                PlacedAdvancement placedAdvancement = advancementManager.getManager().get(Identifier.of(string));
-//                if (advancementEntry != null) {
-//                    RPGCrafting.info("advancementEntry.id: " + advancementEntry.id());
-//                    advancement = advancementEntry.value();
-//                } else {
-//                    RPGCrafting.info("advancementEntry == null");
-//                }
-//                RPGCrafting.info("advancement: " + advancement);
-//                if ((advancement != null && ((DuckClientAdvancementManagerMixin) advancementManager).rpgcrafting$getAdvancementProgress(advancement).isDone()) || string.isEmpty() || !this.handler.getWorld().getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING)) {
-//                    this.recipeList.add(recipeEntry);
-//                }
-//            }
-//            RPGCrafting.info("updatedRecipeList: " + this.recipeList);
-//        }
-//    }
-
     private void updateRecipeList() {
         this.recipeList.clear();
         List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();
-        this.recipeList.addAll(newList);
+        if (this.playerEntity instanceof ClientPlayerEntity clientPlayerEntity) {
+            for (RecipeEntry<RPGCraftingRecipe> recipeEntry : newList) {
+                if (clientPlayerEntity.getRecipeBook().shouldDisplay(recipeEntry) || RPGCrafting.serverConfig.show_locked_recipes_in_crafting_screens) {
+                    this.recipeList.add(recipeEntry);
+                }
+            }
+        }
     }
 
     private void updateWidgets() {
@@ -476,7 +456,6 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
             k = (int) (65.0F * this.scrollAmount);
             Identifier identifier = this.shouldScroll() ? SCROLLER_VERTICAL_6_7_TEXTURE : SCROLLER_VERTICAL_6_7_DISABLED_TEXTURE;
             context.drawGuiTexture(identifier, x + 119, y + 63 + k, 6, 7);
-//            context.drawTexture(identifier, x + 119, y + 63 + k, 0, 0, 6, 7);
 
             int selectedRecipe = this.handler.getSelectedRecipe();
             if (selectedRecipe != -1 && this.client != null && this.client.world != null && selectedRecipe < recipeList.size()) {

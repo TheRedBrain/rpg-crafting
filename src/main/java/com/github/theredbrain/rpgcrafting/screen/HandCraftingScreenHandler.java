@@ -64,18 +64,7 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 
     @Override
     public boolean onButtonClick(PlayerEntity player, int id) {
-//        if (id == -1) {
-//            if (this.selectedRecipe.get() > -1 && player instanceof ServerPlayerEntity serverPlayerEntity) {
-//                List<Identifier> currentRecipeList = this.getCurrentCraftingRecipesList();
-//                ServerPlayNetworking.send(serverPlayerEntity,
-//                        new CraftFromHandCraftingPacket(
-//                                currentRecipeList.get(this.selectedRecipe.get()).toString()
-//                        )
-//                );
-//            }
-//        } else if (this.isInBounds(id)) {
             this.selectedRecipe.set(id);
-//        }
         return true;
     }
 

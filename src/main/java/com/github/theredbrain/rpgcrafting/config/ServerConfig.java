@@ -18,6 +18,18 @@ public class ServerConfig implements ConfigData {
             """)
     public int default_hand_crafting_level = 1;
     @Comment("""
+            Show all recipes in the recipe list screen.
+            When set to false, only unlocked recipes are visible.
+            Recipes can be unlocked via gaining advancements, like in vanilla Minecraft
+            """)
+    public boolean show_locked_recipes_in_recipe_list = true;
+    @Comment("""
+            Show all recipes in the hand crafting / crafting bench screens.
+            When set to false, only unlocked recipes are visible.
+            Recipes can be unlocked via gaining advancements, like in vanilla Minecraft
+            """)
+    public boolean show_locked_recipes_in_crafting_screens = false;
+    @Comment("""
             When set to true, interacting with the Crafting Root block
             opens the crafting screen on tab 0.
             Optionally add 'rpgcrafting:crafting_root_block' to
