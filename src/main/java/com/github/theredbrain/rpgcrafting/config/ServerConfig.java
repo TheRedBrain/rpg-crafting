@@ -16,7 +16,7 @@ public class ServerConfig implements ConfigData {
     @Comment("""
             The default hand crafting level.
             """)
-    public int default_hand_crafting_level = 1;
+    public int default_hand_crafting_level = 0;
     @Comment("""
             Show all recipes in the recipe list screen.
             When set to false, only unlocked recipes are visible.

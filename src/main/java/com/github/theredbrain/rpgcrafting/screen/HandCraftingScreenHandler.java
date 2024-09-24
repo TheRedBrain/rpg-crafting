@@ -143,16 +143,11 @@ public class HandCraftingScreenHandler extends ScreenHandler {
     public void populateRecipeLists() {
 
             this.handCraftingRecipesIdentifierList.clear();
+        int handCraftingLevel = ((DuckPlayerEntityMixin) this.playerInventory.player).rpgcrafting$getActiveHandCraftingLevel();
 
         for (RecipeEntry<RPGCraftingRecipe> rpgCraftingRecipeEntry : this.rpgCraftingRecipesList) {
-//
-            // TODO recipe levels
-
-            RPGCraftingRecipe rpgCraftingRecipe = rpgCraftingRecipeEntry.value();
-            int tab = rpgCraftingRecipe.tab;
-            int level = rpgCraftingRecipe.level;
-            CraftingBenchBlockScreenHandler.RecipeType recipeType = CraftingBenchBlockScreenHandler.RecipeType.valueOf(rpgCraftingRecipe.recipeType);
-            if (tab == 0 && ((DuckPlayerEntityMixin)this.playerInventory.player).rpgcrafting$getActiveHandCraftingLevel() >= level) {
+            CraftingBenchBlockScreenHandler.RecipeType recipeType = CraftingBenchBlockScreenHandler.RecipeType.valueOf(rpgCraftingRecipeEntry.value().recipeType);
+            if (rpgCraftingRecipeEntry.value().tab == 0 && handCraftingLevel >= rpgCraftingRecipeEntry.value().level) {
                 if (recipeType == CraftingBenchBlockScreenHandler.RecipeType.STANDARD || rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(), world) || RPGCrafting.serverConfig.show_all_unlocked_special_recipes) {
                     this.handCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
                 }

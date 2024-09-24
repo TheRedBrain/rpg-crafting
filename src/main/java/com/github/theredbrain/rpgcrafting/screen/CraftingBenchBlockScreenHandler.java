@@ -348,7 +348,6 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
             for (RecipeEntry<RPGCraftingRecipe> rpgCraftingRecipeEntry : this.rpgCraftingRecipesList) {
 
                 RPGCraftingRecipe rpgCraftingRecipe = rpgCraftingRecipeEntry.value();
-                // TODO recipe levels
                     int tab = rpgCraftingRecipe.tab;
                     int level = rpgCraftingRecipe.level;
                     RecipeType recipeType = RecipeType.valueOf(rpgCraftingRecipe.recipeType);
