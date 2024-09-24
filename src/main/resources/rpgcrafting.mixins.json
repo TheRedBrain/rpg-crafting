@@ -6,7 +6,8 @@
 		"entity.LivingEntityMixin",
 		"entity.attribute.EntityAttributesMixin",
 		"entity.player.PlayerEntityMixin",
-		"screen.CraftingScreenHandlerMixin"
+		"screen.CraftingScreenHandlerMixin",
+		"server.network.ServerPlayerEntityMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
