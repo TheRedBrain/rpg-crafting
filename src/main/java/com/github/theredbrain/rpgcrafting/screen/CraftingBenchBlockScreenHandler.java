@@ -152,8 +152,53 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 
     @Override
     public ItemStack quickMove(PlayerEntity player, int slot) {
-        // TODO
-        return ItemStack.EMPTY;
+        ItemStack itemStack = ItemStack.EMPTY;
+        Slot slot2 = this.slots.get(slot);
+        if (slot2 != null && slot2.hasStack()) {
+            ItemStack itemStack2 = slot2.getStack();
+            itemStack = itemStack2.copy();
+            if (slot < 36) {
+                boolean bl = true;
+                if (this.isStorageArea0ProviderInReach) {
+                    if (this.insertItem(itemStack2, 36, 42, false)) {
+                        bl = false;
+                    }
+                }
+                if (this.isStorageArea1ProviderInReach) {
+                    if (this.insertItem(itemStack2, 42, 50, false)) {
+                        bl = false;
+                    }
+                }
+                if (this.isStorageArea2ProviderInReach) {
+                    if (this.insertItem(itemStack2, 50, 62, false)) {
+                        bl = false;
+                    }
+                }
+                if (this.isStorageArea3ProviderInReach) {
+                    if (this.insertItem(itemStack2, 62, 76, false)) {
+                        bl = false;
+                    }
+                }
+                if (this.isStorageArea4ProviderInReach) {
+                    if (this.insertItem(itemStack2, 76, 97, false)) {
+                        bl = false;
+                    }
+                }
+                if (bl) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (!this.insertItem(itemStack2, 0, 36, false)) {
+                return ItemStack.EMPTY;
+            }
+
+            if (itemStack2.isEmpty()) {
+                slot2.setStack(ItemStack.EMPTY);
+            } else {
+                slot2.markDirty();
+            }
+        }
+
+        return itemStack;
     }
 
     @Override
