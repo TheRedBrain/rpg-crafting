@@ -51,7 +51,6 @@ public class RPGCrafting implements ModInitializer {
 		// Registry
 		BlockRegistry.init();
 		ItemGroupRegistry.init();
-//		CraftingRecipesRegistry.init();
 		EventsRegistry.initializeEvents();
 		GameRulesRegistry.init();
 		RecipeRegistry.init();

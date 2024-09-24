@@ -2,7 +2,6 @@ package com.github.theredbrain.rpgcrafting.gui.screen.ingame;
 
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
 import com.github.theredbrain.rpgcrafting.RPGCraftingClient;
-import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateRecipeListScreenHandlerPropertyPacket;
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateRecipeListScreenHandlerSelectedRecipePacket;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
@@ -87,7 +86,6 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
         }
     }
 
-    // TODO move checks to screen handler
     private void updateRecipeList() {
         if (this.client != null && this.client.player != null) {
             this.recipeList.clear();
@@ -138,7 +136,7 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        if (this.mouseClicked && this.shouldScroll()) { // TODO
+        if (this.mouseClicked && this.shouldScroll()) {
             int i = this.y + 62;
             int j = i + 54;
             this.scrollAmount = ((float)mouseY - (float)i - 7.5F) / ((float)(j - i) - 15.0F);

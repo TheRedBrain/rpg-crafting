@@ -480,6 +480,8 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
             }
         }
 
+        x = this.x;
+        y = this.y;
         for (k = 0; k < (showInactiveSlots ? 27 : Math.min(this.inventorySize, 27)); ++k) {
             m = (k / 9);
             context.drawTexture(SLOT_TEXTURE, x + 61 + (k - (m * 9)) * 18, y + 150 + (m * 18), 0, 0, 18, 18, 18, 18);

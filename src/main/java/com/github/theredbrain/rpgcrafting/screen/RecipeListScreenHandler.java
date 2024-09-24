@@ -147,4 +147,13 @@ public class RecipeListScreenHandler extends ScreenHandler {
         this.craftingListRecipesIdentifierList.clear();
 		this.craftingListRecipesIdentifierList.addAll(this.rpgCraftingRecipesList);
     }
+
+    @Override
+    public void onClosed(PlayerEntity player) {
+        super.onClosed(player);
+        if (!player.getWorld().isClient) {
+            this.dropInventory(player, this.input);
+        }
+    }
+
 }
