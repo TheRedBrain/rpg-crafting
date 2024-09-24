@@ -89,13 +89,14 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
             if (oldRecipeListHash != this.recipeList.hashCode()) {
                 newSelectedRecipe = -1;
             }
-            ClientPlayNetworking.send(new UpdateHandCraftingScreenHandlerSelectedRecipePacket(
-                    newSelectedRecipe
-            ));
+            if (oldSelectedRecipe != newSelectedRecipe) {
+                ClientPlayNetworking.send(new UpdateHandCraftingScreenHandlerSelectedRecipePacket(
+                        newSelectedRecipe
+                ));
+            }
         }
     }
 
-    // TODO move checks to screen handler
     private void updateRecipeList() {
         this.recipeList.clear();
         List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();

@@ -36,8 +36,6 @@ public class RecipeListScreenHandler extends ScreenHandler {
         this.world = playerInventory.player.getWorld();
         this.input = new RecipeListInputInventory(1, this);
 
-//        this.craftingRecipesIdentifierList = CraftingRecipesRegistry.registeredCraftingRecipes.keySet().stream().toList(); // TODO rework?
-
         this.updateRPGCraftingRecipesList();
 
         int i;

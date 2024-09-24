@@ -168,7 +168,6 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
         }
     }
 
-    // TODO move checks to screen handler
     private void updateRecipeList() {
         this.recipeList.clear();
         List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();

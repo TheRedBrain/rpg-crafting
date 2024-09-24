@@ -30,6 +30,12 @@ public class ServerConfig implements ConfigData {
             """)
     public boolean show_locked_recipes_in_crafting_screens = false;
     @Comment("""
+            Show all unlocked special recipes in the hand crafting / crafting bench screens.
+            When set to false, special recipes are only visible when unlocked and when all ingredients are available.
+            Recipes can be unlocked via gaining advancements, like in vanilla Minecraft
+            """)
+    public boolean show_all_unlocked_special_recipes = false;
+    @Comment("""
             When set to true, interacting with the Crafting Root block
             opens the crafting screen on tab 0.
             Optionally add 'rpgcrafting:crafting_root_block' to

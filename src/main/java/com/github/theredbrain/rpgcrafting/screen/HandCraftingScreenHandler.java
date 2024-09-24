@@ -147,10 +147,14 @@ public class HandCraftingScreenHandler extends ScreenHandler {
         for (RecipeEntry<RPGCraftingRecipe> rpgCraftingRecipeEntry : this.rpgCraftingRecipesList) {
 //
             // TODO recipe levels
+
             RPGCraftingRecipe rpgCraftingRecipe = rpgCraftingRecipeEntry.value();
             int tab = rpgCraftingRecipe.tab;
+            CraftingBenchBlockScreenHandler.RecipeType recipeType = CraftingBenchBlockScreenHandler.RecipeType.valueOf(rpgCraftingRecipe.recipeType);
             if (tab == 0) {
-                this.handCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
+                if (recipeType == CraftingBenchBlockScreenHandler.RecipeType.STANDARD || rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(), world) || RPGCrafting.serverConfig.show_all_unlocked_special_recipes) {
+                    this.handCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
+                }
             }
 		}
 	}
