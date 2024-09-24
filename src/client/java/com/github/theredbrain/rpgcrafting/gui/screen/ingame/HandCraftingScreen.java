@@ -132,6 +132,12 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
     }
 
     @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
+        this.drawMouseoverTooltip(context, mouseX, mouseY);
+    }
+
+    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         this.mouseClicked = false;
             int i = this.x + 62;
@@ -200,7 +206,7 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
         int m;
         boolean showInactiveSlots = RPGCraftingClient.clientConfigHolder.getConfig().generalClientConfig.show_inactive_slots;
 
-        context.drawTexture(RPGCrafting.identifier("textures/gui/container/crafting_bench/tab_0_background.png"), x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
+        context.drawTexture(RPGCrafting.identifier("textures/gui/container/crafting_bench/hand_crafting_background.png"), x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 
         for (k = 0; k < (showInactiveSlots ? 27 : Math.min(this.inventorySize, 27)); ++k) {
             m = (k / 9);

@@ -346,6 +346,12 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
     }
 
     @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
+        this.drawMouseoverTooltip(context, mouseX, mouseY);
+    }
+
+    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         this.mouseClicked = false;
         if (this.currentTab >= 1) {
