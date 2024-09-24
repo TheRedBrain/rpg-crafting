@@ -10,7 +10,6 @@
 	"contact": {
 		"sources": "https://github.com/TheRedBrain/rpg-crafting"
 	},
-
 	"license": "MIT",
 	"icon": "assets/rpgcrafting/icon.png",
 	"environment": "*",
@@ -23,7 +22,7 @@
 		]
 	},
 	"mixins": [
-      "rpgcrafting.mixins.json",
+		"rpgcrafting.mixins.json",
 		{
 			"config": "rpgcrafting.client.mixins.json",
 			"environment": "client"

@@ -7,8 +7,8 @@ import net.minecraft.text.Text;
 
 public class OpenHandCraftingScreenPacketReceiver implements ServerPlayNetworking.PlayPayloadHandler<OpenHandCraftingScreenPacket> {
 
-    @Override
-    public void receive(OpenHandCraftingScreenPacket payload, ServerPlayNetworking.Context context) {
-        context.player().openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, inventory, player) -> new HandCraftingScreenHandler(syncId, inventory), Text.translatable("gui.hand_crafting.title")));
-    }
+	@Override
+	public void receive(OpenHandCraftingScreenPacket payload, ServerPlayNetworking.Context context) {
+		context.player().openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, inventory, player) -> new HandCraftingScreenHandler(syncId, inventory), Text.translatable("gui.hand_crafting.title")));
+	}
 }

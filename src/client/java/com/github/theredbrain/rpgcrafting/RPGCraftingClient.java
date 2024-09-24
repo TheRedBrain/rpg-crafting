@@ -2,8 +2,8 @@ package com.github.theredbrain.rpgcrafting;
 
 import com.github.theredbrain.rpgcrafting.config.ClientConfig;
 import com.github.theredbrain.rpgcrafting.gui.screen.ingame.CraftingBenchBlockScreen;
-import com.github.theredbrain.rpgcrafting.gui.screen.ingame.RecipeListScreen;
 import com.github.theredbrain.rpgcrafting.gui.screen.ingame.HandCraftingScreen;
+import com.github.theredbrain.rpgcrafting.gui.screen.ingame.RecipeListScreen;
 import com.github.theredbrain.rpgcrafting.network.packet.OpenCraftingListScreenPacket;
 import com.github.theredbrain.rpgcrafting.network.packet.OpenHandCraftingScreenPacket;
 import com.github.theredbrain.rpgcrafting.registry.ClientPacketRegistry;
@@ -20,6 +20,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreens;
 
 public class RPGCraftingClient implements ClientModInitializer {
 	public static ConfigHolder<ClientConfig> clientConfigHolder;
+
 	@Override
 	public void onInitializeClient() {
 		// Config

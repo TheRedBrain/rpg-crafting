@@ -8,50 +8,50 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.RegistryWrapper;
 
 public class StashInventory extends SimpleInventory {
-    public final PlayerEntity player;
+	public final PlayerEntity player;
 
-    public StashInventory(int size, PlayerEntity player) {
-        super(size);
-        this.player = player;
-    }
+	public StashInventory(int size, PlayerEntity player) {
+		super(size);
+		this.player = player;
+	}
 
-    @Override
-    public void readNbtList(NbtList list, RegistryWrapper.WrapperLookup registries) {
-        for(int i = 0; i < this.size(); ++i) {
-            this.setStack(i, ItemStack.EMPTY);
-        }
+	@Override
+	public void readNbtList(NbtList list, RegistryWrapper.WrapperLookup registries) {
+		for (int i = 0; i < this.size(); ++i) {
+			this.setStack(i, ItemStack.EMPTY);
+		}
 
-        for(int i = 0; i < list.size(); ++i) {
-            NbtCompound nbtCompound = list.getCompound(i);
-            int j = nbtCompound.getByte("Slot") & 255;
-            if (j >= 0 && j < this.size()) {
-                this.setStack(j, (ItemStack)ItemStack.fromNbt(registries, nbtCompound).orElse(ItemStack.EMPTY));
-            }
-        }
-    }
+		for (int i = 0; i < list.size(); ++i) {
+			NbtCompound nbtCompound = list.getCompound(i);
+			int j = nbtCompound.getByte("Slot") & 255;
+			if (j >= 0 && j < this.size()) {
+				this.setStack(j, (ItemStack) ItemStack.fromNbt(registries, nbtCompound).orElse(ItemStack.EMPTY));
+			}
+		}
+	}
 
-    @Override
-    public NbtList toNbtList(RegistryWrapper.WrapperLookup registries) {
-        NbtList nbtList = new NbtList();
+	@Override
+	public NbtList toNbtList(RegistryWrapper.WrapperLookup registries) {
+		NbtList nbtList = new NbtList();
 
-        for(int i = 0; i < this.size(); ++i) {
-            ItemStack itemStack = this.getStack(i);
-            if (!itemStack.isEmpty()) {
-                NbtCompound nbtCompound = new NbtCompound();
-                nbtCompound.putByte("Slot", (byte)i);
-                nbtList.add(itemStack.encode(registries, nbtCompound));
-            }
-        }
+		for (int i = 0; i < this.size(); ++i) {
+			ItemStack itemStack = this.getStack(i);
+			if (!itemStack.isEmpty()) {
+				NbtCompound nbtCompound = new NbtCompound();
+				nbtCompound.putByte("Slot", (byte) i);
+				nbtList.add(itemStack.encode(registries, nbtCompound));
+			}
+		}
 
-        return nbtList;
-    }
+		return nbtList;
+	}
 
-    public void dropAll() {
-        for (int i = 0; i < this.size(); ++i) {
-            ItemStack itemStack = this.getStack(i);
-            if (itemStack.isEmpty()) continue;
-            this.player.dropItem(itemStack, true, false);
-            this.setStack(i, ItemStack.EMPTY);
-        }
-    }
+	public void dropAll() {
+		for (int i = 0; i < this.size(); ++i) {
+			ItemStack itemStack = this.getStack(i);
+			if (itemStack.isEmpty()) continue;
+			this.player.dropItem(itemStack, true, false);
+			this.setStack(i, ItemStack.EMPTY);
+		}
+	}
 }

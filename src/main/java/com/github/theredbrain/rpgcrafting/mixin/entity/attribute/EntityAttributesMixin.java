@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(EntityAttributes.class)
 public class EntityAttributesMixin {
-    static {
-        RPGCrafting.HAND_CRAFTING_LEVEL = Registry.registerReference(Registries.ATTRIBUTE, RPGCrafting.identifier("generic.hand_crafting_level"), new ClampedEntityAttribute("attribute.name.generic.hand_crafting_level", 0.0, -64.0, 64.0).setTracked(true));
-    }
+	static {
+		RPGCrafting.HAND_CRAFTING_LEVEL = Registry.registerReference(Registries.ATTRIBUTE, RPGCrafting.identifier("generic.hand_crafting_level"), new ClampedEntityAttribute("attribute.name.generic.hand_crafting_level", 0.0, -64.0, 64.0).setTracked(true));
+	}
 }

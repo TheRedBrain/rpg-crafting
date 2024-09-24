@@ -7,8 +7,8 @@ import net.minecraft.text.Text;
 
 public class OpenCraftingListScreenPacketReceiver implements ServerPlayNetworking.PlayPayloadHandler<OpenCraftingListScreenPacket> {
 
-    @Override
-    public void receive(OpenCraftingListScreenPacket payload, ServerPlayNetworking.Context context) {
-        context.player().openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, inventory, player) -> new RecipeListScreenHandler(syncId, inventory), Text.translatable("gui.crafting_list.title")));
-    }
+	@Override
+	public void receive(OpenCraftingListScreenPacket payload, ServerPlayNetworking.Context context) {
+		context.player().openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, inventory, player) -> new RecipeListScreenHandler(syncId, inventory), Text.translatable("gui.crafting_list.title")));
+	}
 }

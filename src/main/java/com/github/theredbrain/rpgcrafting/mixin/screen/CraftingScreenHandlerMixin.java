@@ -18,14 +18,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(CraftingScreenHandler.class)
 public abstract class CraftingScreenHandlerMixin extends AbstractRecipeScreenHandler<CraftingRecipeInput, CraftingRecipe> {
 
-	@Shadow @Final private ScreenHandlerContext context;
+	@Shadow
+	@Final
+	private ScreenHandlerContext context;
 
 	public CraftingScreenHandlerMixin(ScreenHandlerType<?> screenHandlerType, int i) {
 		super(screenHandlerType, i);
 	}
 
 	@Inject(method = "canUse", at = @At("RETURN"), cancellable = true)
-	public void canUse(PlayerEntity player, CallbackInfoReturnable<Boolean> cir) {
+	public void rpgcrafting$canUse(PlayerEntity player, CallbackInfoReturnable<Boolean> cir) {
 		cir.setReturnValue(cir.getReturnValue() || canUse(this.context, player, BlockRegistry.CRAFTING_ROOT_BLOCK));
 	}
 

@@ -12,12 +12,12 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 
 public class ItemGroupRegistry {
-    public static final RegistryKey<ItemGroup> RPG_CRAFTING_BLOCKS = RegistryKey.of(RegistryKeys.ITEM_GROUP, RPGCrafting.identifier("rpg_crafting_block"));
+	public static final RegistryKey<ItemGroup> RPG_CRAFTING_BLOCKS = RegistryKey.of(RegistryKeys.ITEM_GROUP, RPGCrafting.identifier("rpg_crafting_block"));
 
-    public static void init() {
-        Registry.register(Registries.ITEM_GROUP, RPG_CRAFTING_BLOCKS, FabricItemGroup.builder()
-                .icon(() -> new ItemStack(Items.IRON_SWORD))
-                .displayName(Text.translatable("itemGroup.rpgcrafting.rpg_crafting_blocks"))
-                .build());
-    }
+	public static void init() {
+		Registry.register(Registries.ITEM_GROUP, RPG_CRAFTING_BLOCKS, FabricItemGroup.builder()
+				.icon(() -> new ItemStack(Items.IRON_SWORD))
+				.displayName(Text.translatable("itemGroup.rpgcrafting.rpg_crafting_blocks"))
+				.build());
+	}
 }

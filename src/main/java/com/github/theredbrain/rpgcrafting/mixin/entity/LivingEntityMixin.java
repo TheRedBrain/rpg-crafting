@@ -11,10 +11,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin {
 
-    @Inject(method = "createLivingAttributes", at = @At("RETURN"))
-    private static void staminaattributes$createLivingAttributes(CallbackInfoReturnable<DefaultAttributeContainer.Builder> cir) {
-        cir.getReturnValue()
-                .add(RPGCrafting.HAND_CRAFTING_LEVEL)
-        ;
-    }
+	@Inject(method = "createLivingAttributes", at = @At("RETURN"))
+	private static void rpgcrafting$createLivingAttributes(CallbackInfoReturnable<DefaultAttributeContainer.Builder> cir) {
+		cir.getReturnValue()
+				.add(RPGCrafting.HAND_CRAFTING_LEVEL)
+		;
+	}
 }

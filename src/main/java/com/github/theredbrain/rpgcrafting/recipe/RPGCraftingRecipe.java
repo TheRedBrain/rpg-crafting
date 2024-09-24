@@ -117,10 +117,13 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 	}
 
 	public static class Type implements RecipeType<RPGCraftingRecipe> {
-		private Type() {}
+		private Type() {
+		}
+
 		public static final Type INSTANCE = new Type();
 		public static final String ID = "rpg_crafting_recipe";
 	}
+
 	@Override
 	public RecipeType<?> getType() {
 		return Type.INSTANCE;
@@ -134,12 +137,12 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 
 		public static final MapCodec<RPGCraftingRecipe> CODEC = RecordCodecBuilder.mapCodec(
 				instance -> instance.group(
-								Ingredient.DISALLOW_EMPTY_CODEC.listOf().fieldOf("ingredients").forGetter(recipe -> recipe.ingredients),
-								ItemStack.VALIDATED_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
-								Codec.INT.optionalFieldOf("level", 0).forGetter(recipe -> recipe.level),
-								Codec.INT.optionalFieldOf("tab", 0).forGetter(recipe -> recipe.tab),
-								Codec.STRING.optionalFieldOf("recipeType", "").forGetter(recipe -> recipe.recipeType),
-								Codec.BOOL.optionalFieldOf("showNotification", true).forGetter(recipe -> recipe.showNotification)
+						Ingredient.DISALLOW_EMPTY_CODEC.listOf().fieldOf("ingredients").forGetter(recipe -> recipe.ingredients),
+						ItemStack.VALIDATED_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
+						Codec.INT.optionalFieldOf("level", 0).forGetter(recipe -> recipe.level),
+						Codec.INT.optionalFieldOf("tab", 0).forGetter(recipe -> recipe.tab),
+						Codec.STRING.optionalFieldOf("recipeType", "").forGetter(recipe -> recipe.recipeType),
+						Codec.BOOL.optionalFieldOf("showNotification", true).forGetter(recipe -> recipe.showNotification)
 				).apply(instance, RPGCraftingRecipe::new)
 		);
 		public static final PacketCodec<RegistryByteBuf, RPGCraftingRecipe> PACKET_CODEC = PacketCodec.ofStatic(

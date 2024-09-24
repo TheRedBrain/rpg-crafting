@@ -13,40 +13,41 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class CraftingTabProviderBlock extends Block {
-    private final int openedTab;
-    public CraftingTabProviderBlock(int openedTab, Settings settings) {
-        super(settings);
-        this.openedTab = openedTab;
-    }
+	private final int openedTab;
 
-    // TODO Block Codecs
-    public MapCodec<CraftingTabProviderBlock> getCodec() {
-        return null;
-    }
+	public CraftingTabProviderBlock(int openedTab, Settings settings) {
+		super(settings);
+		this.openedTab = openedTab;
+	}
 
-    @Override
-    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if (world.isClient) {
-            return ActionResult.SUCCESS;
-        }
-        int posX = pos.getX();
-        int posY = pos.getY();
-        int posZ = pos.getZ();
-        int crafting_root_block_reach_radius = RPGCrafting.serverConfig.crafting_root_block_reach_radius;
-        for (int i = -crafting_root_block_reach_radius; i <= crafting_root_block_reach_radius; i++) {
-            for (int j = -crafting_root_block_reach_radius; j <= crafting_root_block_reach_radius; j++) {
-                for (int k = -crafting_root_block_reach_radius; k <= crafting_root_block_reach_radius; k++) {
-                    BlockPos blockPos = new BlockPos(posX + i, posY + j, posZ + k);
-                    BlockState blockState = world.getBlockState(blockPos);
-                    if (blockState.isOf(BlockRegistry.CRAFTING_ROOT_BLOCK)) {
-                        player.openHandledScreen(CraftingRootBlock.createCraftingRootBlockScreenHandlerFactory(blockState, world, blockPos, this.openedTab));
-                        return ActionResult.CONSUME;
-                    }
-                }
-            }
-        }
-        player.sendMessage(Text.translatable("gui.crafting_bench.no_crafting_root_block_nearby"), true);
-        return ActionResult.CONSUME;
+	// TODO Block Codecs
+	public MapCodec<CraftingTabProviderBlock> getCodec() {
+		return null;
+	}
+
+	@Override
+	protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
+		if (world.isClient) {
+			return ActionResult.SUCCESS;
+		}
+		int posX = pos.getX();
+		int posY = pos.getY();
+		int posZ = pos.getZ();
+		int crafting_root_block_reach_radius = RPGCrafting.serverConfig.crafting_root_block_reach_radius;
+		for (int i = -crafting_root_block_reach_radius; i <= crafting_root_block_reach_radius; i++) {
+			for (int j = -crafting_root_block_reach_radius; j <= crafting_root_block_reach_radius; j++) {
+				for (int k = -crafting_root_block_reach_radius; k <= crafting_root_block_reach_radius; k++) {
+					BlockPos blockPos = new BlockPos(posX + i, posY + j, posZ + k);
+					BlockState blockState = world.getBlockState(blockPos);
+					if (blockState.isOf(BlockRegistry.CRAFTING_ROOT_BLOCK)) {
+						player.openHandledScreen(CraftingRootBlock.createCraftingRootBlockScreenHandlerFactory(blockState, world, blockPos, this.openedTab));
+						return ActionResult.CONSUME;
+					}
+				}
+			}
+		}
+		player.sendMessage(Text.translatable("gui.crafting_bench.no_crafting_root_block_nearby"), true);
+		return ActionResult.CONSUME;
 //        player.incrementStat(Stats.INTERACT_WITH_CRAFTING_TABLE); // TODO stats
-    }
+	}
 }

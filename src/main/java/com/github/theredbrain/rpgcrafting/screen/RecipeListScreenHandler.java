@@ -22,167 +22,165 @@ import java.util.List;
 
 public class RecipeListScreenHandler extends ScreenHandler {
 
-    private final Property selectedRecipe = Property.create();
-    private final Property shouldScreenCalculateRecipeList = Property.create();
-    private final World world;
-    private List<RecipeEntry<RPGCraftingRecipe>> rpgCraftingRecipesList = new ArrayList<>(List.of());
-    private List<RecipeEntry<RPGCraftingRecipe>> craftingListRecipesIdentifierList = new ArrayList<>(List.of());
-    private final PlayerInventory playerInventory;
-    private final RecipeListInputInventory input;
+	private final Property selectedRecipe = Property.create();
+	private final Property shouldScreenCalculateRecipeList = Property.create();
+	private final World world;
+	private List<RecipeEntry<RPGCraftingRecipe>> rpgCraftingRecipesList = new ArrayList<>(List.of());
+	private List<RecipeEntry<RPGCraftingRecipe>> craftingListRecipesIdentifierList = new ArrayList<>(List.of());
+	private final PlayerInventory playerInventory;
+	private final RecipeListInputInventory input;
 
-    public RecipeListScreenHandler(int syncId, PlayerInventory playerInventory) {
-        super(ScreenHandlerTypesRegistry.CRAFTING_LIST_SCREEN_HANDLER, syncId);
-        this.playerInventory = playerInventory;
-        this.world = playerInventory.player.getWorld();
-        this.input = new RecipeListInputInventory(1, this);
+	public RecipeListScreenHandler(int syncId, PlayerInventory playerInventory) {
+		super(ScreenHandlerTypesRegistry.CRAFTING_LIST_SCREEN_HANDLER, syncId);
+		this.playerInventory = playerInventory;
+		this.world = playerInventory.player.getWorld();
+		this.input = new RecipeListInputInventory(1, this);
 
-        this.updateRPGCraftingRecipesList();
+		this.updateRPGCraftingRecipesList();
 
-        int i;
-        // hotbar 0 - 8
-        for (i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 62 + i * 18, 209));
-        }
-        // main inventory 9 - 35
-        for (i = 0; i < 3; ++i) {
-            for (int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(playerInventory, j + (i + 1) * 9, 62 + j * 18, 151 + i * 18));
-            }
-        }
-        // input 36
-        this.addSlot(new Slot(this.input, 0, 22, 62));
+		int i;
+		// hotbar 0 - 8
+		for (i = 0; i < 9; ++i) {
+			this.addSlot(new Slot(playerInventory, i, 62 + i * 18, 209));
+		}
+		// main inventory 9 - 35
+		for (i = 0; i < 3; ++i) {
+			for (int j = 0; j < 9; ++j) {
+				this.addSlot(new Slot(playerInventory, j + (i + 1) * 9, 62 + j * 18, 151 + i * 18));
+			}
+		}
+		// input 36
+		this.addSlot(new Slot(this.input, 0, 22, 62));
 
-        // Inventory Size Attributes compatibility
-        int activeHotbarSize = RPGCrafting.getActiveHotbarSize(playerInventory.player);
-        int activeInventorySize = RPGCrafting.getActiveInventorySize(playerInventory.player);
-        for (i = 0; i < 9; i++) {
-            ((SlotCustomization) this.slots.get(i)).slotcustomizationapi$setDisabledOverride(i >= activeHotbarSize);
-        }
-        for (i = 9; i < 36; i++) {
-            ((SlotCustomization) this.slots.get(i)).slotcustomizationapi$setDisabledOverride(i >= 9 + activeInventorySize);
-        }
+		// Inventory Size Attributes compatibility
+		int activeHotbarSize = RPGCrafting.getActiveHotbarSize(playerInventory.player);
+		int activeInventorySize = RPGCrafting.getActiveInventorySize(playerInventory.player);
+		for (i = 0; i < 9; i++) {
+			((SlotCustomization) this.slots.get(i)).slotcustomizationapi$setDisabledOverride(i >= activeHotbarSize);
+		}
+		for (i = 9; i < 36; i++) {
+			((SlotCustomization) this.slots.get(i)).slotcustomizationapi$setDisabledOverride(i >= 9 + activeInventorySize);
+		}
 
-        this.addProperty(this.selectedRecipe);
-        this.selectedRecipe.set(-1);
-        this.addProperty(this.shouldScreenCalculateRecipeList);
-        this.shouldScreenCalculateRecipeList.set(0);
-        this.populateRecipeLists();
-    }
+		this.addProperty(this.selectedRecipe);
+		this.selectedRecipe.set(-1);
+		this.addProperty(this.shouldScreenCalculateRecipeList);
+		this.shouldScreenCalculateRecipeList.set(0);
+		this.populateRecipeLists();
+	}
 
-    public void onContentChanged(Inventory inventory) {
-        if (inventory.equals(this.input)) {
-            this.shouldScreenCalculateRecipeList.set(1);
-            this.selectedRecipe.set(-1);
-        }
-    }
+	public void onContentChanged(Inventory inventory) {
+		if (inventory.equals(this.input)) {
+			this.shouldScreenCalculateRecipeList.set(1);
+			this.selectedRecipe.set(-1);
+		}
+	}
 
-    @Override
-    public ItemStack quickMove(PlayerEntity player, int slot) {
-        ItemStack itemStack = ItemStack.EMPTY;
-        Slot slot2 = this.slots.get(slot);
-        if (slot2 != null && slot2.hasStack()) {
-            ItemStack itemStack2 = slot2.getStack();
-            itemStack = itemStack2.copy();
-            if (slot < 9) {
-                if (!this.insertItem(itemStack2, 36, 37, false) && !this.slots.get(36).hasStack()) {
-                    return ItemStack.EMPTY;
-                }
-                if (!this.insertItem(itemStack2, 9, 36, false)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (slot < 36) {
-                if (!this.insertItem(itemStack2, 36, 37, false) && !this.slots.get(36).hasStack()) {
-                    return ItemStack.EMPTY;
-                }
-                if (!this.insertItem(itemStack2, 0, 9, false)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (!this.insertItem(itemStack2, 0, 36, false)) {
-                return ItemStack.EMPTY;
-            }
+	@Override
+	public ItemStack quickMove(PlayerEntity player, int slot) {
+		ItemStack itemStack = ItemStack.EMPTY;
+		Slot slot2 = this.slots.get(slot);
+		if (slot2 != null && slot2.hasStack()) {
+			ItemStack itemStack2 = slot2.getStack();
+			itemStack = itemStack2.copy();
+			if (slot < 9) {
+				if (!this.insertItem(itemStack2, 36, 37, false) && !this.slots.get(36).hasStack()) {
+					return ItemStack.EMPTY;
+				}
+				if (!this.insertItem(itemStack2, 9, 36, false)) {
+					return ItemStack.EMPTY;
+				}
+			} else if (slot < 36) {
+				if (!this.insertItem(itemStack2, 36, 37, false) && !this.slots.get(36).hasStack()) {
+					return ItemStack.EMPTY;
+				}
+				if (!this.insertItem(itemStack2, 0, 9, false)) {
+					return ItemStack.EMPTY;
+				}
+			} else if (!this.insertItem(itemStack2, 0, 36, false)) {
+				return ItemStack.EMPTY;
+			}
 
-            if (itemStack2.isEmpty()) {
-                slot2.setStack(ItemStack.EMPTY);
-            } else {
-                slot2.markDirty();
-            }
-        }
+			if (itemStack2.isEmpty()) {
+				slot2.setStack(ItemStack.EMPTY);
+			} else {
+				slot2.markDirty();
+			}
+		}
 
-        return itemStack;
-    }
+		return itemStack;
+	}
 
-    @Override
-    public boolean canUse(PlayerEntity player) {
-        return true;
-    }
+	@Override
+	public boolean canUse(PlayerEntity player) {
+		return true;
+	}
 
-    @Override
-    public boolean onButtonClick(PlayerEntity player, int id) {
-//        if (this.isInBounds(id)) {
-            this.selectedRecipe.set(id);
-//        }
-        return true;
-    }
+	@Override
+	public boolean onButtonClick(PlayerEntity player, int id) {
+		this.selectedRecipe.set(id);
+		return true;
+	}
 
-    public int getSelectedRecipe() {
-        return this.selectedRecipe.get();
-    }
+	public int getSelectedRecipe() {
+		return this.selectedRecipe.get();
+	}
 
-    public void setSelectedRecipe(int newSelectedRecipe) {
-        this.selectedRecipe.set(newSelectedRecipe);
-    }
+	public void setSelectedRecipe(int newSelectedRecipe) {
+		this.selectedRecipe.set(newSelectedRecipe);
+	}
 
-    public PlayerInventory getPlayerInventory() {
-        return this.playerInventory;
-    }
+	public PlayerInventory getPlayerInventory() {
+		return this.playerInventory;
+	}
 
-    public RecipeListInputInventory getInput() {
-        return input;
-    }
+	public RecipeListInputInventory getInput() {
+		return input;
+	}
 
-    public MultipleStackRecipeInput getRecipeListInputInventory() {
+	public MultipleStackRecipeInput getRecipeListInputInventory() {
 
-        int inputSize = this.getInput().size();
+		int inputSize = this.getInput().size();
 
-        SimpleInventory craftingInputInventory = new SimpleInventory(
-                inputSize
-        );
+		SimpleInventory craftingInputInventory = new SimpleInventory(
+				inputSize
+		);
 
-        for (int j = 0; j < inputSize; j++) {
-            craftingInputInventory.setStack(j, this.getInput().getStack(j).copy());
-        }
-        return new MultipleStackRecipeInput(craftingInputInventory.getHeldStacks(), craftingInputInventory.size());
-    }
+		for (int j = 0; j < inputSize; j++) {
+			craftingInputInventory.setStack(j, this.getInput().getStack(j).copy());
+		}
+		return new MultipleStackRecipeInput(craftingInputInventory.getHeldStacks(), craftingInputInventory.size());
+	}
 
-    public List<RecipeEntry<RPGCraftingRecipe>> getCurrentCraftingRecipesList() {
-        return this.craftingListRecipesIdentifierList;
-    }
+	public List<RecipeEntry<RPGCraftingRecipe>> getCurrentCraftingRecipesList() {
+		return this.craftingListRecipesIdentifierList;
+	}
 
-    public int shouldScreenCalculateRecipeList() {
-        return this.shouldScreenCalculateRecipeList.get();
-    }
+	public int shouldScreenCalculateRecipeList() {
+		return this.shouldScreenCalculateRecipeList.get();
+	}
 
-    public void setShouldScreenCalculateRecipeList(int shouldScreenCalculateRecipeList) {
-        this.shouldScreenCalculateRecipeList.set(shouldScreenCalculateRecipeList);
-    }
+	public void setShouldScreenCalculateRecipeList(int shouldScreenCalculateRecipeList) {
+		this.shouldScreenCalculateRecipeList.set(shouldScreenCalculateRecipeList);
+	}
 
-    public void updateRPGCraftingRecipesList() {
-        this.rpgCraftingRecipesList.clear();
-        List<RecipeEntry<RPGCraftingRecipe>> newRecipeEntryList = this.world.getRecipeManager().listAllOfType(RPGCraftingRecipe.Type.INSTANCE);
-        this.rpgCraftingRecipesList.addAll(newRecipeEntryList);
-    }
+	public void updateRPGCraftingRecipesList() {
+		this.rpgCraftingRecipesList.clear();
+		List<RecipeEntry<RPGCraftingRecipe>> newRecipeEntryList = this.world.getRecipeManager().listAllOfType(RPGCraftingRecipe.Type.INSTANCE);
+		this.rpgCraftingRecipesList.addAll(newRecipeEntryList);
+	}
 
-    public void populateRecipeLists() {
-        this.craftingListRecipesIdentifierList.clear();
+	public void populateRecipeLists() {
+		this.craftingListRecipesIdentifierList.clear();
 		this.craftingListRecipesIdentifierList.addAll(this.rpgCraftingRecipesList);
-    }
+	}
 
-    @Override
-    public void onClosed(PlayerEntity player) {
-        super.onClosed(player);
-        if (!player.getWorld().isClient) {
-            this.dropInventory(player, this.input);
-        }
-    }
+	@Override
+	public void onClosed(PlayerEntity player) {
+		super.onClosed(player);
+		if (!player.getWorld().isClient) {
+			this.dropInventory(player, this.input);
+		}
+	}
 
 }

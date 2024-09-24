@@ -7,16 +7,18 @@ import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
 
 public record OpenHandCraftingScreenPacket() implements CustomPayload {
-    public static final Id<OpenHandCraftingScreenPacket> PACKET_ID = new Id<>(RPGCrafting.identifier("open_hand_crafting_screen"));
-    public static final PacketCodec<RegistryByteBuf, OpenHandCraftingScreenPacket> PACKET_CODEC = PacketCodec.of(OpenHandCraftingScreenPacket::write, OpenHandCraftingScreenPacket::new);
+	public static final Id<OpenHandCraftingScreenPacket> PACKET_ID = new Id<>(RPGCrafting.identifier("open_hand_crafting_screen"));
+	public static final PacketCodec<RegistryByteBuf, OpenHandCraftingScreenPacket> PACKET_CODEC = PacketCodec.of(OpenHandCraftingScreenPacket::write, OpenHandCraftingScreenPacket::new);
 
-    public OpenHandCraftingScreenPacket(PacketByteBuf buf) {
-        this();
-    }
-    private void write(RegistryByteBuf registryByteBuf) {}
+	public OpenHandCraftingScreenPacket(PacketByteBuf buf) {
+		this();
+	}
 
-    @Override
-    public Id<? extends CustomPayload> getId() {
-        return PACKET_ID;
-    }
+	private void write(RegistryByteBuf registryByteBuf) {
+	}
+
+	@Override
+	public Id<? extends CustomPayload> getId() {
+		return PACKET_ID;
+	}
 }
