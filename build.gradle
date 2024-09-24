@@ -103,6 +103,9 @@ dependencies {
 	// Slot Customization API
 	modImplementation "maven.modrinth:slot-customization-api:${project.slot_customization_api_version}"
 
+	// Inventory Size Attributes
+	modImplementation "maven.modrinth:inventory-size-attributes:${project.inventory_size_attributes_version}"
+
 	// Test mod
 	testmodImplementation sourceSets.main.output
 	testmod_clientImplementation sourceSets.main.output

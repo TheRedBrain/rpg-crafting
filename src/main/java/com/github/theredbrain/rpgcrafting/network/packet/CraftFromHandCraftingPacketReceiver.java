@@ -1,5 +1,6 @@
 package com.github.theredbrain.rpgcrafting.network.packet;
 
+import com.github.theredbrain.rpgcrafting.RPGCrafting;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
 import com.github.theredbrain.rpgcrafting.screen.HandCraftingScreenHandler;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -27,15 +28,30 @@ public class CraftFromHandCraftingPacketReceiver implements ServerPlayNetworking
 		if (rpgCraftingRecipeEntryOptional.isPresent() && screenHandler instanceof HandCraftingScreenHandler handCraftingScreenHandler) {
 			if (rpgCraftingRecipeEntryOptional.get().value() instanceof RPGCraftingRecipe rpgCraftingRecipe) {
 
-				// TODO inventory size attributes
-				int playerInventorySize = handCraftingScreenHandler.getPlayerInventory().size();
+				int playerHotbarSize = RPGCrafting.getActiveHotbarSize(player);
+				int playerInventorySize = RPGCrafting.getActiveInventorySize(player);
 
 				ItemStack itemStack;
 
 				for (Ingredient ingredient : rpgCraftingRecipe.ingredients) {
 
 					int j;
-					for (j = 0; j < playerInventorySize; j++) {
+
+					for (j = 0; j < playerHotbarSize; j++) {
+						if (ingredient.test(handCraftingScreenHandler.getPlayerInventory().getStack(j))) {
+							itemStack = handCraftingScreenHandler.getPlayerInventory().getStack(j).copy();
+							int stackCount = itemStack.getCount();
+							if (stackCount >= 1) {
+								itemStack.setCount(stackCount - 1);
+								handCraftingScreenHandler.getPlayerInventory().setStack(j, itemStack);
+							} else {
+								handCraftingScreenHandler.getPlayerInventory().setStack(j, ItemStack.EMPTY);
+							}
+							break;
+						}
+					}
+
+					for (j = 9; j < playerInventorySize; j++) {
 						if (ingredient.test(handCraftingScreenHandler.getPlayerInventory().getStack(j))) {
 							itemStack = handCraftingScreenHandler.getPlayerInventory().getStack(j).copy();
 							int stackCount = itemStack.getCount();

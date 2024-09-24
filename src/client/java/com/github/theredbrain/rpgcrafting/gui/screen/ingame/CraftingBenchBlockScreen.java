@@ -1,6 +1,7 @@
 package com.github.theredbrain.rpgcrafting.gui.screen.ingame;
 
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
+import com.github.theredbrain.rpgcrafting.RPGCraftingClient;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.gui.widget.ItemButtonWidget;
 import com.github.theredbrain.rpgcrafting.network.packet.CraftFromCraftingBenchPacket;
@@ -59,6 +60,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
     private static final Identifier RECIPE_SELECTED_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe_selected");
     private static final Identifier RECIPE_HIGHLIGHTED_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe_highlighted");
     private static final Identifier RECIPE_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe");
+    public static final Identifier SLOT_TEXTURE = Identifier.ofVanilla("textures/gui/sprites/container/slot.png");
     public static final Identifier STORAGE_TAB_BACKGROUND_TEXTURE = RPGCrafting.identifier("textures/gui/container/crafting_bench/storage_tab_background.png");
     public static final Identifier STASH_AREA_0_BACKGROUND_TEXTURE = RPGCrafting.identifier("textures/gui/container/crafting_bench/stash_area_0_background.png");
     public static final Identifier STASH_AREA_1_BACKGROUND_TEXTURE = RPGCrafting.identifier("textures/gui/container/crafting_bench/stash_area_1_background.png");
@@ -67,6 +69,8 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
     public static final Identifier STASH_AREA_4_BACKGROUND_TEXTURE = RPGCrafting.identifier("textures/gui/container/crafting_bench/stash_area_4_background.png");
     private static final Identifier SCROLLER_VERTICAL_6_7_TEXTURE = RPGCrafting.identifier("scroll_bar/scroller_vertical_6_7");
     private static final Identifier SCROLLER_VERTICAL_6_7_DISABLED_TEXTURE = RPGCrafting.identifier("scroll_bar/scroller_vertical_6_7_disabled");
+    private final int hotbarSize;
+    private final int inventorySize;
 
     private List<RecipeEntry<RPGCraftingRecipe>> recipeList = new ArrayList<>();
 
@@ -95,6 +99,8 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
     public CraftingBenchBlockScreen(CraftingBenchBlockScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
         this.playerEntity = inventory.player;
+        this.hotbarSize = RPGCrafting.getActiveHotbarSize(inventory.player);
+        this.inventorySize = RPGCrafting.getActiveInventorySize(inventory.player);
     }
 
     @Override
@@ -162,6 +168,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
         }
     }
 
+    // TODO move checks to screen handler
     private void updateRecipeList() {
         this.recipeList.clear();
         List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();
@@ -402,6 +409,10 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
     public void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
         int x = this.x;
         int y = this.y;
+        int k;
+        int m;
+        boolean showInactiveSlots = RPGCraftingClient.clientConfigHolder.getConfig().generalClientConfig.show_inactive_slots;
+
         if (this.currentTab == -1) {
             context.drawTexture(STORAGE_TAB_BACKGROUND_TEXTURE, x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
             if (this.isStorageArea0ProviderInReach) {
@@ -421,7 +432,6 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
             }
         } else {
             context.drawTexture(RPGCrafting.identifier("textures/gui/container/crafting_bench/tab_" + this.currentTab + "_background.png"), x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
-            int k;
             int index = 0;
             List<RecipeEntry<RPGCraftingRecipe>> recipeList = this.recipeList;
             int recipeCounter = recipeList.size();
@@ -470,6 +480,15 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
                 context.drawText(this.textRenderer, resultItemStack.getName(), x + 20, y + 4, 4210752, false);
             }
         }
+
+        for (k = 0; k < (showInactiveSlots ? 27 : Math.min(this.inventorySize, 27)); ++k) {
+            m = (k / 9);
+            context.drawTexture(SLOT_TEXTURE, x + 7 + (k - (m * 9)) * 18, y + 83 + (m * 18), 0, 0, 18, 18, 18, 18);
+        }
+        for (k = 0; k < (showInactiveSlots ? 9 : Math.min(this.hotbarSize, 9)); ++k) {
+            context.drawTexture(SLOT_TEXTURE, x + 7 + k * 18, y + 141, 0, 0, 18, 18, 18, 18);
+        }
+
     }
 
     private boolean isInBounds(int id) {

@@ -1,5 +1,6 @@
 package com.github.theredbrain.rpgcrafting;
 
+import com.github.theredbrain.inventorysizeattributes.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.config.ServerConfig;
 import com.github.theredbrain.rpgcrafting.config.ServerConfigWrapper;
 import com.github.theredbrain.rpgcrafting.registry.BlockRegistry;
@@ -14,7 +15,9 @@ import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -26,6 +29,16 @@ public class RPGCrafting implements ModInitializer {
 	public static ServerConfig serverConfig;
 
 	public static RegistryEntry<EntityAttribute> HAND_CRAFTING_LEVEL;
+
+	public static final boolean isInventorySizeAttributesLoaded = FabricLoader.getInstance().isModLoaded("inventorysizeattributes");
+
+	public static int getActiveInventorySize(PlayerEntity player) {
+		return isInventorySizeAttributesLoaded ? ((DuckPlayerEntityMixin) player).inventorysizeattributes$getActiveInventorySlotAmount() : 27;
+	}
+
+	public static int getActiveHotbarSize(PlayerEntity player) {
+		return isInventorySizeAttributesLoaded ? ((DuckPlayerEntityMixin) player).inventorysizeattributes$getActiveHotbarSlotAmount() : 9;
+	}
 
 	@Override
 	public void onInitialize() {

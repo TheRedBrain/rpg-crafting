@@ -1,9 +1,11 @@
 package com.github.theredbrain.rpgcrafting.screen;
 
+import com.github.theredbrain.rpgcrafting.RPGCrafting;
 import com.github.theredbrain.rpgcrafting.inventory.RecipeListInputInventory;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
 import com.github.theredbrain.rpgcrafting.recipe.input.MultipleStackRecipeInput;
 import com.github.theredbrain.rpgcrafting.registry.ScreenHandlerTypesRegistry;
+import com.github.theredbrain.slotcustomizationapi.api.SlotCustomization;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -51,6 +53,17 @@ public class RecipeListScreenHandler extends ScreenHandler {
         }
         // input 36
         this.addSlot(new Slot(this.input, 0, 22, 62));
+
+        // Inventory Size Attributes compatibility
+        int activeHotbarSize = RPGCrafting.getActiveHotbarSize(playerInventory.player);
+        int activeInventorySize = RPGCrafting.getActiveInventorySize(playerInventory.player);
+        for (i = 0; i < 9; i++) {
+            ((SlotCustomization) this.slots.get(i)).slotcustomizationapi$setDisabledOverride(i >= activeHotbarSize);
+        }
+        for (i = 9; i < 36; i++) {
+            ((SlotCustomization) this.slots.get(i)).slotcustomizationapi$setDisabledOverride(i >= 9 + activeInventorySize);
+        }
+
         this.addProperty(this.selectedRecipe);
         this.selectedRecipe.set(-1);
         this.addProperty(this.shouldScreenCalculateRecipeList);

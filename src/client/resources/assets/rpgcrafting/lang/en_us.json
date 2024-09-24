@@ -48,5 +48,9 @@
 	"itemGroup.rpgcrafting.rpg_crafting_blocks": "RPG Crafting Blocks",
 
 	"key.rpgcrafting.craftingListScreen": "Open Crafting List Screen",
-	"key.rpgcrafting.handCraftingScreen": "Open Hand Crafting Screen"
+	"key.rpgcrafting.handCraftingScreen": "Open Hand Crafting Screen",
+
+	"text.autoconfig.rpgcrafting.title": "RPG Crafting",
+	"text.autoconfig.rpgcrafting.category.generalClientConfig": "General",
+	"text.autoconfig.rpgcrafting.option.generalClientConfig.show_inactive_slots": "Show background of inactive slots"
 }

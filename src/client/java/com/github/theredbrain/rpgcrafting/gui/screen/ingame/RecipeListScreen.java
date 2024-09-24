@@ -1,6 +1,7 @@
 package com.github.theredbrain.rpgcrafting.gui.screen.ingame;
 
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
+import com.github.theredbrain.rpgcrafting.RPGCraftingClient;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateRecipeListScreenHandlerPropertyPacket;
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateRecipeListScreenHandlerSelectedRecipePacket;
@@ -32,9 +33,12 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
     private static final Identifier RECIPE_SELECTED_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe_selected");
     private static final Identifier RECIPE_HIGHLIGHTED_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe_highlighted");
     private static final Identifier RECIPE_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe");
+    public static final Identifier SLOT_TEXTURE = Identifier.ofVanilla("textures/gui/sprites/container/slot.png");
     private static final Identifier SCROLLER_VERTICAL_6_7_TEXTURE = RPGCrafting.identifier("scroll_bar/scroller_vertical_6_7");
     private static final Identifier SCROLLER_VERTICAL_6_7_DISABLED_TEXTURE = RPGCrafting.identifier("scroll_bar/scroller_vertical_6_7_disabled");
     public static final Identifier CRAFTING_LIST_BACKGROUND_TEXTURE = RPGCrafting.identifier("textures/gui/container/crafting_bench/crafting_list_background.png");
+    private final int hotbarSize;
+    private final int inventorySize;
 
     private List<RecipeEntry<RPGCraftingRecipe>> recipeList = new ArrayList<>();
 
@@ -44,6 +48,8 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
 
     public RecipeListScreen(RecipeListScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
+        this.hotbarSize = RPGCrafting.getActiveHotbarSize(inventory.player);
+        this.inventorySize = RPGCrafting.getActiveInventorySize(inventory.player);
     }
 
     @Override
@@ -81,6 +87,7 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
         }
     }
 
+    // TODO move checks to screen handler
     private void updateRecipeList() {
         if (this.client != null && this.client.player != null) {
             this.recipeList.clear();
@@ -93,12 +100,6 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
             }
         }
     }
-
-//    private void updateRecipeList() {
-//        this.recipeList.clear();
-//        List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();
-//        this.recipeList.addAll(newList);
-//    }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -165,10 +166,21 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
     public void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
         int x = this.x;
         int y = this.y;
+        int k;
+        int m;
+        boolean showInactiveSlots = RPGCraftingClient.clientConfigHolder.getConfig().generalClientConfig.show_inactive_slots;
 
-            context.drawTexture(CRAFTING_LIST_BACKGROUND_TEXTURE, x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
-            int k;
-            int index = 0;
+        context.drawTexture(CRAFTING_LIST_BACKGROUND_TEXTURE, x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
+
+        for (k = 0; k < (showInactiveSlots ? 27 : Math.min(this.inventorySize, 27)); ++k) {
+            m = (k / 9);
+            context.drawTexture(SLOT_TEXTURE, x + 7 + (k - (m * 9)) * 18, y + 83 + (m * 18), 0, 0, 18, 18, 18, 18);
+        }
+        for (k = 0; k < (showInactiveSlots ? 9 : Math.min(this.hotbarSize, 9)); ++k) {
+            context.drawTexture(SLOT_TEXTURE, x + 7 + k * 18, y + 141, 0, 0, 18, 18, 18, 18);
+        }
+
+        int index = 0;
         List<RecipeEntry<RPGCraftingRecipe>> recipeList = this.recipeList;
             int recipeCounter = recipeList.size();
             for (int i = this.scrollPosition; i < Math.min(this.scrollPosition + (RECIPE_FIELD_HEIGTH * RECIPE_FIELD_WIDTH), recipeCounter); i++) {

@@ -1,10 +1,11 @@
 package com.github.theredbrain.rpgcrafting.screen;
 
+import com.github.theredbrain.rpgcrafting.RPGCrafting;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
-//import com.github.theredbrain.rpgcrafting.network.packet.UpdateCraftingBenchScreenHandlerRecipeListPacket;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
 import com.github.theredbrain.rpgcrafting.recipe.input.MultipleStackRecipeInput;
 import com.github.theredbrain.rpgcrafting.registry.ScreenHandlerTypesRegistry;
+import com.github.theredbrain.slotcustomizationapi.api.SlotCustomization;
 import com.mojang.serialization.Codec;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -42,7 +43,6 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
     private final boolean isStorageArea3ProviderInReach;
     private final boolean isStorageArea4ProviderInReach;
     private final int[] tabLevels;
-//    long lastTakeTime;
     private final Property selectedRecipe = Property.create();
     private final Property shouldScreenCalculateCraftingStatus = Property.create();
     private final World world;
@@ -129,6 +129,17 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
                 this.addSlot(new Slot(enderChestInventory, 6 + j + i * 7, 69 + j * 18, 83 + i * 18));
             }
         }
+
+        // Inventory Size Attributes compatibility
+        int activeHotbarSize = RPGCrafting.getActiveHotbarSize(playerInventory.player);
+        int activeInventorySize = RPGCrafting.getActiveInventorySize(playerInventory.player);
+        for (i = 0; i < 9; i++) {
+            ((SlotCustomization) this.slots.get(i)).slotcustomizationapi$setDisabledOverride(i >= activeHotbarSize);
+        }
+        for (i = 9; i < 36; i++) {
+            ((SlotCustomization) this.slots.get(i)).slotcustomizationapi$setDisabledOverride(i >= 9 + activeInventorySize);
+        }
+
         this.addProperty(this.selectedRecipe);
         this.selectedRecipe.set(-1);
         this.addProperty(this.shouldScreenCalculateCraftingStatus);
@@ -149,30 +160,11 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 
     @Override
     public boolean onButtonClick(PlayerEntity player, int id) {
-//        if (id == -1) {
-//            if (this.selectedRecipe.get() > -1 && this.currentTab >= 0 && player instanceof ServerPlayerEntity serverPlayerEntity) {
-//                List<RecipeEntry<RPGCraftingRecipe>> currentRecipeList = this.getCurrentCraftingRecipesList();
-//
-//                RPGCrafting.info("craft: " + currentRecipeList.get(this.selectedRecipe.get()).id().toString());
-////                ServerPlayNetworking.send(playerEntity,
-////                        new CraftFromCraftingBenchPacket(
-////                                currentRecipeList.get(this.selectedRecipe.get()).id().toString(),
-////                                ((DuckPlayerEntityMixin)player).rpgcrafting$useStashForCrafting()
-////                        )
-////                );
-//                this.craftFromWorkBench(serverPlayerEntity, currentRecipeList.get(this.selectedRecipe.get()), this.getCraftingInputInventory(((DuckPlayerEntityMixin) this.getPlayerInventory().player).rpgcrafting$useStashForCrafting()));
-//            }
-//        } else
-//        if (this.isInBounds(id)) {
             this.selectedRecipe.set(id);
-//        }
         return true;
     }
 
-//    public void onCraftButtonClick(PlayerEntity player, RecipeEntry<RPGCraftingRecipe> recipeEntry) {
-//        if ()
-//    }
-
+    //region getter/setter
     public BlockPos getBlockPos() {
         return this.blockPos;
     }
@@ -258,6 +250,7 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
         this.currentRecipeType = isStandard ? RecipeType.STANDARD : RecipeType.SPECIAL;
         this.selectedRecipe.set(-1);
     }
+    //endregion getter/setter
 
     public List<RecipeEntry<RPGCraftingRecipe>> getCurrentCraftingRecipesList() {
         return this.currentTab == 3 ? (this.currentRecipeType == RecipeType.SPECIAL ? this.tab3SpecialCraftingRecipesIdentifierList : this.tab3StandardCraftingRecipesIdentifierList) : this.currentTab == 2 ? (this.currentRecipeType == RecipeType.SPECIAL ? this.tab2SpecialCraftingRecipesIdentifierList : this.tab2StandardCraftingRecipesIdentifierList) : this.currentTab == 1 ? (this.currentRecipeType == RecipeType.SPECIAL ? this.tab1SpecialCraftingRecipesIdentifierList : this.tab1StandardCraftingRecipesIdentifierList) : this.currentTab == 0 ? (this.currentRecipeType == RecipeType.SPECIAL ? this.tab0SpecialCraftingRecipesIdentifierList : this.tab0StandardCraftingRecipesIdentifierList) : new ArrayList<>();
@@ -271,19 +264,11 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
         this.shouldScreenCalculateCraftingStatus.set(shouldScreenCalculateCraftingStatus);
     }
 
-//    public boolean isInBounds(int id) {
-//        if (this.currentTab >= 0) {
-//            boolean bl = id < this.getCurrentCraftingRecipesList().size();
-//            return id >= 0 && bl;
-//        }
-//        return false;
-//    }
-
     public MultipleStackRecipeInput getCraftingInputInventory(boolean useStashForCrafting) {
 
-        int playerInventorySize = 27; // TODO inventory size attributes
+        int playerHotbarSize = RPGCrafting.getActiveHotbarSize(playerInventory.player);
 
-        int playerHotbarSize = 9; // TODO inventory size attributes
+        int playerInventorySize = RPGCrafting.getActiveInventorySize(playerInventory.player);
 
         int stash0InventorySize = useStashForCrafting && this.isStorageArea0ProviderInReach ? 6 : 0;
 
@@ -296,8 +281,8 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
         int stash4InventorySize = useStashForCrafting && this.isStorageArea4ProviderInReach ? 21 : 0;
 
         SimpleInventory craftingInputInventory = new SimpleInventory(
-                playerInventorySize
-                        + playerHotbarSize
+                playerHotbarSize
+                        + playerInventorySize
                         + stash0InventorySize
                         + stash1InventorySize
                         + stash2InventorySize
@@ -307,26 +292,35 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 
         int k = 0;
         int j;
-        for (j = 0; j < playerInventorySize; j++) { // TODO inventory size attributes
+        for (j = 0; j < playerHotbarSize; j++) {
             craftingInputInventory.setStack(k + j, this.getPlayerInventory().getStack(j).copy());
+        }
+        k = k + playerHotbarSize;
+
+        for (j = 0; j < playerInventorySize; j++) {
+            craftingInputInventory.setStack(k + j, this.getPlayerInventory().getStack(9 + j).copy());
         }
         k = k + playerInventorySize;
 
         for (j = 0; j < stash0InventorySize; j++) {
             craftingInputInventory.setStack(k + j, this.getEnderChestInventory().getStack(j).copy());
         }
+        k = k + stash0InventorySize;
 
         for (j = 0; j < stash1InventorySize; j++) {
             craftingInputInventory.setStack(k + j, this.getStashInventory().getStack(j).copy());
         }
+        k = k + stash1InventorySize;
 
         for (j = 0; j < stash2InventorySize; j++) {
             craftingInputInventory.setStack(k + j, this.getStashInventory().getStack(8 + j).copy());
         }
+        k = k + stash2InventorySize;
 
         for (j = 0; j < stash3InventorySize; j++) {
             craftingInputInventory.setStack(k + j, this.getStashInventory().getStack(20 + j).copy());
         }
+        k = k + stash3InventorySize;
 
         for (j = 0; j < stash4InventorySize; j++) {
             craftingInputInventory.setStack(k + j, this.getEnderChestInventory().getStack(6 + j).copy());
@@ -335,39 +329,13 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
         return new MultipleStackRecipeInput(craftingInputInventory.getHeldStacks(), craftingInputInventory.size());
     }
 
-//    public boolean matchRPGCraftingRecipe() {
-//        World world = this.getPlayerInventory().player.getWorld();
-//        List<RecipeEntry<RPGCraftingRecipe>> activeRecipeList = this.getCurrentCraftingRecipesList();
-//        int selectedRecipe = this.getSelectedRecipe();
-//        if (selectedRecipe >= 0) {
-//            RecipeEntry<RPGCraftingRecipe> craftingRecipeEntry = activeRecipeList.get(selectedRecipe);
-//            return craftingRecipeEntry.value().matches(this.getCraftingInputInventory(((DuckPlayerEntityMixin) this.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world);
-//        }
-//        return false;
-//    }
-
     public void updateRPGCraftingRecipesList() {
         this.rpgCraftingRecipesList.clear();
         List<RecipeEntry<RPGCraftingRecipe>> newRecipeEntryList = this.world.getRecipeManager().listAllOfType(RPGCraftingRecipe.Type.INSTANCE);
         this.rpgCraftingRecipesList.addAll(newRecipeEntryList);
     }
 
-//    public void syncRPGCraftingRecipesList(List<Identifier> rpgCraftingRecipeIdentifierList) {
-//        if (this.world.isClient) {
-//            RPGCrafting.info("syncRecipeList");
-//            this.rpgCraftingRecipesList.clear();
-//            for (Identifier identifier : rpgCraftingRecipeIdentifierList) {
-//                Optional<RecipeEntry<?>> optional = this.world.getRecipeManager().get(identifier);
-//                if (optional.isPresent()) {
-//                    RecipeEntry<RPGCraftingRecipe> recipeEntry = (RecipeEntry<RPGCraftingRecipe>) optional.get();
-//                    this.rpgCraftingRecipesList.add(recipeEntry);
-//                }
-//            }
-//        }
-//    }
-
     public void populateRecipeLists() {
-//        if (this.playerInventory.player instanceof ServerPlayerEntity playerEntity) {
             this.tab0StandardCraftingRecipesIdentifierList.clear();
             this.tab1StandardCraftingRecipesIdentifierList.clear();
             this.tab2StandardCraftingRecipesIdentifierList.clear();
@@ -380,7 +348,6 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
             for (RecipeEntry<RPGCraftingRecipe> rpgCraftingRecipeEntry : this.rpgCraftingRecipesList) {
 
                 RPGCraftingRecipe rpgCraftingRecipe = rpgCraftingRecipeEntry.value();
-//                if (rpgCraftingRecipe.isUnlocked(playerEntity, this.world)) {
                 // TODO recipe levels
                     int tab = rpgCraftingRecipe.tab;
                     RecipeType recipeType = RecipeType.valueOf(rpgCraftingRecipe.recipeType);
@@ -410,161 +377,7 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
                         }
                     }
                 }
-//            }
-//            List<Identifier> rpgCraftingRecipeIdentifierList = new ArrayList<>();
-//            for (RecipeEntry<RPGCraftingRecipe> recipeEntry : this.rpgCraftingRecipesList) {
-//                rpgCraftingRecipeIdentifierList.add(recipeEntry.id());
-//            }
-//            ServerPlayNetworking.send(
-//                    playerEntity,
-//                    new UpdateCraftingBenchScreenHandlerRecipeListPacket(
-//                            rpgCraftingRecipeIdentifierList
-//                    )
-//            );
-
-//        }
     }
-
-//    private boolean isRPGCraftingRecipeUnlocked(RecipeEntry<RPGCraftingRecipe> rpgCraftingRecipeEntry, ServerPlayerEntity playerEntity) {
-//        boolean bl = true;
-//
-//        PlayerAdvancementTracker playerAdvancementTracker = null;
-//        ServerAdvancementLoader serverAdvancementLoader = null;
-//
-//        playerAdvancementTracker = playerEntity.getAdvancementTracker();
-//        MinecraftServer minecraftServer = playerEntity.getServer();
-//        if (minecraftServer != null) {
-//            serverAdvancementLoader = minecraftServer.getAdvancementLoader();
-//        }
-//        String unlockAdvancementIdentifier;
-//
-//        if (playerAdvancementTracker != null && serverAdvancementLoader != null) {
-//            unlockAdvancementIdentifier = rpgCraftingRecipeEntry.value().unlockAdvancement;
-//
-//            AdvancementEntry unlockAdvancementEntry = null;
-//            if (!unlockAdvancementIdentifier.isEmpty()) {
-//                unlockAdvancementEntry = serverAdvancementLoader.get(Identifier.tryParse(unlockAdvancementIdentifier));
-//            }
-//            bl = !this.world.getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING) || unlockAdvancementIdentifier.isEmpty() || (unlockAdvancementEntry != null && playerAdvancementTracker.getProgress(unlockAdvancementEntry).isDone());
-//
-//        }
-//        return bl;
-//    }
-
-//    private void craftFromWorkBench(ServerPlayerEntity serverPlayerEntity, RecipeEntry<RPGCraftingRecipe> rpgCraftingRecipeEntry, MultipleStackRecipeInput multipleStackRecipeInput) {
-//
-//        boolean useStorageInventory = ((DuckPlayerEntityMixin) serverPlayerEntity).rpgcrafting$useStashForCrafting();
-//        RPGCraftingRecipe craftingRecipe = rpgCraftingRecipeEntry.value();
-//
-//            int playerInventorySize = this.getPlayerInventory().size();
-//
-//            int stash0InventorySize = useStorageInventory && this.isStorageArea0ProviderInReach() ? 6 : 0;
-//
-//            int stash1InventorySize = useStorageInventory && this.isStorageArea1ProviderInReach() ? 8 : 0;
-//
-//            int stash2InventorySize = useStorageInventory && this.isStorageArea2ProviderInReach() ? 12 : 0;
-//
-//            int stash3InventorySize = useStorageInventory && this.isStorageArea3ProviderInReach() ? 14 : 0;
-//
-//            int stash4InventorySize = useStorageInventory && this.isStorageArea4ProviderInReach() ? 21 : 0;
-//
-//            ItemStack itemStack;
-//
-//            for (Ingredient ingredient : craftingRecipe.ingredients) {
-//
-//                int j;
-//
-//                // TODO play test which inventory normally contains the most crafting ingredients and should be checked first
-//
-//                for (j = 0; j < playerInventorySize; j++) {
-//                    if (ingredient.test(this.getPlayerInventory().getStack(j))) {
-//                        itemStack = this.getPlayerInventory().getStack(j).copy();
-//                        int stackCount = itemStack.getCount();
-//                        if (stackCount >= 1) {
-//                            itemStack.setCount(stackCount - 1);
-//                            this.getPlayerInventory().setStack(j, itemStack);
-//						} else {
-//                            this.getPlayerInventory().setStack(j, ItemStack.EMPTY);
-//						}
-//						break;
-//					}
-//                }
-//
-//                for (j = 0; j < stash0InventorySize; j++) {
-//                    if (ingredient.test(this.getEnderChestInventory().getStack(j))) {
-//                        itemStack = this.getEnderChestInventory().getStack(j).copy();
-//                        int stackCount = itemStack.getCount();
-//                        if (stackCount >= 1) {
-//                            itemStack.setCount(stackCount - 1);
-//                            this.getEnderChestInventory().setStack(j, itemStack);
-//						} else {
-//                            this.getEnderChestInventory().setStack(j, ItemStack.EMPTY);
-//						}
-//						break;
-//					}
-//                }
-//
-//                for (j = 0; j < stash1InventorySize; j++) {
-//                    if (ingredient.test(this.getStashInventory().getStack(j))) {
-//                        itemStack = this.getStashInventory().getStack(j).copy();
-//                        int stackCount = itemStack.getCount();
-//                        if (stackCount >= 1) {
-//                            itemStack.setCount(stackCount - 1);
-//                            this.getStashInventory().setStack(j, itemStack);
-//						} else {
-//                            this.getStashInventory().setStack(j, ItemStack.EMPTY);
-//						}
-//						break;
-//					}
-//                }
-//
-//                for (j = 0; j < stash2InventorySize; j++) {
-//                    if (ingredient.test(this.getStashInventory().getStack(8 + j))) {
-//                        itemStack = this.getStashInventory().getStack(8 + j).copy();
-//                        int stackCount = itemStack.getCount();
-//                        if (stackCount >= 1) {
-//                            itemStack.setCount(stackCount - 1);
-//                            this.getStashInventory().setStack(8 + j, itemStack);
-//						} else {
-//                            this.getStashInventory().setStack(8 + j, ItemStack.EMPTY);
-//						}
-//						break;
-//					}
-//                }
-//
-//                for (j = 0; j < stash3InventorySize; j++) {
-//                    if (ingredient.test(this.getStashInventory().getStack(20 + j))) {
-//                        itemStack = this.getStashInventory().getStack(20 + j).copy();
-//                        int stackCount = itemStack.getCount();
-//                        if (stackCount >= 1) {
-//                            itemStack.setCount(stackCount - 1);
-//                            this.getStashInventory().setStack(20 + j, itemStack);
-//						} else {
-//                            this.getStashInventory().setStack(20 + j, ItemStack.EMPTY);
-//						}
-//						break;
-//					}
-//                }
-//
-//                for (j = 0; j < stash4InventorySize; j++) {
-//                    if (ingredient.test(this.getEnderChestInventory().getStack(6 + j))) {
-//                        itemStack = this.getEnderChestInventory().getStack(6 + j).copy();
-//                        int stackCount = itemStack.getCount();
-//                        if (stackCount >= 1) {
-//                            itemStack.setCount(stackCount - 1);
-//                            this.getEnderChestInventory().setStack(6 + j, itemStack);
-//						} else {
-//                            this.getEnderChestInventory().setStack(6 + j, ItemStack.EMPTY);
-//						}
-//						break;
-//					}
-//                }
-//            }
-//            serverPlayerEntity.getInventory().offerOrDrop(craftingRecipe.craft(multipleStackRecipeInput, world.getRegistryManager()));
-//            this.updateRPGCraftingRecipesList();
-//            this.calculateUnlockedRecipes();
-//            this.setShouldScreenCalculateCraftingStatus(1);
-//    }
 
     public record CraftingBenchBlockData(
             BlockPos blockPos,

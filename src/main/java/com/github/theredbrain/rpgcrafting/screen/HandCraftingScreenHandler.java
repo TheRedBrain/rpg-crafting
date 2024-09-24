@@ -1,9 +1,11 @@
 package com.github.theredbrain.rpgcrafting.screen;
 
+import com.github.theredbrain.rpgcrafting.RPGCrafting;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
 import com.github.theredbrain.rpgcrafting.recipe.input.MultipleStackRecipeInput;
 import com.github.theredbrain.rpgcrafting.registry.ScreenHandlerTypesRegistry;
+import com.github.theredbrain.slotcustomizationapi.api.SlotCustomization;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.SimpleInventory;
@@ -44,6 +46,17 @@ public class HandCraftingScreenHandler extends ScreenHandler {
                 this.addSlot(new Slot(playerInventory, j + (i + 1) * 9, 62 + j * 18, 151 + i * 18));
             }
         }
+
+        // Inventory Size Attributes compatibility
+        int activeHotbarSize = RPGCrafting.getActiveHotbarSize(playerInventory.player);
+        int activeInventorySize = RPGCrafting.getActiveInventorySize(playerInventory.player);
+        for (i = 0; i < 9; i++) {
+            ((SlotCustomization) this.slots.get(i)).slotcustomizationapi$setDisabledOverride(i >= activeHotbarSize);
+        }
+        for (i = 9; i < 36; i++) {
+            ((SlotCustomization) this.slots.get(i)).slotcustomizationapi$setDisabledOverride(i >= 9 + activeInventorySize);
+        }
+
         this.addProperty(this.selectedRecipe);
         this.selectedRecipe.set(-1);
         this.addProperty(this.shouldScreenCalculateCraftingStatus);
@@ -98,21 +111,25 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 
     public MultipleStackRecipeInput getCraftingInputInventory() {
 
-        int playerInventorySize = 27; // TODO inventory size attributes
+        int playerHotbarSize = RPGCrafting.getActiveHotbarSize(playerInventory.player);
 
-        int playerHotbarSize = 9; // TODO inventory size attributes
+        int playerInventorySize = RPGCrafting.getActiveInventorySize(playerInventory.player);
 
         SimpleInventory craftingInputInventory = new SimpleInventory(
-                playerInventorySize
-                        + playerHotbarSize
+                playerHotbarSize
+                        + playerInventorySize
         );
 
         int k = 0;
         int j;
-        for (j = 0; j < playerInventorySize; j++) { // TODO inventory size attributes
+        for (j = 0; j < playerHotbarSize; j++) {
             craftingInputInventory.setStack(k + j, this.getPlayerInventory().getStack(j).copy());
         }
-        k = k + playerInventorySize;
+        k = k + playerHotbarSize;
+
+        for (j = 0; j < playerInventorySize; j++) {
+            craftingInputInventory.setStack(k + j, this.getPlayerInventory().getStack(9 + j).copy());
+        }
 
         return new MultipleStackRecipeInput(craftingInputInventory.getHeldStacks(), craftingInputInventory.size());
     }
