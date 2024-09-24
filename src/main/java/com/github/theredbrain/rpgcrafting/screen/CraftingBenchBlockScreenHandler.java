@@ -30,13 +30,16 @@ import java.util.Optional;
 
 public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 
-
+    private static final int TAB_1 = 1;
+    private static final int TAB_2 = 2;
+    private static final int TAB_3 = 3;
+    private static final int TAB_4 = 4;
     private final BlockPos blockPos;
     private final boolean isStorageTabProviderInReach;
-    private final boolean isTab0ProviderInReach;
     private final boolean isTab1ProviderInReach;
     private final boolean isTab2ProviderInReach;
     private final boolean isTab3ProviderInReach;
+    private final boolean isTab4ProviderInReach;
     private final boolean isStorageArea0ProviderInReach;
     private final boolean isStorageArea1ProviderInReach;
     private final boolean isStorageArea2ProviderInReach;
@@ -47,14 +50,14 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
     private final Property shouldScreenCalculateCraftingStatus = Property.create();
     private final World world;
     private List<RecipeEntry<RPGCraftingRecipe>> rpgCraftingRecipesList = new ArrayList<>(List.of());
-    private List<RecipeEntry<RPGCraftingRecipe>> tab0StandardCraftingRecipesIdentifierList = new ArrayList<>(List.of());
-    private List<RecipeEntry<RPGCraftingRecipe>> tab0SpecialCraftingRecipesIdentifierList = new ArrayList<>(List.of());
     private List<RecipeEntry<RPGCraftingRecipe>> tab1StandardCraftingRecipesIdentifierList = new ArrayList<>(List.of());
     private List<RecipeEntry<RPGCraftingRecipe>> tab1SpecialCraftingRecipesIdentifierList = new ArrayList<>(List.of());
     private List<RecipeEntry<RPGCraftingRecipe>> tab2StandardCraftingRecipesIdentifierList = new ArrayList<>(List.of());
     private List<RecipeEntry<RPGCraftingRecipe>> tab2SpecialCraftingRecipesIdentifierList = new ArrayList<>(List.of());
     private List<RecipeEntry<RPGCraftingRecipe>> tab3StandardCraftingRecipesIdentifierList = new ArrayList<>(List.of());
     private List<RecipeEntry<RPGCraftingRecipe>> tab3SpecialCraftingRecipesIdentifierList = new ArrayList<>(List.of());
+    private List<RecipeEntry<RPGCraftingRecipe>> tab4StandardCraftingRecipesIdentifierList = new ArrayList<>(List.of());
+    private List<RecipeEntry<RPGCraftingRecipe>> tab4SpecialCraftingRecipesIdentifierList = new ArrayList<>(List.of());
     private int currentTab;
     private RecipeType currentRecipeType;
     private final PlayerInventory playerInventory;
@@ -74,10 +77,10 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
         this.currentTab = initialTab;
         this.currentRecipeType = RecipeType.STANDARD;
         this.isStorageTabProviderInReach = (tabProvidersInReach & 1 << 0) != 0;
-        this.isTab0ProviderInReach = (tabProvidersInReach & 1 << 1) != 0;
-        this.isTab1ProviderInReach = (tabProvidersInReach & 1 << 2) != 0;
-        this.isTab2ProviderInReach = (tabProvidersInReach & 1 << 3) != 0;
-        this.isTab3ProviderInReach = (tabProvidersInReach & 1 << 4) != 0;
+        this.isTab1ProviderInReach = (tabProvidersInReach & 1 << 1) != 0;
+        this.isTab2ProviderInReach = (tabProvidersInReach & 1 << 2) != 0;
+        this.isTab3ProviderInReach = (tabProvidersInReach & 1 << 3) != 0;
+        this.isTab4ProviderInReach = (tabProvidersInReach & 1 << 4) != 0;
         this.isStorageArea0ProviderInReach = (storageProvidersInReach & 1 << 0) != 0;
         this.isStorageArea1ProviderInReach = (storageProvidersInReach & 1 << 1) != 0;
         this.isStorageArea2ProviderInReach = (storageProvidersInReach & 1 << 2) != 0;
@@ -165,20 +168,12 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
     }
 
     //region getter/setter
-    public BlockPos getBlockPos() {
-        return this.blockPos;
-    }
-
     public int getSelectedRecipe() {
         return this.selectedRecipe.get();
     }
 
     public void setSelectedRecipe(int newSelectedRecipe) {
         this.selectedRecipe.set(newSelectedRecipe);
-    }
-
-    public int[] getTabLevels() {
-        return this.tabLevels;
     }
 
     public EnderChestInventory getEnderChestInventory() {
@@ -197,10 +192,6 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
         return this.isStorageTabProviderInReach;
     }
 
-    public boolean isTab0ProviderInReach() {
-        return this.isTab0ProviderInReach;
-    }
-
     public boolean isTab1ProviderInReach() {
         return this.isTab1ProviderInReach;
     }
@@ -211,6 +202,10 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 
     public boolean isTab3ProviderInReach() {
         return this.isTab3ProviderInReach;
+    }
+
+    public boolean isTab4ProviderInReach() {
+        return this.isTab4ProviderInReach;
     }
 
     public boolean isStorageArea0ProviderInReach() {
@@ -253,7 +248,7 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
     //endregion getter/setter
 
     public List<RecipeEntry<RPGCraftingRecipe>> getCurrentCraftingRecipesList() {
-        return this.currentTab == 3 ? (this.currentRecipeType == RecipeType.SPECIAL ? this.tab3SpecialCraftingRecipesIdentifierList : this.tab3StandardCraftingRecipesIdentifierList) : this.currentTab == 2 ? (this.currentRecipeType == RecipeType.SPECIAL ? this.tab2SpecialCraftingRecipesIdentifierList : this.tab2StandardCraftingRecipesIdentifierList) : this.currentTab == 1 ? (this.currentRecipeType == RecipeType.SPECIAL ? this.tab1SpecialCraftingRecipesIdentifierList : this.tab1StandardCraftingRecipesIdentifierList) : this.currentTab == 0 ? (this.currentRecipeType == RecipeType.SPECIAL ? this.tab0SpecialCraftingRecipesIdentifierList : this.tab0StandardCraftingRecipesIdentifierList) : new ArrayList<>();
+        return this.currentTab == TAB_4 ? (this.currentRecipeType == RecipeType.SPECIAL ? this.tab4SpecialCraftingRecipesIdentifierList : this.tab4StandardCraftingRecipesIdentifierList) : this.currentTab == TAB_3 ? (this.currentRecipeType == RecipeType.SPECIAL ? this.tab3SpecialCraftingRecipesIdentifierList : this.tab3StandardCraftingRecipesIdentifierList) : this.currentTab == TAB_2 ? (this.currentRecipeType == RecipeType.SPECIAL ? this.tab2SpecialCraftingRecipesIdentifierList : this.tab2StandardCraftingRecipesIdentifierList) : this.currentTab == TAB_1 ? (this.currentRecipeType == RecipeType.SPECIAL ? this.tab1SpecialCraftingRecipesIdentifierList : this.tab1StandardCraftingRecipesIdentifierList) : new ArrayList<>();
     }
 
     public int shouldScreenCalculateCraftingStatus() {
@@ -336,14 +331,14 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
     }
 
     public void populateRecipeLists() {
-            this.tab0StandardCraftingRecipesIdentifierList.clear();
             this.tab1StandardCraftingRecipesIdentifierList.clear();
             this.tab2StandardCraftingRecipesIdentifierList.clear();
             this.tab3StandardCraftingRecipesIdentifierList.clear();
-            this.tab0SpecialCraftingRecipesIdentifierList.clear();
+            this.tab4StandardCraftingRecipesIdentifierList.clear();
             this.tab1SpecialCraftingRecipesIdentifierList.clear();
             this.tab2SpecialCraftingRecipesIdentifierList.clear();
             this.tab3SpecialCraftingRecipesIdentifierList.clear();
+            this.tab4SpecialCraftingRecipesIdentifierList.clear();
 
             for (RecipeEntry<RPGCraftingRecipe> rpgCraftingRecipeEntry : this.rpgCraftingRecipesList) {
 
@@ -351,29 +346,29 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
                     int tab = rpgCraftingRecipe.tab;
                     int level = rpgCraftingRecipe.level;
                     RecipeType recipeType = RecipeType.valueOf(rpgCraftingRecipe.recipeType);
-                    if (tab == 0 && this.tabLevels[0] >= level) {
-                        if (recipeType == RecipeType.STANDARD) {
-                            this.tab0StandardCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
-                        } else if (rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(((DuckPlayerEntityMixin) this.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world) || RPGCrafting.serverConfig.show_all_unlocked_special_recipes) {
-                            this.tab0SpecialCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
-                        }
-                    } else if (tab == 1 && this.tabLevels[1] >= level) {
+                    if (tab == TAB_1 && this.tabLevels[0] >= level) {
                         if (recipeType == RecipeType.STANDARD) {
                             this.tab1StandardCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
                         } else if (rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(((DuckPlayerEntityMixin) this.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world) || RPGCrafting.serverConfig.show_all_unlocked_special_recipes) {
                             this.tab1SpecialCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
                         }
-                    } else if (tab == 2 && this.tabLevels[2] >= level) {
+                    } else if (tab == TAB_2 && this.tabLevels[1] >= level) {
                         if (recipeType == RecipeType.STANDARD) {
                             this.tab2StandardCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
                         } else if (rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(((DuckPlayerEntityMixin) this.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world) || RPGCrafting.serverConfig.show_all_unlocked_special_recipes) {
                             this.tab2SpecialCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
                         }
-                    } else if (tab == 3 && this.tabLevels[3] >= level) {
+                    } else if (tab == TAB_3 && this.tabLevels[2] >= level) {
                         if (recipeType == RecipeType.STANDARD) {
                             this.tab3StandardCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
                         } else if (rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(((DuckPlayerEntityMixin) this.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world) || RPGCrafting.serverConfig.show_all_unlocked_special_recipes) {
                             this.tab3SpecialCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
+                        }
+                    } else if (tab == TAB_4 && this.tabLevels[3] >= level) {
+                        if (recipeType == RecipeType.STANDARD) {
+                            this.tab4StandardCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
+                        } else if (rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(((DuckPlayerEntityMixin) this.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world) || RPGCrafting.serverConfig.show_all_unlocked_special_recipes) {
+                            this.tab4SpecialCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
                         }
                     }
                 }

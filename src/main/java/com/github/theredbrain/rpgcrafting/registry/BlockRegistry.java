@@ -22,10 +22,10 @@ public class BlockRegistry {
     public static final Block STORAGE_AREA_2_PROVIDER_BLOCK = registerBlock("storage_area_2_provider_block", new CraftingTabProviderBlock(-1, Block.Settings.create().mapColor(MapColor.OAK_TAN)), ItemGroupRegistry.RPG_CRAFTING_BLOCKS);
     public static final Block STORAGE_AREA_3_PROVIDER_BLOCK = registerBlock("storage_area_3_provider_block", new CraftingTabProviderBlock(-1, Block.Settings.create().mapColor(MapColor.OAK_TAN)), ItemGroupRegistry.RPG_CRAFTING_BLOCKS);
     public static final Block STORAGE_AREA_4_PROVIDER_BLOCK = registerBlock("storage_area_4_provider_block", new CraftingTabProviderBlock(-1, Block.Settings.create().mapColor(MapColor.OAK_TAN)), ItemGroupRegistry.RPG_CRAFTING_BLOCKS);
-    public static final Block CRAFTING_TAB_0_PROVIDER_BLOCK = registerBlock("crafting_tab_0_provider_block", new CraftingTabProviderBlock(0, Block.Settings.create().mapColor(MapColor.OAK_TAN)), ItemGroupRegistry.RPG_CRAFTING_BLOCKS);
     public static final Block CRAFTING_TAB_1_PROVIDER_BLOCK = registerBlock("crafting_tab_1_provider_block", new CraftingTabProviderBlock(1, Block.Settings.create().mapColor(MapColor.OAK_TAN)), ItemGroupRegistry.RPG_CRAFTING_BLOCKS);
     public static final Block CRAFTING_TAB_2_PROVIDER_BLOCK = registerBlock("crafting_tab_2_provider_block", new CraftingTabProviderBlock(2, Block.Settings.create().mapColor(MapColor.OAK_TAN)), ItemGroupRegistry.RPG_CRAFTING_BLOCKS);
     public static final Block CRAFTING_TAB_3_PROVIDER_BLOCK = registerBlock("crafting_tab_3_provider_block", new CraftingTabProviderBlock(3, Block.Settings.create().mapColor(MapColor.OAK_TAN)), ItemGroupRegistry.RPG_CRAFTING_BLOCKS);
+    public static final Block CRAFTING_TAB_4_PROVIDER_BLOCK = registerBlock("crafting_tab_4_provider_block", new CraftingTabProviderBlock(4, Block.Settings.create().mapColor(MapColor.OAK_TAN)), ItemGroupRegistry.RPG_CRAFTING_BLOCKS);
 
     private static Block registerBlock(String name, Block block, RegistryKey<ItemGroup> itemGroup) {
         Registry.register(Registries.ITEM, RPGCrafting.identifier(name), new BlockItem(block, new Item.Settings()));

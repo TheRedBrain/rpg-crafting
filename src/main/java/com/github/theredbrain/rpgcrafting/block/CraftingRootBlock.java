@@ -43,8 +43,8 @@ public class CraftingRootBlock extends Block {
             return ActionResult.SUCCESS;
         }
         switch (RPGCrafting.serverConfig.crafting_root_block_provided_screen) {
-            case CRAFTING_TAB_0 ->
-                    player.openHandledScreen(createCraftingRootBlockScreenHandlerFactory(state, world, pos, 0));
+            case CRAFTING_TAB_1 ->
+                    player.openHandledScreen(createCraftingRootBlockScreenHandlerFactory(state, world, pos, 1));
             case CRAFTING_GRID_3X3 -> player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
         }
 //        player.incrementStat(Stats.INTERACT_WITH_CRAFTING_TABLE); // TODO stats
@@ -60,15 +60,18 @@ public class CraftingRootBlock extends Block {
         int posX = pos.getX();
         int posY = pos.getY();
         int posZ = pos.getZ();
-        Set<String> craftingTab0LevelProviders = new HashSet<>();
+
+        // using sets so two blocks of the same type only count as one level
         Set<String> craftingTab1LevelProviders = new HashSet<>();
         Set<String> craftingTab2LevelProviders = new HashSet<>();
         Set<String> craftingTab3LevelProviders = new HashSet<>();
+        Set<String> craftingTab4LevelProviders = new HashSet<>();
+
         boolean isStorageTabProviderInReach = false;
-        boolean isCraftingTab0ProviderInReach = false;
         boolean isCraftingTab1ProviderInReach = false;
         boolean isCraftingTab2ProviderInReach = false;
         boolean isCraftingTab3ProviderInReach = false;
+        boolean isCraftingTab4ProviderInReach = false;
         boolean isStorageArea0ProviderInReach = false;
         boolean isStorageArea1ProviderInReach = false;
         boolean isStorageArea2ProviderInReach = false;
@@ -104,10 +107,7 @@ public class CraftingRootBlock extends Block {
 
                         isStorageTabProviderInReach = isStorageArea0ProviderInReach || isStorageArea1ProviderInReach || isStorageArea2ProviderInReach || isStorageArea3ProviderInReach || isStorageArea4ProviderInReach;
 
-                        if (blockState.isOf(BlockRegistry.CRAFTING_TAB_0_PROVIDER_BLOCK) || (RPGCrafting.serverConfig.crafting_root_block_provided_screen == ServerConfig.RootBlockProvidedScreen.CRAFTING_TAB_0 && blockState.isOf(BlockRegistry.CRAFTING_TAB_0_PROVIDER_BLOCK))) {
-                            isCraftingTab0ProviderInReach = true;
-                        }
-                        if (blockState.isOf(BlockRegistry.CRAFTING_TAB_1_PROVIDER_BLOCK)) {
+                        if (blockState.isOf(BlockRegistry.CRAFTING_TAB_1_PROVIDER_BLOCK) || (RPGCrafting.serverConfig.crafting_root_block_provided_screen == ServerConfig.RootBlockProvidedScreen.CRAFTING_TAB_1 && blockState.isOf(BlockRegistry.CRAFTING_TAB_1_PROVIDER_BLOCK))) {
                             isCraftingTab1ProviderInReach = true;
                         }
                         if (blockState.isOf(BlockRegistry.CRAFTING_TAB_2_PROVIDER_BLOCK)) {
@@ -116,8 +116,8 @@ public class CraftingRootBlock extends Block {
                         if (blockState.isOf(BlockRegistry.CRAFTING_TAB_3_PROVIDER_BLOCK)) {
                             isCraftingTab3ProviderInReach = true;
                         }
-                        if (blockState.isIn(Tags.PROVIDES_CRAFTING_TAB_0_LEVEL)) {
-                            craftingTab0LevelProviders.add(blockState.getBlock().getTranslationKey());
+                        if (blockState.isOf(BlockRegistry.CRAFTING_TAB_4_PROVIDER_BLOCK)) {
+                            isCraftingTab4ProviderInReach = true;
                         }
                         if (blockState.isIn(Tags.PROVIDES_CRAFTING_TAB_1_LEVEL)) {
                             craftingTab1LevelProviders.add(blockState.getBlock().getTranslationKey());
@@ -128,21 +128,24 @@ public class CraftingRootBlock extends Block {
                         if (blockState.isIn(Tags.PROVIDES_CRAFTING_TAB_3_LEVEL)) {
                             craftingTab3LevelProviders.add(blockState.getBlock().getTranslationKey());
                         }
+                        if (blockState.isIn(Tags.PROVIDES_CRAFTING_TAB_4_LEVEL)) {
+                            craftingTab4LevelProviders.add(blockState.getBlock().getTranslationKey());
+                        }
                     }
                 }
             }
         }
 
-        tabLevels[0] = craftingTab0LevelProviders.size();
-        tabLevels[1] = craftingTab1LevelProviders.size();
-        tabLevels[2] = craftingTab2LevelProviders.size();
-        tabLevels[3] = craftingTab3LevelProviders.size();
+        tabLevels[0] = craftingTab1LevelProviders.size();
+        tabLevels[1] = craftingTab2LevelProviders.size();
+        tabLevels[2] = craftingTab3LevelProviders.size();
+        tabLevels[3] = craftingTab4LevelProviders.size();
 
         tabProvidersInReach = (byte)(isStorageTabProviderInReach ? tabProvidersInReach | 1 << 0 : tabProvidersInReach & ~(1 << 0));
-        tabProvidersInReach = (byte)(isCraftingTab0ProviderInReach ? tabProvidersInReach | 1 << 1 : tabProvidersInReach & ~(1 << 1));
-        tabProvidersInReach = (byte)(isCraftingTab1ProviderInReach ? tabProvidersInReach | 1 << 2 : tabProvidersInReach & ~(1 << 2));
-        tabProvidersInReach = (byte)(isCraftingTab2ProviderInReach ? tabProvidersInReach | 1 << 3 : tabProvidersInReach & ~(1 << 3));
-        tabProvidersInReach = (byte)(isCraftingTab3ProviderInReach ? tabProvidersInReach | 1 << 4 : tabProvidersInReach & ~(1 << 4));
+        tabProvidersInReach = (byte)(isCraftingTab1ProviderInReach ? tabProvidersInReach | 1 << 1 : tabProvidersInReach & ~(1 << 1));
+        tabProvidersInReach = (byte)(isCraftingTab2ProviderInReach ? tabProvidersInReach | 1 << 2 : tabProvidersInReach & ~(1 << 2));
+        tabProvidersInReach = (byte)(isCraftingTab3ProviderInReach ? tabProvidersInReach | 1 << 3 : tabProvidersInReach & ~(1 << 3));
+        tabProvidersInReach = (byte)(isCraftingTab4ProviderInReach ? tabProvidersInReach | 1 << 4 : tabProvidersInReach & ~(1 << 4));
 
         storageProvidersInReach = (byte)(isStorageArea0ProviderInReach ? storageProvidersInReach | 1 << 0 : storageProvidersInReach & ~(1 << 0));
         storageProvidersInReach = (byte)(isStorageArea1ProviderInReach ? storageProvidersInReach | 1 << 1 : storageProvidersInReach & ~(1 << 1));
