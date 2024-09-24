@@ -1,32 +1,32 @@
 {
-  "parent": "minecraft:recipes/root",
-  "criteria": {
-    "has_logs": {
-      "conditions": {
-        "items": [
-          {
-            "items": "minecraft:birch_log"
-          }
-        ]
-      },
-      "trigger": "minecraft:inventory_changed"
-    },
-    "has_the_recipe": {
-      "conditions": {
-        "recipe": "rpgcrafting_test:birch_log_to_birch_planks"
-      },
-      "trigger": "minecraft:recipe_unlocked"
-    }
-  },
-  "requirements": [
-    [
-      "has_the_recipe",
-      "has_logs"
-    ]
-  ],
-  "rewards": {
-    "recipes": [
-      "rpgcrafting_test:birch_log_to_birch_planks"
-    ]
-  }
+	"parent": "minecraft:recipes/root",
+	"criteria": {
+		"has_logs": {
+			"conditions": {
+				"items": [
+					{
+						"items": "minecraft:birch_log"
+					}
+				]
+			},
+			"trigger": "minecraft:inventory_changed"
+		},
+		"has_the_recipe": {
+			"conditions": {
+				"recipe": "rpgcrafting_test:birch_log_to_birch_planks"
+			},
+			"trigger": "minecraft:recipe_unlocked"
+		}
+	},
+	"requirements": [
+		[
+			"has_the_recipe",
+			"has_logs"
+		]
+	],
+	"rewards": {
+		"recipes": [
+			"rpgcrafting_test:birch_log_to_birch_planks"
+		]
+	}
 }
