@@ -1,0 +1,16 @@
+{
+	"type": "rpgcrafting:rpg_crafting_recipe",
+	"category": "misc",
+	"ingredients": [
+		{
+			"item": "minecraft:birch_log"
+		}
+	],
+	"result": {
+		"id": "minecraft:birch_planks",
+		"count": 4
+	},
+	"level": 0,
+	"tab": 0,
+	"recipeType": "STANDARD"
+}
