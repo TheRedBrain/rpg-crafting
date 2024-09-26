@@ -5,6 +5,7 @@ import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
 import com.github.theredbrain.rpgcrafting.recipe.input.MultipleStackRecipeInput;
 import com.github.theredbrain.rpgcrafting.registry.ScreenHandlerTypesRegistry;
+import com.github.theredbrain.rpgcrafting.screen.slot.RPGCraftingResultSlot;
 import com.github.theredbrain.slotcustomizationapi.api.SlotCustomization;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -27,11 +28,15 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 	private List<RecipeEntry<RPGCraftingRecipe>> rpgCraftingRecipesList = new ArrayList<>(List.of());
 	private List<RecipeEntry<RPGCraftingRecipe>> handCraftingRecipesIdentifierList = new ArrayList<>(List.of());
 	private final PlayerInventory playerInventory;
+	private final SimpleInventory craftingResultInventory;
+	private final SimpleInventory craftingResultIngredientsInventory;
 
 	public HandCraftingScreenHandler(int syncId, PlayerInventory playerInventory) {
 		super(ScreenHandlerTypesRegistry.HAND_CRAFTING_SCREEN_HANDLER, syncId);
 		this.playerInventory = playerInventory;
 		this.world = playerInventory.player.getWorld();
+		this.craftingResultInventory = new SimpleInventory(1);
+		this.craftingResultIngredientsInventory = new SimpleInventory(4);
 
 		this.updateRPGCraftingRecipesList();
 
@@ -45,6 +50,12 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 			for (int j = 0; j < 9; ++j) {
 				this.addSlot(new Slot(playerInventory, j + (i + 1) * 9, 62 + j * 18, 151 + i * 18));
 			}
+		}
+
+		// crafting result slots 36 - 40
+		this.addSlot(new RPGCraftingResultSlot(this.craftingResultInventory, 0, 135, 22));
+		for (i = 0; i < 4; ++i) {
+			this.addSlot(new RPGCraftingResultSlot(this.craftingResultIngredientsInventory, i, 135 + (i * 18), 92));
 		}
 
 		// Inventory Size Attributes compatibility
@@ -114,6 +125,14 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 
 	public PlayerInventory getPlayerInventory() {
 		return this.playerInventory;
+	}
+
+	public SimpleInventory getCraftingResultInventory() {
+		return this.craftingResultInventory;
+	}
+
+	public SimpleInventory getCraftingResultIngredientsInventory() {
+		return this.craftingResultIngredientsInventory;
 	}
 
 	public List<RecipeEntry<RPGCraftingRecipe>> getCurrentCraftingRecipesList() {

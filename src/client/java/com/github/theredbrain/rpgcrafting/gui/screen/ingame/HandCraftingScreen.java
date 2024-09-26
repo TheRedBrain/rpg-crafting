@@ -7,6 +7,7 @@ import com.github.theredbrain.rpgcrafting.network.packet.UpdateHandCraftingScree
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateHandCraftingScreenHandlerSelectedRecipePacket;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
 import com.github.theredbrain.rpgcrafting.screen.HandCraftingScreenHandler;
+import com.github.theredbrain.slotcustomizationapi.api.SlotCustomization;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -19,9 +20,12 @@ import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -46,6 +50,9 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 	private List<RecipeEntry<RPGCraftingRecipe>> recipeList = new ArrayList<>();
 
 	private ButtonWidget craftButton;
+
+	private MutableText craftingResultDescription = Text.empty();
+
 	private float scrollAmount;
 	private boolean mouseClicked;
 	private int scrollPosition;
@@ -124,9 +131,48 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 		World world = this.handler.getPlayerInventory().player.getWorld();
 		List<RecipeEntry<RPGCraftingRecipe>> activeRecipeList = this.recipeList;
 		int selectedRecipe = this.handler.getSelectedRecipe();
+
+		this.handler.getCraftingResultInventory().clear();
+		this.handler.getCraftingResultIngredientsInventory().clear();
+
 		if (selectedRecipe >= 0 && selectedRecipe < activeRecipeList.size()) {
+
+			((SlotCustomization) this.handler.slots.get(36)).slotcustomizationapi$setDisabledOverride(false);
+
 			RecipeEntry<RPGCraftingRecipe> craftingRecipeEntry = activeRecipeList.get(selectedRecipe);
+
+			this.handler.getCraftingResultInventory().addStack(craftingRecipeEntry.value().result.copy());
+
+			List<Ingredient> ingredients = craftingRecipeEntry.value().ingredients;
+			for (Ingredient ingredient : ingredients) {
+				ItemStack[] ingredientItemStacks = ingredient.getMatchingStacks();
+				// TODO cycle through all itemStacks
+				this.handler.getCraftingResultIngredientsInventory().addStack(ingredientItemStacks[0].copy());
+			}
+			int ingredientAmount = 0;
+			for (ItemStack itemStack : this.handler.getCraftingResultIngredientsInventory().heldStacks) {
+				if (!itemStack.isEmpty()) {
+					ingredientAmount++;
+				}
+			}
+			for (int i = 0; i < 4; i++) {
+				((SlotCustomization) this.handler.slots.get(37 + i)).slotcustomizationapi$setDisabledOverride(i >= ingredientAmount);
+			}
+
+			// recipe description
+			Identifier id = craftingRecipeEntry.id();
+			String craftingResultDescriptionString = "recipe." + id.getNamespace() + "." + id.getPath() + ".description";
+			MutableText newCraftingResultDescription = Text.translatable(craftingResultDescriptionString);
+			if (newCraftingResultDescription.getString().equals(craftingResultDescriptionString)) {
+				newCraftingResultDescription = Text.empty();
+			}
+			this.craftingResultDescription = newCraftingResultDescription;
+
 			craftButtonActive = craftingRecipeEntry.value().matches(this.handler.getCraftingInputInventory(), world);
+		} else {
+			for (int i = 0; i < 5; i++) {
+				((SlotCustomization) this.handler.slots.get(36 + i)).slotcustomizationapi$setDisabledOverride(true);
+			}
 		}
 		this.craftButton.active = craftButtonActive;
 	}
@@ -253,15 +299,15 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 
 		int selectedRecipe = this.handler.getSelectedRecipe();
 		if (selectedRecipe != -1 && this.client != null && this.client.world != null && selectedRecipe < recipeList.size()) {
-			RPGCraftingRecipe craftingRecipe = recipeList.get(selectedRecipe).value();
-			ItemStack resultItemStack = craftingRecipe.getResult(this.client.world.getRegistryManager());
 
-			x = this.x + 135;
-			y = this.y + 20;
-			context.drawItemWithoutEntity(resultItemStack, x, y);
-			context.drawItemInSlot(this.textRenderer, resultItemStack, x, y);
+			context.drawText(this.textRenderer, this.handler.getCraftingResultInventory().getStack(0).getName(), x + 155, y + 26, 16777215, false);
 
-			context.drawText(this.textRenderer, resultItemStack.getName(), x + 20, y + 4, 4210752, false);
+			if (this.craftingResultDescription != Text.EMPTY) {
+				context.drawTextWrapped(this.textRenderer, this.craftingResultDescription, x + 139, y + 42, 132, 16777215);
+			}
+
+			context.drawText(this.textRenderer, Text.translatable("gui.rpg_crafting.recipe_result.ingredients_title").formatted(Formatting.UNDERLINE), x + 135, y + 80, 16777215, false);
+
 		}
 	}
 

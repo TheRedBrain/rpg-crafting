@@ -75,8 +75,7 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 		return bl;
 	}
 
-	public boolean hasIngredient(MultipleStackRecipeInput input, World world) {
-		boolean bl = true;
+	public boolean hasIngredient(MultipleStackRecipeInput input) {
 		int inputSize = input.getSize();
 		Inventory inputCopy = new SimpleInventory(inputSize);
 		int j;
@@ -86,14 +85,12 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 
 		for (Ingredient ingredient : this.ingredients) {
 			for (j = 0; j < inputSize; j++) {
-				bl = false;
 				if (ingredient.test(inputCopy.getStack(j))) {
-					bl = true;
-					break;
+					return true;
 				}
 			}
 		}
-		return bl;
+		return false;
 	}
 
 	@Override

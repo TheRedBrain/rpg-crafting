@@ -5,6 +5,7 @@ import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
 import com.github.theredbrain.rpgcrafting.recipe.input.MultipleStackRecipeInput;
 import com.github.theredbrain.rpgcrafting.registry.ScreenHandlerTypesRegistry;
+import com.github.theredbrain.rpgcrafting.screen.slot.RPGCraftingResultSlot;
 import com.github.theredbrain.slotcustomizationapi.api.SlotCustomization;
 import com.mojang.serialization.Codec;
 import net.minecraft.entity.player.PlayerEntity;
@@ -63,6 +64,8 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 	private final PlayerInventory playerInventory;
 	private final EnderChestInventory enderChestInventory;
 	private final SimpleInventory stashInventory;
+	private final SimpleInventory craftingResultInventory;
+	private final SimpleInventory craftingResultIngredientsInventory;
 
 	public CraftingBenchBlockScreenHandler(int syncId, PlayerInventory playerInventory, CraftingBenchBlockData data) {
 
@@ -89,6 +92,8 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 		this.tabLevels = tabLevels;
 		this.enderChestInventory = enderChestInventory;
 		this.stashInventory = stashInventory;
+		this.craftingResultInventory = new SimpleInventory(1);
+		this.craftingResultIngredientsInventory = new SimpleInventory(4);
 
 
 		this.updateRPGCraftingRecipesList();
@@ -131,6 +136,12 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 			for (int j = 0; j < 7; ++j) {
 				this.addSlot(new Slot(enderChestInventory, 6 + j + i * 7, 69 + j * 18, 83 + i * 18));
 			}
+		}
+
+		// crafting result slots 97 - 101
+		this.addSlot(new RPGCraftingResultSlot(this.craftingResultInventory, 0, 135, 22));
+		for (i = 0; i < 4; ++i) {
+			this.addSlot(new RPGCraftingResultSlot(this.craftingResultIngredientsInventory, i, 135 + (i * 18), 92));
 		}
 
 		// Inventory Size Attributes compatibility
@@ -231,6 +242,14 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 
 	public PlayerInventory getPlayerInventory() {
 		return this.playerInventory;
+	}
+
+	public SimpleInventory getCraftingResultInventory() {
+		return this.craftingResultInventory;
+	}
+
+	public SimpleInventory getCraftingResultIngredientsInventory() {
+		return this.craftingResultIngredientsInventory;
 	}
 
 	public boolean isStorageTabProviderInReach() {

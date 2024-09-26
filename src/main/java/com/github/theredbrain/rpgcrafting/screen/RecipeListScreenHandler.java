@@ -5,6 +5,7 @@ import com.github.theredbrain.rpgcrafting.inventory.RecipeListInputInventory;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
 import com.github.theredbrain.rpgcrafting.recipe.input.MultipleStackRecipeInput;
 import com.github.theredbrain.rpgcrafting.registry.ScreenHandlerTypesRegistry;
+import com.github.theredbrain.rpgcrafting.screen.slot.RPGCraftingResultSlot;
 import com.github.theredbrain.slotcustomizationapi.api.SlotCustomization;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -29,12 +30,16 @@ public class RecipeListScreenHandler extends ScreenHandler {
 	private List<RecipeEntry<RPGCraftingRecipe>> craftingListRecipesIdentifierList = new ArrayList<>(List.of());
 	private final PlayerInventory playerInventory;
 	private final RecipeListInputInventory input;
+	private final SimpleInventory craftingResultInventory;
+	private final SimpleInventory craftingResultIngredientsInventory;
 
 	public RecipeListScreenHandler(int syncId, PlayerInventory playerInventory) {
 		super(ScreenHandlerTypesRegistry.CRAFTING_LIST_SCREEN_HANDLER, syncId);
 		this.playerInventory = playerInventory;
 		this.world = playerInventory.player.getWorld();
 		this.input = new RecipeListInputInventory(1, this);
+		this.craftingResultInventory = new SimpleInventory(1);
+		this.craftingResultIngredientsInventory = new SimpleInventory(4);
 
 		this.updateRPGCraftingRecipesList();
 
@@ -51,6 +56,12 @@ public class RecipeListScreenHandler extends ScreenHandler {
 		}
 		// input 36
 		this.addSlot(new Slot(this.input, 0, 22, 62));
+
+		// crafting result slots 37 - 41
+		this.addSlot(new RPGCraftingResultSlot(this.craftingResultInventory, 0, 135, 22));
+		for (i = 0; i < 4; ++i) {
+			this.addSlot(new RPGCraftingResultSlot(this.craftingResultIngredientsInventory, i, 135 + (i * 18), 92));
+		}
 
 		// Inventory Size Attributes compatibility
 		int activeHotbarSize = RPGCrafting.getActiveHotbarSize(playerInventory.player);
@@ -136,6 +147,14 @@ public class RecipeListScreenHandler extends ScreenHandler {
 
 	public RecipeListInputInventory getInput() {
 		return input;
+	}
+
+	public SimpleInventory getCraftingResultInventory() {
+		return this.craftingResultInventory;
+	}
+
+	public SimpleInventory getCraftingResultIngredientsInventory() {
+		return this.craftingResultIngredientsInventory;
 	}
 
 	public MultipleStackRecipeInput getRecipeListInputInventory() {

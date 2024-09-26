@@ -45,6 +45,10 @@
 	"gui.hand_crafting.title": "Hand Crafting",
 	"gui.hand_crafting.hotkey_disabled_by_server": "This hotkey was disabled by a server setting",
 
+	"gui.rpg_crafting.recipe_result.ingredients_title": "Ingredients",
+	"gui.rpg_crafting.recipe_result.requirements_button": "%s: Level %s",
+	"gui.rpg_crafting.recipe_result.requirements_button.tooltip": "Required level of crafting station / hand crafting",
+
 	"hud.message.not_all_crafting_ingredients_were_found": "Not all crafting ingredients were found",
 
 	"itemGroup.rpgcrafting.rpg_crafting_blocks": "RPG Crafting Blocks",
