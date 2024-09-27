@@ -19,4 +19,14 @@ public class RPGCraftingResultSlot extends Slot {
 	public boolean canTakeItems(PlayerEntity playerEntity) {
 		return false;
 	}
+
+	@Override
+	public boolean canBeHighlighted() {
+		return false;
+	}
+
+	@Override
+	public boolean disablesDynamicDisplay() {
+		return true;
+	}
 }

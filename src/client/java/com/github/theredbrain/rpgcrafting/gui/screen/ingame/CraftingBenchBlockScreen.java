@@ -408,10 +408,10 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 				int m = l - this.scrollPosition;
 				double d = mouseX - (double) (i + m % RECIPE_FIELD_WIDTH * 18);
 				double e = mouseY - (double) (j + m / RECIPE_FIELD_WIDTH * 18);
-				if (d >= 0.0 && e >= 0.0 && d < 18.0 && e < 18.0 && this.client != null && this.client.interactionManager != null && this.handler.onButtonClick(this.client.player, l - this.scrollPosition)) {
+				if (d >= 0.0 && e >= 0.0 && d < 18.0 && e < 18.0 && this.client != null && this.client.interactionManager != null && this.handler.onButtonClick(this.client.player, l)) {
 					MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_STONECUTTER_SELECT_RECIPE, 1.0F));
 					if (this.isInBounds(l - this.scrollPosition)) {
-						this.client.interactionManager.clickButton(this.handler.syncId, l - this.scrollPosition);
+						this.client.interactionManager.clickButton(this.handler.syncId, l);
 					} else {
 						this.client.interactionManager.clickButton(this.handler.syncId, -1);
 					}
@@ -453,7 +453,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 			int i = this.getMaxScroll();
 			float f = (float) verticalAmount / (float) i;
 			this.scrollAmount = MathHelper.clamp(this.scrollAmount - f, 0.0F, 1.0F);
-			this.scrollPosition = (int) ((double) (this.scrollAmount * (float) i) + 0.5) * 3;
+			this.scrollPosition = (int) ((double) (this.scrollAmount * (float) i) + 0.5) * RECIPE_FIELD_WIDTH;
 		}
 
 		return true;
@@ -524,7 +524,15 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 			int selectedRecipe = this.handler.getSelectedRecipe();
 			if (selectedRecipe != -1 && this.client != null && this.client.world != null && selectedRecipe < recipeList.size()) {
 
-				context.drawText(this.textRenderer, this.handler.getCraftingResultInventory().getStack(0).getName(), x + 155, y + 26, 16777215, false);
+				ItemStack resultItemStack = this.handler.getCraftingResultInventory().getStack(0);
+				Text resultName;
+				int count = resultItemStack.getCount();
+				if (count > 1) {
+					resultName = Text.translatable("gui.rpg_crafting.recipe_result.results_title", resultItemStack.getName(), resultItemStack.getCount());
+				} else {
+					resultName = resultItemStack.getName();
+				}
+				context.drawText(this.textRenderer, resultName, x + 155, y + 26, 16777215, false);
 
 				if (this.craftingResultDescription != Text.EMPTY) {
 					context.drawTextWrapped(this.textRenderer, this.craftingResultDescription, x + 139, y + 42, 132, 16777215);
@@ -561,6 +569,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 
 	protected int getMaxScroll() {
 //        return (this.recipeList.size() + 3 - 1) / 3 - 3; // TODO testing
-		return (this.recipeList.size() + RECIPE_FIELD_WIDTH - 1) / RECIPE_FIELD_WIDTH - RECIPE_FIELD_WIDTH;
+//		return (this.recipeList.size() + RECIPE_FIELD_WIDTH - 1) / RECIPE_FIELD_WIDTH - RECIPE_FIELD_WIDTH;
+		return (this.recipeList.size() + 1) / RECIPE_FIELD_WIDTH - RECIPE_FIELD_WIDTH;
 	}
 }

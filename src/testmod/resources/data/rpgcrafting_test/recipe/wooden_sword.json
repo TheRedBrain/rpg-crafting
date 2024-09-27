@@ -1,0 +1,21 @@
+{
+	"type": "rpgcrafting:rpg_crafting_recipe",
+	"category": "misc",
+	"ingredients": [
+		{
+			"item": "minecraft:oak_planks"
+		},
+		{
+			"item": "minecraft:oak_planks"
+		},
+		{
+			"item": "minecraft:stick"
+		}
+	],
+	"result": {
+		"id": "minecraft:wooden_sword"
+	},
+	"level": 1,
+	"tab": 1,
+	"recipeType": "STANDARD"
+}

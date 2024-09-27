@@ -1,0 +1,16 @@
+{
+	"type": "rpgcrafting:rpg_crafting_recipe",
+	"category": "misc",
+	"ingredients": [
+		{
+			"item": "minecraft:oak_planks"
+		}
+	],
+	"result": {
+		"id": "minecraft:oak_slab",
+		"count": 2
+	},
+	"level": 1,
+	"tab": 0,
+	"recipeType": "STANDARD"
+}
