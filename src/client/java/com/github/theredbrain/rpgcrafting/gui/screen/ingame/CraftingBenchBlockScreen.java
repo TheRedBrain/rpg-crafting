@@ -178,6 +178,28 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 		}
 	}
 
+	@Override
+	protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
+		context.drawText(this.textRenderer, this.getModifiedTitle(), this.titleX, this.titleY, 4210752, false);
+		context.drawText(this.textRenderer, this.playerInventoryTitle, this.playerInventoryTitleX, this.playerInventoryTitleY, 4210752, false);
+	}
+
+	private Text getModifiedTitle() {
+		if (this.currentTab == 1) {
+			return Text.translatable("gui.crafting_bench.tab_1_title", this.handler.getTabLevels()[0]);
+		} else if (this.currentTab == 2) {
+			return Text.translatable("gui.crafting_bench.tab_2_title", this.handler.getTabLevels()[1]);
+		} else if (this.currentTab == 3) {
+			return Text.translatable("gui.crafting_bench.tab_3_title", this.handler.getTabLevels()[2]);
+		} else if (this.currentTab == 4) {
+			return Text.translatable("gui.crafting_bench.tab_4_title", this.handler.getTabLevels()[3]);
+		} else if (this.currentTab == -1) {
+			return Text.translatable("gui.crafting_bench.stash_title");
+		} else {
+			return this.title;
+		}
+	}
+
 	private void updateRecipeList() {
 		this.recipeList.clear();
 		List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();

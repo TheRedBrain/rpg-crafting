@@ -50,4 +50,5 @@ public class CraftingTabProviderBlock extends Block {
 		return ActionResult.CONSUME;
 //        player.incrementStat(Stats.INTERACT_WITH_CRAFTING_TABLE); // TODO stats
 	}
+	// TODO block states for direction, depending on player orientation on placing
 }

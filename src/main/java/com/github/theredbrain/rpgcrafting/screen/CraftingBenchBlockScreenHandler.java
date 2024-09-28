@@ -224,6 +224,11 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 	}
 
 	//region getter/setter
+
+	public int[] getTabLevels() {
+		return tabLevels;
+	}
+
 	public int getSelectedRecipe() {
 		return this.selectedRecipe.get();
 	}

@@ -49,6 +49,12 @@ public class CraftingRootBlock extends Block {
 		switch (RPGCrafting.serverConfig.crafting_root_block_provided_screen) {
 			case CRAFTING_TAB_1 ->
 					player.openHandledScreen(createCraftingRootBlockScreenHandlerFactory(state, world, pos, 1));
+			case CRAFTING_TAB_2 ->
+					player.openHandledScreen(createCraftingRootBlockScreenHandlerFactory(state, world, pos, 2));
+			case CRAFTING_TAB_3 ->
+					player.openHandledScreen(createCraftingRootBlockScreenHandlerFactory(state, world, pos, 3));
+			case CRAFTING_TAB_4 ->
+					player.openHandledScreen(createCraftingRootBlockScreenHandlerFactory(state, world, pos, 4));
 			case CRAFTING_GRID_3X3 -> player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
 		}
 //        player.incrementStat(Stats.INTERACT_WITH_CRAFTING_TABLE); // TODO stats
@@ -167,7 +173,7 @@ public class CraftingRootBlock extends Block {
 
 			@Override
 			public Text getDisplayName() {
-				return Text.literal("WIP");
+				return Text.translatable("gui.crafting_bench.title");
 			}
 
 			@Nullable
