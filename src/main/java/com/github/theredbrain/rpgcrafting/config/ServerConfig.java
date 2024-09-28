@@ -36,10 +36,13 @@ public class ServerConfig implements ConfigData {
 			""")
 	public boolean show_all_unlocked_special_recipes = false;
 	@Comment("""
-			When set to true, interacting with the Crafting Root block
-			opens the crafting screen on tab 1.
-			Optionally add 'rpgcrafting:crafting_root_block' to
-			the 'provides_crafting_tab_1_level' block tag.
+			Possible values:
+			"NONE": no screen is opened on interaction
+			"CRAFTING_GRID_3X3": the 3x3 vanilla crafting screen is opened on interaction
+			"CRAFTING_TAB_1": the first crafting tab screen is opened on interaction
+			"CRAFTING_TAB_2": the second crafting tab screen is opened on interaction
+			"CRAFTING_TAB_3": the third crafting tab screen is opened on interaction
+			"CRAFTING_TAB_4": the forth crafting tab screen is opened on interaction
 			""")
 	public RootBlockProvidedScreen crafting_root_block_provided_screen = RootBlockProvidedScreen.NONE;
 	@Comment("The crafting list screen can be accessed via hotkey")
@@ -54,7 +57,10 @@ public class ServerConfig implements ConfigData {
 	public enum RootBlockProvidedScreen {
 		NONE,
 		CRAFTING_GRID_3X3,
-		CRAFTING_TAB_1;
+		CRAFTING_TAB_1,
+		CRAFTING_TAB_2,
+		CRAFTING_TAB_3,
+		CRAFTING_TAB_4;
 
 		RootBlockProvidedScreen() {
 		}

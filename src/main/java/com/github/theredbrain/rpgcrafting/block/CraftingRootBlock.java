@@ -111,16 +111,16 @@ public class CraftingRootBlock extends Block {
 
 						isStorageTabProviderInReach = isStorageArea0ProviderInReach || isStorageArea1ProviderInReach || isStorageArea2ProviderInReach || isStorageArea3ProviderInReach || isStorageArea4ProviderInReach;
 
-						if (blockState.isOf(BlockRegistry.CRAFTING_TAB_1_PROVIDER_BLOCK) || (RPGCrafting.serverConfig.crafting_root_block_provided_screen == ServerConfig.RootBlockProvidedScreen.CRAFTING_TAB_1 && blockState.isOf(BlockRegistry.CRAFTING_TAB_1_PROVIDER_BLOCK))) {
+						if (blockState.isOf(BlockRegistry.CRAFTING_TAB_1_PROVIDER_BLOCK) || (RPGCrafting.serverConfig.crafting_root_block_provided_screen == ServerConfig.RootBlockProvidedScreen.CRAFTING_TAB_1 && blockState.isOf(BlockRegistry.CRAFTING_ROOT_BLOCK))) {
 							isCraftingTab1ProviderInReach = true;
 						}
-						if (blockState.isOf(BlockRegistry.CRAFTING_TAB_2_PROVIDER_BLOCK)) {
+						if (blockState.isOf(BlockRegistry.CRAFTING_TAB_2_PROVIDER_BLOCK) || (RPGCrafting.serverConfig.crafting_root_block_provided_screen == ServerConfig.RootBlockProvidedScreen.CRAFTING_TAB_2 && blockState.isOf(BlockRegistry.CRAFTING_ROOT_BLOCK))) {
 							isCraftingTab2ProviderInReach = true;
 						}
-						if (blockState.isOf(BlockRegistry.CRAFTING_TAB_3_PROVIDER_BLOCK)) {
+						if (blockState.isOf(BlockRegistry.CRAFTING_TAB_3_PROVIDER_BLOCK) || (RPGCrafting.serverConfig.crafting_root_block_provided_screen == ServerConfig.RootBlockProvidedScreen.CRAFTING_TAB_3 && blockState.isOf(BlockRegistry.CRAFTING_ROOT_BLOCK))) {
 							isCraftingTab3ProviderInReach = true;
 						}
-						if (blockState.isOf(BlockRegistry.CRAFTING_TAB_4_PROVIDER_BLOCK)) {
+						if (blockState.isOf(BlockRegistry.CRAFTING_TAB_4_PROVIDER_BLOCK) || (RPGCrafting.serverConfig.crafting_root_block_provided_screen == ServerConfig.RootBlockProvidedScreen.CRAFTING_TAB_4 && blockState.isOf(BlockRegistry.CRAFTING_ROOT_BLOCK))) {
 							isCraftingTab4ProviderInReach = true;
 						}
 						if (blockState.isIn(Tags.PROVIDES_CRAFTING_TAB_1_LEVEL)) {
