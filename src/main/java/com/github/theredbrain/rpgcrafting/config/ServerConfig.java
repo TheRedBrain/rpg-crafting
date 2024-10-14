@@ -9,10 +9,9 @@ import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 )
 public class ServerConfig implements ConfigData {
 	@Comment("""
-			The radius around crafting root blocks where tab provider
-			blocks can open the crafting screen and enable their crafting tab/level.
+			The radius around crafting bench blocks where they check for blocks that enable additional tabs and that increase tab levels.
 			""")
-	public int crafting_root_block_reach_radius = 10;
+	public int crafting_bench_block_reach_radius = 10;
 	@Comment("""
 			The default hand crafting level.
 			""")
@@ -35,16 +34,6 @@ public class ServerConfig implements ConfigData {
 			Recipes can be unlocked via gaining advancements, like in vanilla Minecraft
 			""")
 	public boolean show_all_unlocked_special_recipes = false;
-	@Comment("""
-			Possible values:
-			"NONE": no screen is opened on interaction
-			"CRAFTING_GRID_3X3": the 3x3 vanilla crafting screen is opened on interaction
-			"CRAFTING_TAB_1": the first crafting tab screen is opened on interaction
-			"CRAFTING_TAB_2": the second crafting tab screen is opened on interaction
-			"CRAFTING_TAB_3": the third crafting tab screen is opened on interaction
-			"CRAFTING_TAB_4": the forth crafting tab screen is opened on interaction
-			""")
-	public RootBlockProvidedScreen crafting_root_block_provided_screen = RootBlockProvidedScreen.NONE;
 	@Comment("The crafting list screen can be accessed via hotkey")
 	public boolean is_crafting_list_screen_hotkey_enabled = true;
 	@Comment("The hand crafting screen can be accessed via hotkey")
@@ -52,17 +41,5 @@ public class ServerConfig implements ConfigData {
 
 	public ServerConfig() {
 
-	}
-
-	public enum RootBlockProvidedScreen {
-		NONE,
-		CRAFTING_GRID_3X3,
-		CRAFTING_TAB_1,
-		CRAFTING_TAB_2,
-		CRAFTING_TAB_3,
-		CRAFTING_TAB_4;
-
-		RootBlockProvidedScreen() {
-		}
 	}
 }

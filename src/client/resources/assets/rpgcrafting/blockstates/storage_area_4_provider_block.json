@@ -1,7 +1,30 @@
 {
   "variants": {
-    "": {
-      "model": "rpgcrafting:block/storage_area_4_provider_block"
+    "facing=down": {
+      "model": "minecraft:block/barrel",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "minecraft:block/barrel",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "minecraft:block/barrel",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "minecraft:block/barrel",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "minecraft:block/barrel"
+    },
+    "facing=west": {
+      "model": "minecraft:block/barrel",
+      "x": 90,
+      "y": 270
     }
   }
 }

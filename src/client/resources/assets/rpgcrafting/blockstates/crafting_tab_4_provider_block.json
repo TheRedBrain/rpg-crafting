@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "rpgcrafting:block/crafting_tab_4_provider_block"
+      "model": "minecraft:block/cauldron"
     }
   }
 }
