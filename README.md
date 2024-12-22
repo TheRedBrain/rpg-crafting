@@ -72,6 +72,16 @@ Example:
   - 1 to 4: the different tabs in the Crafting Bench screen
 - "recipeType", either "STANDARD" or "SPECIAL". This is not used, when the "tab" is set to 0.
 
+### Recipe Descriptions
+
+Recipes can optionally have a description, that is displayed on crafting screens and the recipe list.
+
+The localization key has the following syntax:
+
+"recipe.<recipe_namespace>.<recipe_path>.description"
+
+Note that "recipe_path" must include eventual subfolders in the recipe directory.
+
 ## Crafting Bench Screen
 
 This screen is the most complex of the three.
@@ -114,4 +124,4 @@ The "Craft" button can not be clicked, but it shows which level of which craftin
 
 ## Customization
 
-Data and Resource Packs and the config files can be used to extensively customize this mod.
+Data and resource Packs, game rules and the config files can be used to extensively customize this mod.
