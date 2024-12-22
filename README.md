@@ -1,6 +1,6 @@
 # RPG Crafting
 
-RPG Crafting introduces an alternative/replacement/addition to the traditional crafting system. It is heavily inspired by games like Valheim and Terraria.
+Introduces an alternative/replacement/addition to the traditional crafting system. It is heavily inspired by games like Valheim and Terraria.
 
 # Differences to vanilla crafting
 
