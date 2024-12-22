@@ -61,7 +61,23 @@
 	"key.rpgcrafting.craftingListScreen": "Open Crafting List Screen",
 	"key.rpgcrafting.handCraftingScreen": "Open Hand Crafting Screen",
 
-	"text.autoconfig.rpgcrafting.title": "RPG Crafting",
-	"text.autoconfig.rpgcrafting.category.generalClientConfig": "General",
-	"text.autoconfig.rpgcrafting.option.generalClientConfig.show_inactive_slots": "Show background of inactive slots"
+	"rpgcrafting.server": "Server Side Settings",
+
+	"rpgcrafting.server.crafting_bench_block_reach_radius": "Crafting Bench Block Reach Radius",
+	"rpgcrafting.server.crafting_bench_block_reach_radius.desc": "The radius around 'tab providing blocks' where they check for blocks that enable additional tabs and that increase tab levels.",
+
+	"rpgcrafting.server.default_hand_crafting_level": "Default Handcrafting Level",
+
+	"rpgcrafting.server.show_locked_recipes_in_recipe_list": "Show Locked Recipes In Recipe List",
+	"rpgcrafting.server.show_locked_recipes_in_crafting_screens": "Show Locked Recipes In Crafting Screens",
+	"rpgcrafting.server.show_all_unlocked_special_recipes": "Show All Unlocked Special Recipes",
+	"rpgcrafting.server.show_all_unlocked_special_recipes.desc": "When set to false, special recipes are only visible when unlocked and when all ingredients are available.",
+
+	"rpgcrafting.server.is_crafting_list_screen_hotkey_enabled": "Enable Crafting List Hotkey",
+	"rpgcrafting.server.is_hand_crafting_screen_hotkey_enabled": "Enable Handcrafting Hotkey",
+
+	"rpgcrafting.client": "Client Side Settings",
+
+	"rpgcrafting.client.show_inactive_slots": "Show Inactive Slots",
+	"rpgcrafting.client.show_inactive_slots.desc": "Inventory Size Attributes - Compat Setting"
 }
