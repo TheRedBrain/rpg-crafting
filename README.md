@@ -2,11 +2,19 @@
 
 Introduces an alternative/replacement/addition to the traditional crafting system. It is heavily inspired by games like Valheim and Terraria.
 
-# Differences to vanilla crafting
+## Content
+
+RPG Crafting adds a custom recipe type, similar to the stone cutter recipe type, but instead of a single item the crafting input can contain multiple items.
+
+It also adds several blocks which open different screens on interaction.
+
+The mod does not add crafting recipes for the new system, however. 
+
+## Differences to vanilla crafting
 
 The traditional system provides a grid for ingredients, where the pattern made with ingredient items determines the output.
 
-RPG Crafting takes the "stone cutter approach" and takes it to the next level. The player can select a recipe out of a list of available recipes.
+RPG Crafting takes the "stone cutter approach" and takes it to the next level. The player can select a recipe out of a list of unlocked recipes.
 The ingredients are (by default) taken out of the players inventory.
 
 RPG Crafting uses simple ingredient lists. While this might look not as interesting as the vanilla system, it has several advantages
@@ -15,15 +23,8 @@ RPG Crafting uses simple ingredient lists. While this might look not as interest
 - ingredient amounts are not restricted
 - unique recipe patterns are not required
 
-
-# Content
-RPG Crafting a custom recipe type, similar to the stonecutter recipe type.
-But instead of a single item, the crafting input can contain multiple items. 
-The player can choose a recipe out of a list of all valid recipes.
-
-
-
 ## Recipes
+
 Recipes are defined via data packs.
 Example:
 
@@ -67,27 +68,50 @@ Example:
 - "result", an item stack that is given to the player upon crafting
 - "level", an integer. This determines which level the crafting station has to be at a minimum.
 - "tab", an integer. This determines at which crafting station this recipe is crafted.
-  - 0: hand crafting
+  - 0: handcrafting
   - 1 to 4: the different tabs in the Crafting Bench screen
 - "recipeType", either "STANDARD" or "SPECIAL". This is not used, when the "tab" is set to 0.
 
 ## Crafting Bench Screen
+
 This screen is the most complex of the three.
-Interacting with certain blocks opens this screen. Depending on the block, a different "tab" is initially selected. 
-Each of these tabs represents a different crafting station, eg. a crafting bench or an anvil.
-Each tab has two sub categories, "STANDARD" and "SPECIAL"
+
+Interacting with 'crafting tab provider blocks' opens this screen. Depending on the block, a different "tab" is initially selected. 
+
+Each of these tabs represents a different crafting station and has two sub categories, "STANDARD" and "SPECIAL".
+
 Each tab shows only the recipes that can be crafted at that crafting station and of the currently selected sub category.
 
-## Hand Crafting Screen
-Hand Crafting is a special "crafting station", that is accessed via a hotkey/button.
-This screen doesn't have different tabs.
-The level of Hand Crafting is determined by the new entity attribute "generic.hand_crafting_level".
-Hand Crafting checks the players inventory for ingredients.
+By default, there are 4 Crafting Tab Provider Blocks which look like a crafting table, an anvil, a cauldron and a furnace.
+
+If other 'crafting tab provider blocks' are in a configurable radius around the interacted block, the corresponding tab can be accessed via a button.
+
+Each crafting tab has a level. It is 0 by default and can be increased by placing specific blocks in a configurable radius around the interacted block. This is controlled by block tags.
+
+## Stash Crafting
+
+The stash is an additional player specific inventory, similar to the ender chest inventory. Both inventories can be accessed by interacting with 'storage area provider blocks'.
+
+Depending on the 'storage area provider block' different slots of those inventories are accessible. If other 'storage area provider blocks' are in a configurable radius around the interacted block, the corresponding slots are accessible, too.
+
+There is also a button that toggles 'stash crafting'. When enabled, items in the stash/ender chest inventory are used for crafting.
+
+## Handcrafting Screen
+
+Handcrafting is a special "crafting station", that is accessed via a hotkey/button. This screen doesn't have different tabs.
+
+The level of handcrafting is determined by the new entity attribute "generic.hand_crafting_level".
+
+Handcrafting checks the players inventory for ingredients.
 
 ## Recipe List Screen
-This screen has a single inventory slot in addition to the player inventory. The recipe list will show every single (unlocked) recipe, that has the item in the slot as an ingredient.
+
+This screen has a single inventory slot in addition to the player inventory and is accessed via a hotkey/button.
+
+The recipe list will show every single recipe, that has the item in the slot as an ingredient.
+
 The "Craft" button can not be clicked, but it shows which level of which crafting station is required for the recipe.
 
-# Customization
-Data and Resource Packs and the config files can be used to extensively customize this mod.
+## Customization
 
+Data and Resource Packs and the config files can be used to extensively customize this mod.
