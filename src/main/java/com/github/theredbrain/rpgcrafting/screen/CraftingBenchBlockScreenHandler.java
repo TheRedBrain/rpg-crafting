@@ -418,25 +418,25 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 			if (tab == TAB_1 && this.tabLevels[0] >= level) {
 				if (recipeType == RecipeType.STANDARD) {
 					this.tab1StandardCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
-				} else if (rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(((DuckPlayerEntityMixin) this.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world) || RPGCrafting.serverConfig.show_all_unlocked_special_recipes) {
+				} else if (rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(((DuckPlayerEntityMixin) this.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world) || RPGCrafting.SERVER_CONFIG.show_all_unlocked_special_recipes.get()) {
 					this.tab1SpecialCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
 				}
 			} else if (tab == TAB_2 && this.tabLevels[1] >= level) {
 				if (recipeType == RecipeType.STANDARD) {
 					this.tab2StandardCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
-				} else if (rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(((DuckPlayerEntityMixin) this.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world) || RPGCrafting.serverConfig.show_all_unlocked_special_recipes) {
+				} else if (rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(((DuckPlayerEntityMixin) this.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world) || RPGCrafting.SERVER_CONFIG.show_all_unlocked_special_recipes.get()) {
 					this.tab2SpecialCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
 				}
 			} else if (tab == TAB_3 && this.tabLevels[2] >= level) {
 				if (recipeType == RecipeType.STANDARD) {
 					this.tab3StandardCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
-				} else if (rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(((DuckPlayerEntityMixin) this.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world) || RPGCrafting.serverConfig.show_all_unlocked_special_recipes) {
+				} else if (rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(((DuckPlayerEntityMixin) this.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world) || RPGCrafting.SERVER_CONFIG.show_all_unlocked_special_recipes.get()) {
 					this.tab3SpecialCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
 				}
 			} else if (tab == TAB_4 && this.tabLevels[3] >= level) {
 				if (recipeType == RecipeType.STANDARD) {
 					this.tab4StandardCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
-				} else if (rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(((DuckPlayerEntityMixin) this.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world) || RPGCrafting.serverConfig.show_all_unlocked_special_recipes) {
+				} else if (rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(((DuckPlayerEntityMixin) this.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world) || RPGCrafting.SERVER_CONFIG.show_all_unlocked_special_recipes.get()) {
 					this.tab4SpecialCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
 				}
 			}

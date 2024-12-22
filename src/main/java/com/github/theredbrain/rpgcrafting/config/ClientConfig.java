@@ -1,31 +1,16 @@
 package com.github.theredbrain.rpgcrafting.config;
 
-import me.shedaniel.autoconfig.ConfigData;
-import me.shedaniel.autoconfig.annotation.Config;
-import me.shedaniel.autoconfig.annotation.ConfigEntry;
-import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
+import com.github.theredbrain.rpgcrafting.RPGCrafting;
+import me.fzzyhmstrs.fzzy_config.config.Config;
+import me.fzzyhmstrs.fzzy_config.validation.misc.ValidatedBoolean;
 
-@Config(
-		name = "rpgcrafting"
-)
-public class ClientConfig extends PartitioningSerializer.GlobalData {
-	@ConfigEntry.Category("generalClientConfig")
-	@ConfigEntry.Gui.TransitiveObject
-	public GeneralClientConfig generalClientConfig = new GeneralClientConfig();
+public class ClientConfig extends Config {
 
 	public ClientConfig() {
+		super(RPGCrafting.identifier("client"));
 	}
 
-	@Config(
-			name = "generalClientConfig"
-	)
-	public static class GeneralClientConfig implements ConfigData {
+	public ValidatedBoolean show_inactive_slots = new ValidatedBoolean(false);
 
-		public boolean show_inactive_slots = false;
-
-		public GeneralClientConfig() {
-		}
-
-	}
 }
 

@@ -98,7 +98,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements DuckPlay
 
 	@Override
 	public int rpgcrafting$getActiveHandCraftingLevel() {
-		return Math.max(0, Math.max(0, RPGCrafting.serverConfig.default_hand_crafting_level) + this.rpgcrafting$getHandCraftingLevel());
+		return Math.max(0, Math.max(0, RPGCrafting.SERVER_CONFIG.default_hand_crafting_level.get()) + this.rpgcrafting$getHandCraftingLevel());
 	}
 
 	@Override

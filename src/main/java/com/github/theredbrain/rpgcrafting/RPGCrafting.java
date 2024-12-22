@@ -2,17 +2,14 @@ package com.github.theredbrain.rpgcrafting;
 
 import com.github.theredbrain.inventorysizeattributes.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.config.ServerConfig;
-import com.github.theredbrain.rpgcrafting.config.ServerConfigWrapper;
 import com.github.theredbrain.rpgcrafting.registry.BlockRegistry;
-import com.github.theredbrain.rpgcrafting.registry.EventsRegistry;
 import com.github.theredbrain.rpgcrafting.registry.GameRulesRegistry;
 import com.github.theredbrain.rpgcrafting.registry.ItemGroupRegistry;
 import com.github.theredbrain.rpgcrafting.registry.RecipeRegistry;
 import com.github.theredbrain.rpgcrafting.registry.ScreenHandlerTypesRegistry;
 import com.github.theredbrain.rpgcrafting.registry.ServerPacketRegistry;
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
-import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
+import me.fzzyhmstrs.fzzy_config.api.ConfigApiJava;
+import me.fzzyhmstrs.fzzy_config.api.RegisterType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.attribute.EntityAttribute;
@@ -25,7 +22,7 @@ import org.slf4j.LoggerFactory;
 public class RPGCrafting implements ModInitializer {
 	public static final String MOD_ID = "rpgcrafting";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-	public static ServerConfig serverConfig;
+	public static ServerConfig SERVER_CONFIG = ConfigApiJava.registerAndLoadConfig(ServerConfig::new, RegisterType.BOTH);
 
 	public static RegistryEntry<EntityAttribute> HAND_CRAFTING_LEVEL;
 
@@ -43,14 +40,9 @@ public class RPGCrafting implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Crafting was RPG-ified!");
 
-		// Config
-		AutoConfig.register(ServerConfigWrapper.class, PartitioningSerializer.wrap(JanksonConfigSerializer::new));
-		serverConfig = ((ServerConfigWrapper) AutoConfig.getConfigHolder(ServerConfigWrapper.class).getConfig()).server;
-
 		// Registry
 		BlockRegistry.init();
 		ItemGroupRegistry.init();
-		EventsRegistry.initializeEvents();
 		GameRulesRegistry.init();
 		RecipeRegistry.init();
 		ScreenHandlerTypesRegistry.registerAll();

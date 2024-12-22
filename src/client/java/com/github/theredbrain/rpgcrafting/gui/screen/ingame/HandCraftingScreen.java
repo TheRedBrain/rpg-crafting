@@ -109,7 +109,7 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 		List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();
 		if (this.playerEntity instanceof ClientPlayerEntity clientPlayerEntity) {
 			for (RecipeEntry<RPGCraftingRecipe> recipeEntry : newList) {
-				if (clientPlayerEntity.getRecipeBook().shouldDisplay(recipeEntry) || RPGCrafting.serverConfig.show_locked_recipes_in_crafting_screens) {
+				if (clientPlayerEntity.getRecipeBook().shouldDisplay(recipeEntry) || RPGCrafting.SERVER_CONFIG.show_locked_recipes_in_crafting_screens.get()) {
 					this.recipeList.add(recipeEntry);
 				}
 			}
@@ -250,7 +250,7 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 		int y = this.y;
 		int k;
 		int m;
-		boolean showInactiveSlots = RPGCraftingClient.clientConfigHolder.getConfig().generalClientConfig.show_inactive_slots;
+		boolean showInactiveSlots = RPGCraftingClient.CLIENT_CONFIG.show_inactive_slots.get();
 
 		context.drawTexture(RPGCrafting.identifier("textures/gui/container/crafting_bench/hand_crafting_background.png"), x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 

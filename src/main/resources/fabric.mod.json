@@ -3,7 +3,7 @@
 	"id": "rpgcrafting",
 	"version": "${version}",
 	"name": "RPG Crafting",
-	"description": "This mod adds a new way of crafting, inspired by Valheim",
+	"description": "Introduces an alternative/replacement/addition to the traditional crafting system. It is heavily inspired by games like Valheim and Terraria.",
 	"authors": [
 		"TheRedBrain"
 	],
@@ -21,6 +21,11 @@
 			"com.github.theredbrain.rpgcrafting.RPGCraftingClient"
 		]
 	},
+	"custom": {
+		"fzzy_config": [
+			"rpgcrafting"
+		]
+	},
 	"mixins": [
 		"rpgcrafting.mixins.json",
 		{
@@ -32,7 +37,7 @@
 		"minecraft": "${minecraft_version}",
 		"fabricloader": ">=${loader_version}",
 		"fabric-api": "*",
-		"cloth-config": ">=${cloth_config_version}",
+		"fzzy_config": ">=${fzzy_config_version}",
 		"slotcustomizationapi": ">=${slot_customization_api_version}"
 	}
 }

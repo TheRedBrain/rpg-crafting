@@ -104,7 +104,7 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
 			this.recipeList.clear();
 			List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();
 			for (RecipeEntry<RPGCraftingRecipe> recipeEntry : newList) {
-				if (recipeEntry.value().hasIngredient(this.handler.getRecipeListInputInventory()) && (this.client.player.getRecipeBook().shouldDisplay(recipeEntry) || RPGCrafting.serverConfig.show_locked_recipes_in_recipe_list)) {
+				if (recipeEntry.value().hasIngredient(this.handler.getRecipeListInputInventory()) && (this.client.player.getRecipeBook().shouldDisplay(recipeEntry) || RPGCrafting.SERVER_CONFIG.show_locked_recipes_in_recipe_list.get())) {
 					this.recipeList.add(recipeEntry);
 				}
 			}
@@ -245,7 +245,7 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
 		int y = this.y;
 		int k;
 		int m;
-		boolean showInactiveSlots = RPGCraftingClient.clientConfigHolder.getConfig().generalClientConfig.show_inactive_slots;
+		boolean showInactiveSlots = RPGCraftingClient.CLIENT_CONFIG.show_inactive_slots.get();
 
 		context.drawTexture(CRAFTING_LIST_BACKGROUND_TEXTURE, x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 

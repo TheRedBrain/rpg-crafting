@@ -186,7 +186,7 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 		for (RecipeEntry<RPGCraftingRecipe> rpgCraftingRecipeEntry : this.rpgCraftingRecipesList) {
 			CraftingBenchBlockScreenHandler.RecipeType recipeType = CraftingBenchBlockScreenHandler.RecipeType.valueOf(rpgCraftingRecipeEntry.value().recipeType);
 			if (rpgCraftingRecipeEntry.value().tab == 0 && handCraftingLevel >= rpgCraftingRecipeEntry.value().level) {
-				if (recipeType == CraftingBenchBlockScreenHandler.RecipeType.STANDARD || rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(), world) || RPGCrafting.serverConfig.show_all_unlocked_special_recipes) {
+				if (recipeType == CraftingBenchBlockScreenHandler.RecipeType.STANDARD || rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(), world) || RPGCrafting.SERVER_CONFIG.show_all_unlocked_special_recipes.get()) {
 					this.handCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
 				}
 			}

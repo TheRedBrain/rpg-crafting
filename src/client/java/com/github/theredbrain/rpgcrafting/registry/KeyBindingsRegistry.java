@@ -32,7 +32,7 @@ public class KeyBindingsRegistry {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (KeyBindingsRegistry.openCraftingListScreen.wasPressed()) {
 				if (!openCraftingListScreenBoolean) {
-					if (RPGCrafting.serverConfig.is_crafting_list_screen_hotkey_enabled) {
+					if (RPGCrafting.SERVER_CONFIG.is_crafting_list_screen_hotkey_enabled.get()) {
 						RPGCraftingClient.openCraftingListScreen(client);
 					} else if (client.player != null) {
 						client.player.sendMessage(Text.translatable("gui.crafting_list.hotkey_disabled_by_server"));
@@ -44,7 +44,7 @@ public class KeyBindingsRegistry {
 			}
 			if (KeyBindingsRegistry.openHandCraftingScreen.wasPressed()) {
 				if (!openHandCraftingScreenBoolean) {
-					if (RPGCrafting.serverConfig.is_hand_crafting_screen_hotkey_enabled) {
+					if (RPGCrafting.SERVER_CONFIG.is_hand_crafting_screen_hotkey_enabled.get()) {
 						RPGCraftingClient.openHandCraftingScreen(client);
 					} else if (client.player != null) {
 						client.player.sendMessage(Text.translatable("gui.hand_crafting.hotkey_disabled_by_server"));

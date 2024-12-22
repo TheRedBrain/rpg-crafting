@@ -205,7 +205,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 		List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();
 		if (this.playerEntity instanceof ClientPlayerEntity clientPlayerEntity) {
 			for (RecipeEntry<RPGCraftingRecipe> recipeEntry : newList) {
-				if (clientPlayerEntity.getRecipeBook().shouldDisplay(recipeEntry) || RPGCrafting.serverConfig.show_locked_recipes_in_crafting_screens) {
+				if (clientPlayerEntity.getRecipeBook().shouldDisplay(recipeEntry) || RPGCrafting.SERVER_CONFIG.show_locked_recipes_in_crafting_screens.get()) {
 					this.recipeList.add(recipeEntry);
 				}
 			}
@@ -487,7 +487,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 		int y = this.y;
 		int k;
 		int m;
-		boolean showInactiveSlots = RPGCraftingClient.clientConfigHolder.getConfig().generalClientConfig.show_inactive_slots;
+		boolean showInactiveSlots = RPGCraftingClient.CLIENT_CONFIG.show_inactive_slots.get();
 
 		if (this.currentTab == -1) {
 			context.drawTexture(STORAGE_TAB_BACKGROUND_TEXTURE, x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);

@@ -9,23 +9,16 @@ import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalFacingBlock;
 import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,7 +72,7 @@ public abstract class AbstractCraftingTabProviderBlock extends Block {
 		int[] tabLevels = new int[CRAFTING_TAB_AMOUNT];
 		byte tabProvidersInReach = 0;
 		byte storageProvidersInReach = 0;
-		int crafting_root_block_reach_radius = RPGCrafting.serverConfig.crafting_bench_block_reach_radius;
+		int crafting_root_block_reach_radius = RPGCrafting.SERVER_CONFIG.crafting_bench_block_reach_radius.get();
 
 		BlockState blockState;
 		if (world != null) {
