@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class AbstractCraftingTabProviderBlock extends Block {
+public abstract class AbstractCraftingTabProviderBlock extends Block implements TabProvider {
 	public static final int CRAFTING_TAB_AMOUNT = 4;
 	private final int openedTab;
 
@@ -46,6 +46,13 @@ public abstract class AbstractCraftingTabProviderBlock extends Block {
 //		player.sendMessage(Text.translatable("gui.crafting_bench.no_crafting_root_block_nearby"), true);
 		return ActionResult.CONSUME;
 //        player.incrementStat(Stats.INTERACT_WITH_CRAFTING_TABLE); // TODO stats
+	}
+
+	private static boolean isTabProviderBlockActive(World world, BlockState blockState) {
+		if (blockState.getBlock() instanceof TabProvider tabProvider) {
+			return tabProvider.isActive(world, blockState);
+		}
+		return true;
 	}
 
 	public static NamedScreenHandlerFactory createCraftingTabProviderBlockScreenHandlerFactory(BlockState state, World world, BlockPos pos, int initialTab) {
@@ -76,51 +83,52 @@ public abstract class AbstractCraftingTabProviderBlock extends Block {
 
 		BlockState blockState;
 		if (world != null) {
+			boolean stateIsActiveTabProvider = isTabProviderBlockActive(world, state);
 			for (int i = -crafting_root_block_reach_radius; i <= crafting_root_block_reach_radius; i++) {
 				for (int j = -crafting_root_block_reach_radius; j <= crafting_root_block_reach_radius; j++) {
 					for (int k = -crafting_root_block_reach_radius; k <= crafting_root_block_reach_radius; k++) {
 						blockState = world.getBlockState(new BlockPos(posX + i, posY + j, posZ + k));
 
-						if (blockState.isIn(Tags.PROVIDES_STORAGE_AREA_0) || state.isIn(Tags.PROVIDES_STORAGE_AREA_0)) {
+						if ((blockState.isIn(Tags.PROVIDES_STORAGE_AREA_0) && isTabProviderBlockActive(world, blockState)) || (state.isIn(Tags.PROVIDES_STORAGE_AREA_0) && stateIsActiveTabProvider)) {
 							isStorageArea0ProviderInReach = true;
 						}
-						if (blockState.isIn(Tags.PROVIDES_STORAGE_AREA_1) || state.isIn(Tags.PROVIDES_STORAGE_AREA_1)) {
+						if ((blockState.isIn(Tags.PROVIDES_STORAGE_AREA_1) && isTabProviderBlockActive(world, blockState)) || (state.isIn(Tags.PROVIDES_STORAGE_AREA_1) && stateIsActiveTabProvider)) {
 							isStorageArea1ProviderInReach = true;
 						}
-						if (blockState.isIn(Tags.PROVIDES_STORAGE_AREA_2) || state.isIn(Tags.PROVIDES_STORAGE_AREA_2)) {
+						if ((blockState.isIn(Tags.PROVIDES_STORAGE_AREA_2) && isTabProviderBlockActive(world, blockState)) || (state.isIn(Tags.PROVIDES_STORAGE_AREA_2) && stateIsActiveTabProvider)) {
 							isStorageArea2ProviderInReach = true;
 						}
-						if (blockState.isIn(Tags.PROVIDES_STORAGE_AREA_3) || state.isIn(Tags.PROVIDES_STORAGE_AREA_3)) {
+						if ((blockState.isIn(Tags.PROVIDES_STORAGE_AREA_3) && isTabProviderBlockActive(world, blockState)) || (state.isIn(Tags.PROVIDES_STORAGE_AREA_3) && stateIsActiveTabProvider)) {
 							isStorageArea3ProviderInReach = true;
 						}
-						if (blockState.isIn(Tags.PROVIDES_STORAGE_AREA_4) || state.isIn(Tags.PROVIDES_STORAGE_AREA_4)) {
+						if ((blockState.isIn(Tags.PROVIDES_STORAGE_AREA_4) && isTabProviderBlockActive(world, blockState)) || (state.isIn(Tags.PROVIDES_STORAGE_AREA_4) && stateIsActiveTabProvider)) {
 							isStorageArea4ProviderInReach = true;
 						}
 
 						isStorageTabProviderInReach = isStorageArea0ProviderInReach || isStorageArea1ProviderInReach || isStorageArea2ProviderInReach || isStorageArea3ProviderInReach || isStorageArea4ProviderInReach;
 
-						if (blockState.isOf(BlockRegistry.CRAFTING_TAB_1_PROVIDER_BLOCK) || state.isOf(BlockRegistry.CRAFTING_TAB_1_PROVIDER_BLOCK)) {
+						if ((blockState.isOf(BlockRegistry.CRAFTING_TAB_1_PROVIDER_BLOCK) && isTabProviderBlockActive(world, blockState)) || (state.isOf(BlockRegistry.CRAFTING_TAB_1_PROVIDER_BLOCK) && stateIsActiveTabProvider)) {
 							isCraftingTab1ProviderInReach = true;
 						}
-						if (blockState.isOf(BlockRegistry.CRAFTING_TAB_2_PROVIDER_BLOCK) || state.isOf(BlockRegistry.CRAFTING_TAB_2_PROVIDER_BLOCK)) {
+						if ((blockState.isOf(BlockRegistry.CRAFTING_TAB_2_PROVIDER_BLOCK) && isTabProviderBlockActive(world, blockState)) || (state.isOf(BlockRegistry.CRAFTING_TAB_2_PROVIDER_BLOCK) && stateIsActiveTabProvider)) {
 							isCraftingTab2ProviderInReach = true;
 						}
-						if (blockState.isOf(BlockRegistry.CRAFTING_TAB_3_PROVIDER_BLOCK) || state.isOf(BlockRegistry.CRAFTING_TAB_3_PROVIDER_BLOCK)) {
+						if ((blockState.isOf(BlockRegistry.CRAFTING_TAB_3_PROVIDER_BLOCK) && isTabProviderBlockActive(world, blockState)) || (state.isOf(BlockRegistry.CRAFTING_TAB_3_PROVIDER_BLOCK) && stateIsActiveTabProvider)) {
 							isCraftingTab3ProviderInReach = true;
 						}
-						if (blockState.isOf(BlockRegistry.CRAFTING_TAB_4_PROVIDER_BLOCK) || state.isOf(BlockRegistry.CRAFTING_TAB_4_PROVIDER_BLOCK)) {
+						if ((blockState.isOf(BlockRegistry.CRAFTING_TAB_4_PROVIDER_BLOCK) && isTabProviderBlockActive(world, blockState)) || (state.isOf(BlockRegistry.CRAFTING_TAB_4_PROVIDER_BLOCK) && stateIsActiveTabProvider)) {
 							isCraftingTab4ProviderInReach = true;
 						}
-						if (blockState.isIn(Tags.PROVIDES_CRAFTING_TAB_1_LEVEL)) {
+						if (blockState.isIn(Tags.PROVIDES_CRAFTING_TAB_1_LEVEL) && isTabProviderBlockActive(world, blockState)) {
 							craftingTab1LevelProviders.add(blockState.getBlock().getTranslationKey());
 						}
-						if (blockState.isIn(Tags.PROVIDES_CRAFTING_TAB_2_LEVEL)) {
+						if (blockState.isIn(Tags.PROVIDES_CRAFTING_TAB_2_LEVEL) && isTabProviderBlockActive(world, blockState)) {
 							craftingTab2LevelProviders.add(blockState.getBlock().getTranslationKey());
 						}
-						if (blockState.isIn(Tags.PROVIDES_CRAFTING_TAB_3_LEVEL)) {
+						if (blockState.isIn(Tags.PROVIDES_CRAFTING_TAB_3_LEVEL) && isTabProviderBlockActive(world, blockState)) {
 							craftingTab3LevelProviders.add(blockState.getBlock().getTranslationKey());
 						}
-						if (blockState.isIn(Tags.PROVIDES_CRAFTING_TAB_4_LEVEL)) {
+						if (blockState.isIn(Tags.PROVIDES_CRAFTING_TAB_4_LEVEL) && isTabProviderBlockActive(world, blockState)) {
 							craftingTab4LevelProviders.add(blockState.getBlock().getTranslationKey());
 						}
 					}
