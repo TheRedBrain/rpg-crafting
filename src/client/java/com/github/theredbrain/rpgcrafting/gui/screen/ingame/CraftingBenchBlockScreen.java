@@ -308,6 +308,9 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 
 		} else {
 
+			this.handler.getCraftingResultInventory().clear();
+			this.handler.getCraftingResultIngredientsInventory().clear();
+
 			this.toggleUseStashForCraftingButton.visible = true;
 
 		}
@@ -361,6 +364,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 
 	private void calculateCraftingStatus() {
 		boolean craftButtonActive = false;
+		boolean hideCraftingResultItemStacks = true;
 		if (this.currentTab >= 1) {
 			World world = this.handler.getPlayerInventory().player.getWorld();
 			List<RecipeEntry<RPGCraftingRecipe>> activeRecipeList = this.recipeList;
@@ -371,6 +375,8 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 
 			if (selectedRecipe >= 0 && selectedRecipe < activeRecipeList.size()) {
 
+				hideCraftingResultItemStacks = false;
+
 				((SlotCustomization) this.handler.slots.get(97)).slotcustomizationapi$setDisabledOverride(false);
 
 				RecipeEntry<RPGCraftingRecipe> craftingRecipeEntry = activeRecipeList.get(selectedRecipe);
@@ -380,7 +386,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 				List<Ingredient> ingredients = craftingRecipeEntry.value().ingredients;
 				for (Ingredient ingredient : ingredients) {
 					ItemStack[] ingredientItemStacks = ingredient.getMatchingStacks();
-					// TODO cycle through all itemStacks
+					// TODO cycle through all itemStacks, eg ingredient is #minecraft:planks -> cycle through all plank types
 					this.handler.getCraftingResultIngredientsInventory().addStack(ingredientItemStacks[0].copy());
 				}
 				int ingredientAmount = 0;
@@ -389,6 +395,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 						ingredientAmount++;
 					}
 				}
+				// TODO scrollable list of ingredients?
 				for (int i = 0; i < 4; i++) {
 					((SlotCustomization) this.handler.slots.get(98 + i)).slotcustomizationapi$setDisabledOverride(i >= ingredientAmount);
 				}
@@ -404,12 +411,12 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 
 				craftButtonActive = craftingRecipeEntry.value().matches(this.handler.getCraftingInputInventory(((DuckPlayerEntityMixin) this.handler.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world);
 			} else {
-				for (int i = 0; i < 5; i++) {
-					((SlotCustomization) this.handler.slots.get(97 + i)).slotcustomizationapi$setDisabledOverride(true);
-				}
 			}
 		}
 		this.craftButton.active = craftButtonActive;
+		for (int i = 0; i < 5; i++) {
+			((SlotCustomization) this.handler.slots.get(97 + i)).slotcustomizationapi$setDisabledOverride(hideCraftingResultItemStacks);
+		}
 	}
 
 	@Override
