@@ -143,6 +143,11 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 
 			this.handler.getCraftingResultInventory().addStack(craftingRecipeEntry.value().result.copy());
 
+			List<ItemStack> itemStackIngredients = craftingRecipeEntry.value().itemStackIngredients;
+			for (ItemStack itemStackIngredient : itemStackIngredients) {
+				this.handler.getCraftingResultIngredientsInventory().addStack(itemStackIngredient.copy());
+			}
+
 			List<Ingredient> ingredients = craftingRecipeEntry.value().ingredients;
 			for (Ingredient ingredient : ingredients) {
 				ItemStack[] ingredientItemStacks = ingredient.getMatchingStacks();

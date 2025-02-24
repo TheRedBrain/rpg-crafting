@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
+	public final List<ItemStack> itemStackIngredients;
 	public final List<Ingredient> ingredients;
 	public final ItemStack result;
 	public int level;
@@ -29,7 +30,8 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 	public final String recipeType;
 	public final boolean showNotification;
 
-	public RPGCraftingRecipe(List<Ingredient> ingredients, ItemStack result, int level, int tab, String recipeType, boolean showNotification) {
+	public RPGCraftingRecipe(List<ItemStack> itemStackIngredients, List<Ingredient> ingredients, ItemStack result, int level, int tab, String recipeType, boolean showNotification) {
+		this.itemStackIngredients = itemStackIngredients;
 		this.ingredients = ingredients;
 		this.result = result;
 		this.level = level;
@@ -50,6 +52,31 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 			playerInventoryCopy.setStack(j, input.getStackInSlot(j).copy());
 		}
 
+		for (ItemStack itemStackIngredient : this.itemStackIngredients) {
+			int ingredientCount = itemStackIngredient.getCount();
+			for (j = 0; j < inputSize; j++) {
+				bl = false;
+				if (areItemStacksEqual(itemStackIngredient, playerInventoryCopy.getStack(j))) {
+					itemStack = playerInventoryCopy.getStack(j).copy();
+					int stackCount = itemStack.getCount();
+					if (stackCount > ingredientCount) {
+						itemStack.setCount(stackCount - ingredientCount);
+						ingredientCount = 0;
+						playerInventoryCopy.setStack(j, itemStack);
+					} else {
+						ingredientCount -= stackCount;
+						playerInventoryCopy.setStack(j, ItemStack.EMPTY);
+					}
+					if (ingredientCount <= 0) {
+						bl = true;
+						break;
+					}
+				}
+			}
+			if (!bl) {
+				return false;
+			}
+		}
 		for (Ingredient ingredient : this.ingredients) {
 			for (j = 0; j < inputSize; j++) {
 				bl = false;
@@ -83,11 +110,29 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 			inputCopy.setStack(j, input.getStackInSlot(j).copy());
 		}
 
+		for (ItemStack itemStackIngredient : this.itemStackIngredients) {
+			for (j = 0; j < inputSize; j++) {
+				if (areItemStacksEqual(itemStackIngredient, inputCopy.getStack(j))) {
+					return true;
+				}
+			}
+		}
 		for (Ingredient ingredient : this.ingredients) {
 			for (j = 0; j < inputSize; j++) {
 				if (ingredient.test(inputCopy.getStack(j))) {
 					return true;
 				}
+			}
+		}
+		return false;
+	}
+
+	public static boolean areItemStacksEqual(ItemStack itemStack1, ItemStack itemStack2) {
+		if (itemStack1.getComponentChanges().isEmpty()) {
+			return itemStack1.getItem() == itemStack2.getItem();
+		} else {
+			if (itemStack1.getItem() == itemStack2.getItem()) {
+				return ItemStack.areItemsAndComponentsEqual(itemStack1, itemStack2);
 			}
 		}
 		return false;
@@ -134,6 +179,7 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 
 		public static final MapCodec<RPGCraftingRecipe> CODEC = RecordCodecBuilder.mapCodec(
 				instance -> instance.group(
+						ItemStack.VALIDATED_CODEC.listOf().fieldOf("itemStackIngredients").forGetter(recipe -> recipe.itemStackIngredients),
 						Ingredient.DISALLOW_EMPTY_CODEC.listOf().fieldOf("ingredients").forGetter(recipe -> recipe.ingredients),
 						ItemStack.VALIDATED_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
 						Codec.INT.optionalFieldOf("level", 0).forGetter(recipe -> recipe.level),
@@ -157,6 +203,11 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 		}
 
 		private static RPGCraftingRecipe read(RegistryByteBuf buf) {
+			int itemStackIngredientsSize = buf.readInt();
+			List<ItemStack> itemStackIngredients = new ArrayList<>();
+			for (int i = 0; i < itemStackIngredientsSize; i++) {
+				itemStackIngredients.add(ItemStack.PACKET_CODEC.decode(buf));
+			}
 			int ingredientsSize = buf.readInt();
 			List<Ingredient> ingredients = new ArrayList<>();
 			for (int i = 0; i < ingredientsSize; i++) {
@@ -167,10 +218,14 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 			int tab = buf.readInt();
 			String recipeType = buf.readString();
 			boolean showNotification = buf.readBoolean();
-			return new RPGCraftingRecipe(ingredients, result, level, tab, recipeType, showNotification);
+			return new RPGCraftingRecipe(itemStackIngredients, ingredients, result, level, tab, recipeType, showNotification);
 		}
 
 		private static void write(RegistryByteBuf buf, RPGCraftingRecipe recipe) {
+			buf.writeInt(recipe.itemStackIngredients.size());
+			for (ItemStack ingredient : recipe.itemStackIngredients) {
+				ItemStack.PACKET_CODEC.encode(buf, ingredient);
+			}
 			buf.writeInt(recipe.ingredients.size());
 			for (Ingredient ingredient : recipe.ingredients) {
 				Ingredient.PACKET_CODEC.encode(buf, ingredient);
