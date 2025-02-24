@@ -1,6 +1,7 @@
 {
 	"type": "rpgcrafting:rpg_crafting_recipe",
 	"category": "misc",
+	"itemStackIngredients": [],
 	"ingredients": [
 		{
 			"item": "minecraft:iron_ingot"
