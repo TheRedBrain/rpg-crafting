@@ -1,7 +1,9 @@
 package com.github.theredbrain.rpgcrafting;
 
 import com.github.theredbrain.inventorysizeattributes.entity.player.DuckPlayerEntityMixin;
+import com.github.theredbrain.rpgcrafting.advancement.criterion.InteractWithRPGCraftingStationCriterion;
 import com.github.theredbrain.rpgcrafting.config.ServerConfig;
+import com.github.theredbrain.rpgcrafting.registry.AdvancementCriteriaRegistry;
 import com.github.theredbrain.rpgcrafting.registry.BlockRegistry;
 import com.github.theredbrain.rpgcrafting.registry.GameRulesRegistry;
 import com.github.theredbrain.rpgcrafting.registry.ItemGroupRegistry;
@@ -25,6 +27,7 @@ public class RPGCrafting implements ModInitializer {
 	public static ServerConfig SERVER_CONFIG = ConfigApiJava.registerAndLoadConfig(ServerConfig::new, RegisterType.BOTH);
 
 	public static RegistryEntry<EntityAttribute> HAND_CRAFTING_LEVEL;
+	public static InteractWithRPGCraftingStationCriterion INTERACTED_WITH_RPG_CRAFTING_STATION;
 
 	public static final boolean isInventorySizeAttributesLoaded = FabricLoader.getInstance().isModLoaded("inventorysizeattributes");
 
@@ -41,6 +44,7 @@ public class RPGCrafting implements ModInitializer {
 		LOGGER.info("Crafting was RPG-ified!");
 
 		// Registry
+		AdvancementCriteriaRegistry.init();
 		BlockRegistry.init();
 		ItemGroupRegistry.init();
 		GameRulesRegistry.init();

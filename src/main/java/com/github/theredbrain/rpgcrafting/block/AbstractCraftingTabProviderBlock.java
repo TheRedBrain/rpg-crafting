@@ -2,6 +2,7 @@ package com.github.theredbrain.rpgcrafting.block;
 
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
+import com.github.theredbrain.rpgcrafting.registry.AdvancementCriteriaRegistry;
 import com.github.theredbrain.rpgcrafting.registry.BlockRegistry;
 import com.github.theredbrain.rpgcrafting.registry.Tags;
 import com.github.theredbrain.rpgcrafting.screen.CraftingBenchBlockScreenHandler;
@@ -185,6 +186,21 @@ public abstract class AbstractCraftingTabProviderBlock extends Block implements 
 				return new CraftingBenchBlockScreenHandler(syncId, playerInventory, player.getEnderChestInventory(), ((DuckPlayerEntityMixin) player).rpgcrafting$getStashInventory(), pos, initialTab, finalTabProvidersInReach, finalStorageProvidersInReach, tabLevels);
 			}
 		};
+	}
+
+	public static void triggerAdvancementCriterion(ServerPlayerEntity serverPlayerEntity, byte tabProvidersInReach, int[] tabLevels) {
+		if ((tabProvidersInReach & 1 << 1) != 0 && tabLevels.length >= 1) {
+			RPGCrafting.INTERACTED_WITH_RPG_CRAFTING_STATION.trigger(serverPlayerEntity, 1, tabLevels[0]);
+		}
+		if ((tabProvidersInReach & 1 << 2) != 0 && tabLevels.length >= 2) {
+			RPGCrafting.INTERACTED_WITH_RPG_CRAFTING_STATION.trigger(serverPlayerEntity, 2, tabLevels[1]);
+		}
+		if ((tabProvidersInReach & 1 << 3) != 0 && tabLevels.length >= 3) {
+			RPGCrafting.INTERACTED_WITH_RPG_CRAFTING_STATION.trigger(serverPlayerEntity, 3, tabLevels[2]);
+		}
+		if ((tabProvidersInReach & 1 << 4) != 0 && tabLevels.length >= 4) {
+			RPGCrafting.INTERACTED_WITH_RPG_CRAFTING_STATION.trigger(serverPlayerEntity, 4, tabLevels[3]);
+		}
 	}
 
 	@Override

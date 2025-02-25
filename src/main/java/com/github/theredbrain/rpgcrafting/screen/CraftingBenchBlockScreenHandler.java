@@ -1,6 +1,7 @@
 package com.github.theredbrain.rpgcrafting.screen;
 
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
+import com.github.theredbrain.rpgcrafting.block.AbstractCraftingTabProviderBlock;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
 import com.github.theredbrain.rpgcrafting.recipe.input.MultipleStackRecipeInput;
@@ -19,6 +20,7 @@ import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.screen.Property;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.BlockPos;
@@ -95,6 +97,9 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 		this.craftingResultInventory = new SimpleInventory(1);
 		this.craftingResultIngredientsInventory = new SimpleInventory(4);
 
+		if (this.playerInventory.player instanceof ServerPlayerEntity serverPlayerEntity) {
+			AbstractCraftingTabProviderBlock.triggerAdvancementCriterion(serverPlayerEntity, tabProvidersInReach, tabLevels);
+		}
 
 		this.updateRPGCraftingRecipesList();
 
