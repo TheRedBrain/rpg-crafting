@@ -2,10 +2,12 @@ package com.github.theredbrain.rpgcrafting.gui.screen.ingame;
 
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
 import com.github.theredbrain.rpgcrafting.RPGCraftingClient;
+import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.network.packet.CraftFromHandCraftingPacket;
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateHandCraftingScreenHandlerPropertyPacket;
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateHandCraftingScreenHandlerSelectedRecipePacket;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
+import com.github.theredbrain.rpgcrafting.registry.Tags;
 import com.github.theredbrain.rpgcrafting.screen.HandCraftingScreenHandler;
 import com.github.theredbrain.slotcustomizationapi.api.SlotCustomization;
 import net.fabricmc.api.EnvType;
@@ -22,6 +24,8 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -180,6 +184,20 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 			}
 		}
 		this.craftButton.active = craftButtonActive;
+	}
+
+	@Override
+	protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
+		context.drawText(this.textRenderer, this.getModifiedTitle(), this.titleX, this.titleY, 4210752, false);
+		context.drawText(this.textRenderer, this.playerInventoryTitle, this.playerInventoryTitleX, this.playerInventoryTitleY, 4210752, false);
+	}
+
+	private Text getModifiedTitle() {
+		if (this.playerEntity != null) {
+			return Text.translatable("gui.hand_crafting.title_with_level", ((DuckPlayerEntityMixin)this.playerEntity).rpgcrafting$getActiveHandCraftingLevel());
+		} else {
+			return this.title;
+		}
 	}
 
 	@Override
