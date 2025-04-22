@@ -4,6 +4,8 @@
 - added (in)active tab provider block.
 - potentially fixed lingering crafting result slots
 - hand-crafting screen now shows the hand-crafting level
+- added advancement criterion for interacting with a crafting station
+- added loot tables and other survival relevant assets
 
 # 1.0.0
 

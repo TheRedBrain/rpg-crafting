@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "rpgcrafting:storage_area_0_provider_block"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "rpgcrafting:blocks/storage_area_0_provider_block"
+}
