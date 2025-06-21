@@ -15,6 +15,10 @@ public class LivingEntityMixin {
 	private static void rpgcrafting$createLivingAttributes(CallbackInfoReturnable<DefaultAttributeContainer.Builder> cir) {
 		cir.getReturnValue()
 				.add(RPGCrafting.HAND_CRAFTING_LEVEL)
+				.add(RPGCrafting.CRAFTING_TAB_1_LEVEL)
+				.add(RPGCrafting.CRAFTING_TAB_2_LEVEL)
+				.add(RPGCrafting.CRAFTING_TAB_3_LEVEL)
+				.add(RPGCrafting.CRAFTING_TAB_4_LEVEL)
 		;
 	}
 }

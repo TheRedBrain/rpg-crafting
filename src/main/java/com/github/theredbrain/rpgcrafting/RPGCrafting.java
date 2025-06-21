@@ -1,7 +1,7 @@
 package com.github.theredbrain.rpgcrafting;
 
-import com.github.theredbrain.inventorysizeattributes.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.advancement.criterion.InteractWithRPGCraftingStationCriterion;
+import com.github.theredbrain.rpgcrafting.compatibility.InventorySizeAttributesCompat;
 import com.github.theredbrain.rpgcrafting.config.ServerConfig;
 import com.github.theredbrain.rpgcrafting.registry.AdvancementCriteriaRegistry;
 import com.github.theredbrain.rpgcrafting.registry.BlockRegistry;
@@ -27,6 +27,11 @@ public class RPGCrafting implements ModInitializer {
 	public static ServerConfig SERVER_CONFIG = ConfigApiJava.registerAndLoadConfig(ServerConfig::new, RegisterType.BOTH);
 
 	public static RegistryEntry<EntityAttribute> HAND_CRAFTING_LEVEL;
+	public static RegistryEntry<EntityAttribute> CRAFTING_TAB_1_LEVEL;
+	public static RegistryEntry<EntityAttribute> CRAFTING_TAB_2_LEVEL;
+	public static RegistryEntry<EntityAttribute> CRAFTING_TAB_3_LEVEL;
+	public static RegistryEntry<EntityAttribute> CRAFTING_TAB_4_LEVEL;
+
 	public static InteractWithRPGCraftingStationCriterion INTERACTED_WITH_RPG_CRAFTING_STATION;
 
 	public static final boolean isInventorySizeAttributesLoaded = FabricLoader.getInstance().isModLoaded("inventorysizeattributes");
