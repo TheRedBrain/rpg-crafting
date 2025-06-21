@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 public class RPGCrafting implements ModInitializer {
 	public static final String MOD_ID = "rpgcrafting";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-	public static ServerConfig SERVER_CONFIG = ConfigApiJava.registerAndLoadConfig(ServerConfig::new, RegisterType.BOTH);
+	public static ServerConfig SERVER_CONFIG;
 
 	public static RegistryEntry<EntityAttribute> HAND_CRAFTING_LEVEL;
 	public static RegistryEntry<EntityAttribute> CRAFTING_TAB_1_LEVEL;
@@ -37,16 +37,17 @@ public class RPGCrafting implements ModInitializer {
 	public static final boolean isInventorySizeAttributesLoaded = FabricLoader.getInstance().isModLoaded("inventorysizeattributes");
 
 	public static int getActiveInventorySize(PlayerEntity player) {
-		return isInventorySizeAttributesLoaded ? ((DuckPlayerEntityMixin) player).inventorysizeattributes$getActiveInventorySlotAmount() : 27;
+		return isInventorySizeAttributesLoaded ? InventorySizeAttributesCompat.getActiveInventorySize(player) : 27;
 	}
 
 	public static int getActiveHotbarSize(PlayerEntity player) {
-		return isInventorySizeAttributesLoaded ? ((DuckPlayerEntityMixin) player).inventorysizeattributes$getActiveHotbarSlotAmount() : 9;
+		return isInventorySizeAttributesLoaded ? InventorySizeAttributesCompat.getActiveHotbarSize(player) : 9;
 	}
 
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Crafting was RPG-ified!");
+		SERVER_CONFIG = ConfigApiJava.registerAndLoadConfig(ServerConfig::new, RegisterType.BOTH);
 
 		// Registry
 		AdvancementCriteriaRegistry.init();
