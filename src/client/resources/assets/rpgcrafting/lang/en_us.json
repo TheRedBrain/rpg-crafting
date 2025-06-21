@@ -1,5 +1,9 @@
 {
 	"attribute.name.generic.hand_crafting_level": "Hand Crafting Level",
+	"attribute.name.generic.crafting_tab_1_level": "Crafting Bench Level",
+	"attribute.name.generic.crafting_tab_2_level": "Smithy Level",
+	"attribute.name.generic.crafting_tab_3_level": "Smelter Level",
+	"attribute.name.generic.crafting_tab_4_level": "Cauldron Level",
 
 	"block.rpgcrafting.storage_area_0_provider_block": "Storage Area 0 Provider",
 	"block.rpgcrafting.storage_area_1_provider_block": "Storage Area 1 Provider",
@@ -65,7 +69,7 @@
 	"rpgcrafting.server": "Server Side Settings",
 
 	"rpgcrafting.server.crafting_bench_block_reach_radius": "Crafting Bench Block Reach Radius",
-	"rpgcrafting.server.crafting_bench_block_reach_radius.desc": "The radius around 'tab providing blocks' where they check for blocks that enable additional tabs and that increase tab levels.",
+	"rpgcrafting.server.crafting_bench_block_reach_radius.desc": "The radius around 'tab providing blocks' where they check for blocks that enable additional tabs or increase tab levels.",
 
 	"rpgcrafting.server.default_hand_crafting_level": "Default Handcrafting Level",
 
@@ -77,8 +81,9 @@
 	"rpgcrafting.server.is_crafting_list_screen_hotkey_enabled": "Enable Crafting List Hotkey",
 	"rpgcrafting.server.is_hand_crafting_screen_hotkey_enabled": "Enable Handcrafting Hotkey",
 
+	"rpgcrafting.server.crafting_bench_level_calculation": "Crafting Tab Level Calculation",
+
 	"rpgcrafting.client": "Client Side Settings",
 
-	"rpgcrafting.client.show_inactive_slots": "Show Inactive Slots",
-	"rpgcrafting.client.show_inactive_slots.desc": "Inventory Size Attributes - Compat Setting"
+	"rpgcrafting.client.show_item_count_in_recipe_description": "Show Crafting Result Item Count"
 }
