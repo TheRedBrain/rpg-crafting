@@ -184,9 +184,8 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 		int handCraftingLevel = ((DuckPlayerEntityMixin) this.playerInventory.player).rpgcrafting$getHandCraftingLevel();
 
 		for (RecipeEntry<RPGCraftingRecipe> rpgCraftingRecipeEntry : this.rpgCraftingRecipesList) {
-			CraftingBenchBlockScreenHandler.RecipeType recipeType = CraftingBenchBlockScreenHandler.RecipeType.valueOf(rpgCraftingRecipeEntry.value().recipeType);
 			if (rpgCraftingRecipeEntry.value().tab == 0 && handCraftingLevel >= rpgCraftingRecipeEntry.value().level) {
-				if (recipeType == CraftingBenchBlockScreenHandler.RecipeType.STANDARD || rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(), world) || RPGCrafting.SERVER_CONFIG.show_all_unlocked_special_recipes.get()) {
+				if (rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(), world)) {
 					this.handCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
 				}
 			}

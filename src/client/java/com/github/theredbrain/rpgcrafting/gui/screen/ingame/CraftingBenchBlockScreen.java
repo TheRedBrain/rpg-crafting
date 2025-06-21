@@ -205,7 +205,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 		List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();
 		if (this.playerEntity instanceof ClientPlayerEntity clientPlayerEntity) {
 			for (RecipeEntry<RPGCraftingRecipe> recipeEntry : newList) {
-				if (clientPlayerEntity.getRecipeBook().shouldDisplay(recipeEntry) || RPGCrafting.SERVER_CONFIG.show_locked_recipes_in_crafting_screens.get()) {
+				if (clientPlayerEntity.getRecipeBook().shouldDisplay(recipeEntry) || !recipeEntry.value().requiresUnlockAdvancement || RPGCrafting.SERVER_CONFIG.show_locked_recipes_in_crafting_screens.get()) {
 					this.recipeList.add(recipeEntry);
 				}
 			}

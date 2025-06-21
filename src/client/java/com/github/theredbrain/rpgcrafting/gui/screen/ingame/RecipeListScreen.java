@@ -104,7 +104,7 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
 			this.recipeList.clear();
 			List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();
 			for (RecipeEntry<RPGCraftingRecipe> recipeEntry : newList) {
-				if (recipeEntry.value().hasIngredient(this.handler.getRecipeListInputInventory()) && (this.client.player.getRecipeBook().shouldDisplay(recipeEntry) || RPGCrafting.SERVER_CONFIG.show_locked_recipes_in_recipe_list.get())) {
+				if (recipeEntry.value().hasIngredient(this.handler.getRecipeListInputInventory()) && (this.client.player.getRecipeBook().shouldDisplay(recipeEntry) || !recipeEntry.value().requiresUnlockAdvancement || RPGCrafting.SERVER_CONFIG.show_locked_recipes_in_recipe_list.get())) {
 					this.recipeList.add(recipeEntry);
 				}
 			}

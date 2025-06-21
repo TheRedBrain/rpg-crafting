@@ -29,8 +29,9 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 	public int tab;
 	public final String recipeType;
 	public final boolean showNotification;
+	public final boolean requiresUnlockAdvancement;
 
-	public RPGCraftingRecipe(List<ItemStack> itemStackIngredients, List<Ingredient> ingredients, ItemStack result, int level, int tab, String recipeType, boolean showNotification) {
+	public RPGCraftingRecipe(List<ItemStack> itemStackIngredients, List<Ingredient> ingredients, ItemStack result, int level, int tab, String recipeType, boolean showNotification, boolean requiresUnlockAdvancement) {
 		this.itemStackIngredients = itemStackIngredients;
 		this.ingredients = ingredients;
 		this.result = result;
@@ -38,6 +39,7 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 		this.tab = tab;
 		this.recipeType = recipeType;
 		this.showNotification = showNotification;
+		this.requiresUnlockAdvancement = requiresUnlockAdvancement;
 	}
 
 	@Override
@@ -185,7 +187,8 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 						Codec.INT.optionalFieldOf("level", 0).forGetter(recipe -> recipe.level),
 						Codec.INT.optionalFieldOf("tab", 0).forGetter(recipe -> recipe.tab),
 						Codec.STRING.optionalFieldOf("recipeType", "").forGetter(recipe -> recipe.recipeType),
-						Codec.BOOL.optionalFieldOf("showNotification", true).forGetter(recipe -> recipe.showNotification)
+						Codec.BOOL.optionalFieldOf("showNotification", true).forGetter(recipe -> recipe.showNotification),
+						Codec.BOOL.optionalFieldOf("requiresUnlockAdvancement", false).forGetter(recipe -> recipe.requiresUnlockAdvancement)
 				).apply(instance, RPGCraftingRecipe::new)
 		);
 		public static final PacketCodec<RegistryByteBuf, RPGCraftingRecipe> PACKET_CODEC = PacketCodec.ofStatic(
@@ -218,7 +221,8 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 			int tab = buf.readInt();
 			String recipeType = buf.readString();
 			boolean showNotification = buf.readBoolean();
-			return new RPGCraftingRecipe(itemStackIngredients, ingredients, result, level, tab, recipeType, showNotification);
+			boolean requiresUnlockAdvancement = buf.readBoolean();
+			return new RPGCraftingRecipe(itemStackIngredients, ingredients, result, level, tab, recipeType, showNotification, requiresUnlockAdvancement);
 		}
 
 		private static void write(RegistryByteBuf buf, RPGCraftingRecipe recipe) {
@@ -235,6 +239,7 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 			buf.writeInt(recipe.tab);
 			buf.writeString(recipe.recipeType);
 			buf.writeBoolean(recipe.showNotification);
+			buf.writeBoolean(recipe.requiresUnlockAdvancement);
 		}
 	}
 
