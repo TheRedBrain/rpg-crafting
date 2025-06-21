@@ -6,6 +6,14 @@ public interface DuckPlayerEntityMixin {
 
 	int rpgcrafting$getHandCraftingLevel();
 
+	int rpgcrafting$getCraftingTab1Level();
+
+	int rpgcrafting$getCraftingTab2Level();
+
+	int rpgcrafting$getCraftingTab3Level();
+
+	int rpgcrafting$getCraftingTab4Level();
+
 	boolean rpgcrafting$useStashForCrafting();
 
 	void rpgcrafting$setUseStashForCrafting(boolean useStashForCrafting);

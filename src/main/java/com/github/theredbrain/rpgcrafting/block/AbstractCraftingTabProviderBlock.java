@@ -1,6 +1,7 @@
 package com.github.theredbrain.rpgcrafting.block;
 
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
+import com.github.theredbrain.rpgcrafting.config.ServerConfig;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.registry.AdvancementCriteriaRegistry;
 import com.github.theredbrain.rpgcrafting.registry.BlockRegistry;
@@ -43,7 +44,7 @@ public abstract class AbstractCraftingTabProviderBlock extends Block implements 
 		if (world.isClient) {
 			return ActionResult.SUCCESS;
 		}
-		player.openHandledScreen(createCraftingTabProviderBlockScreenHandlerFactory(state, world, pos, this.openedTab));
+		player.openHandledScreen(createCraftingTabProviderBlockScreenHandlerFactory(state, world, pos, player, this.openedTab));
 //		player.sendMessage(Text.translatable("gui.crafting_bench.no_crafting_root_block_nearby"), true);
 		return ActionResult.CONSUME;
 //        player.incrementStat(Stats.INTERACT_WITH_CRAFTING_TABLE); // TODO stats
@@ -56,7 +57,7 @@ public abstract class AbstractCraftingTabProviderBlock extends Block implements 
 		return true;
 	}
 
-	public static NamedScreenHandlerFactory createCraftingTabProviderBlockScreenHandlerFactory(BlockState state, World world, BlockPos pos, int initialTab) {
+	public static NamedScreenHandlerFactory createCraftingTabProviderBlockScreenHandlerFactory(BlockState state, World world, BlockPos pos, PlayerEntity player, int initialTab) {
 		int posX = pos.getX();
 		int posY = pos.getY();
 		int posZ = pos.getZ();
@@ -80,7 +81,8 @@ public abstract class AbstractCraftingTabProviderBlock extends Block implements 
 		int[] tabLevels = new int[CRAFTING_TAB_AMOUNT];
 		byte tabProvidersInReach = 0;
 		byte storageProvidersInReach = 0;
-		int crafting_root_block_reach_radius = RPGCrafting.SERVER_CONFIG.crafting_bench_block_reach_radius.get();
+		ServerConfig serverConfig = RPGCrafting.SERVER_CONFIG;
+		int crafting_root_block_reach_radius = serverConfig.crafting_bench_block_reach_radius.get();
 
 		BlockState blockState;
 		if (world != null) {
@@ -135,25 +137,47 @@ public abstract class AbstractCraftingTabProviderBlock extends Block implements 
 					}
 				}
 			}
+
+			if (state.isIn(Tags.PROVIDES_CRAFTING_TAB_1_LEVEL) && stateIsActiveTabProvider) {
+				craftingTab1LevelProviders.add(state.getBlock().getTranslationKey());
+			}
+			if (state.isIn(Tags.PROVIDES_CRAFTING_TAB_2_LEVEL) && stateIsActiveTabProvider) {
+				craftingTab2LevelProviders.add(state.getBlock().getTranslationKey());
+			}
+			if (state.isIn(Tags.PROVIDES_CRAFTING_TAB_3_LEVEL) && stateIsActiveTabProvider) {
+				craftingTab3LevelProviders.add(state.getBlock().getTranslationKey());
+			}
+			if (state.isIn(Tags.PROVIDES_CRAFTING_TAB_4_LEVEL) && stateIsActiveTabProvider) {
+				craftingTab4LevelProviders.add(state.getBlock().getTranslationKey());
+			}
 		}
 
-		if (state.isIn(Tags.PROVIDES_CRAFTING_TAB_1_LEVEL)) {
-			craftingTab1LevelProviders.add(state.getBlock().getTranslationKey());
-		}
-		if (state.isIn(Tags.PROVIDES_CRAFTING_TAB_2_LEVEL)) {
-			craftingTab2LevelProviders.add(state.getBlock().getTranslationKey());
-		}
-		if (state.isIn(Tags.PROVIDES_CRAFTING_TAB_3_LEVEL)) {
-			craftingTab3LevelProviders.add(state.getBlock().getTranslationKey());
-		}
-		if (state.isIn(Tags.PROVIDES_CRAFTING_TAB_4_LEVEL)) {
-			craftingTab4LevelProviders.add(state.getBlock().getTranslationKey());
-		}
+		int craftingTab1AttributeLevel = ((DuckPlayerEntityMixin) player).rpgcrafting$getCraftingTab1Level();
+		int craftingTab2AttributeLevel = ((DuckPlayerEntityMixin) player).rpgcrafting$getCraftingTab2Level();
+		int craftingTab3AttributeLevel = ((DuckPlayerEntityMixin) player).rpgcrafting$getCraftingTab3Level();
+		int craftingTab4AttributeLevel = ((DuckPlayerEntityMixin) player).rpgcrafting$getCraftingTab4Level();
 
-		tabLevels[0] = craftingTab1LevelProviders.size();
-		tabLevels[1] = craftingTab2LevelProviders.size();
-		tabLevels[2] = craftingTab3LevelProviders.size();
-		tabLevels[3] = craftingTab4LevelProviders.size();
+		if (serverConfig.crafting_bench_level_calculation.get() == RPGCrafting.CraftingLevelCalculation.ADDITION) {
+			tabLevels[0] = craftingTab1LevelProviders.size() + craftingTab1AttributeLevel;
+			tabLevels[1] = craftingTab2LevelProviders.size() + craftingTab2AttributeLevel;
+			tabLevels[2] = craftingTab3LevelProviders.size() + craftingTab3AttributeLevel;
+			tabLevels[3] = craftingTab4LevelProviders.size() + craftingTab4AttributeLevel;
+		} else if (serverConfig.crafting_bench_level_calculation.get() == RPGCrafting.CraftingLevelCalculation.BLOCKS_REQUIRED) {
+			tabLevels[0] = (int) Math.clamp(craftingTab1AttributeLevel, 0.0, craftingTab1LevelProviders.size());
+			tabLevels[1] = (int) Math.clamp(craftingTab2AttributeLevel, 0.0, craftingTab2LevelProviders.size());
+			tabLevels[2] = (int) Math.clamp(craftingTab3AttributeLevel, 0.0, craftingTab3LevelProviders.size());
+			tabLevels[3] = (int) Math.clamp(craftingTab4AttributeLevel, 0.0, craftingTab4LevelProviders.size());
+		} else if (serverConfig.crafting_bench_level_calculation.get() == RPGCrafting.CraftingLevelCalculation.HIGHER_VALUE) {
+			tabLevels[0] = Math.max(craftingTab1LevelProviders.size(), craftingTab1AttributeLevel);
+			tabLevels[1] = Math.max(craftingTab2LevelProviders.size(), craftingTab2AttributeLevel);
+			tabLevels[2] = Math.max(craftingTab3LevelProviders.size(), craftingTab3AttributeLevel);
+			tabLevels[3] = Math.max(craftingTab4LevelProviders.size(), craftingTab4AttributeLevel);
+		} else {
+			tabLevels[0] = 0;
+			tabLevels[1] = 0;
+			tabLevels[2] = 0;
+			tabLevels[3] = 0;
+		}
 
 		tabProvidersInReach = (byte) (isStorageTabProviderInReach ? tabProvidersInReach | 1 << 0 : tabProvidersInReach & ~(1 << 0));
 		tabProvidersInReach = (byte) (isCraftingTab1ProviderInReach ? tabProvidersInReach | 1 << 1 : tabProvidersInReach & ~(1 << 1));

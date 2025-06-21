@@ -44,6 +44,15 @@ public class RPGCrafting implements ModInitializer {
 		return isInventorySizeAttributesLoaded ? InventorySizeAttributesCompat.getActiveHotbarSize(player) : 9;
 	}
 
+	public enum CraftingLevelCalculation {
+		ADDITION,
+		BLOCKS_REQUIRED,
+		HIGHER_VALUE;
+
+		CraftingLevelCalculation() {
+		}
+	}
+
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Crafting was RPG-ified!");

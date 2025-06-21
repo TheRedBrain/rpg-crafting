@@ -102,6 +102,23 @@ public abstract class PlayerEntityMixin extends LivingEntity implements DuckPlay
 	}
 
 	@Override
+	public int rpgcrafting$getCraftingTab1Level() {
+		return (int) this.getAttributeValue(RPGCrafting.CRAFTING_TAB_1_LEVEL);
+	}
+
+	@Override
+	public int rpgcrafting$getCraftingTab2Level() {
+		return (int) this.getAttributeValue(RPGCrafting.CRAFTING_TAB_2_LEVEL);
+	}
+
+	@Override
+	public int rpgcrafting$getCraftingTab3Level() {
+		return (int) this.getAttributeValue(RPGCrafting.CRAFTING_TAB_3_LEVEL);
+	}
+
+	@Override
+	public int rpgcrafting$getCraftingTab4Level() {
+		return (int) this.getAttributeValue(RPGCrafting.CRAFTING_TAB_4_LEVEL);
 	}
 
 }
