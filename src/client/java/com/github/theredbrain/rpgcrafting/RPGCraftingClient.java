@@ -1,5 +1,6 @@
 package com.github.theredbrain.rpgcrafting;
 
+import com.github.theredbrain.inventorysizeattributes.InventorySizeAttributesClient;
 import com.github.theredbrain.rpgcrafting.config.ClientConfig;
 import com.github.theredbrain.rpgcrafting.gui.screen.ingame.CraftingBenchBlockScreen;
 import com.github.theredbrain.rpgcrafting.gui.screen.ingame.HandCraftingScreen;
@@ -16,14 +17,19 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 
 public class RPGCraftingClient implements ClientModInitializer {
-	public static ClientConfig CLIENT_CONFIG = ConfigApiJava.registerAndLoadConfig(ClientConfig::new, RegisterType.CLIENT);
+	public static ClientConfig CLIENT_CONFIG;
 
 	@Override
 	public void onInitializeClient() {
+		CLIENT_CONFIG = ConfigApiJava.registerAndLoadConfig(ClientConfig::new, RegisterType.CLIENT);
 		KeyBindingsRegistry.registerKeyBindings();
 		HandledScreens.register(ScreenHandlerTypesRegistry.CRAFTING_BENCH_BLOCK_SCREEN_HANDLER, CraftingBenchBlockScreen::new);
 		HandledScreens.register(ScreenHandlerTypesRegistry.CRAFTING_LIST_SCREEN_HANDLER, RecipeListScreen::new);
 		HandledScreens.register(ScreenHandlerTypesRegistry.HAND_CRAFTING_SCREEN_HANDLER, HandCraftingScreen::new);
+	}
+
+	public static boolean showInactiveInventorySlots() {
+		return RPGCrafting.isInventorySizeAttributesLoaded ? InventorySizeAttributesClient.CLIENT_CONFIG.show_inactive_inventory_slots.get() : true;
 	}
 
 	public static void openCraftingListScreen(MinecraftClient client) {

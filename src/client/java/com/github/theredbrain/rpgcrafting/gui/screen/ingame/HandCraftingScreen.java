@@ -194,7 +194,7 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 
 	private Text getModifiedTitle() {
 		if (this.playerEntity != null) {
-			return Text.translatable("gui.hand_crafting.title_with_level", ((DuckPlayerEntityMixin)this.playerEntity).rpgcrafting$getActiveHandCraftingLevel());
+			return Text.translatable("gui.hand_crafting.title_with_level", ((DuckPlayerEntityMixin)this.playerEntity).rpgcrafting$getHandCraftingLevel());
 		} else {
 			return this.title;
 		}
@@ -273,7 +273,7 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 		int y = this.y;
 		int k;
 		int m;
-		boolean showInactiveSlots = RPGCraftingClient.CLIENT_CONFIG.show_inactive_slots.get();
+		boolean showInactiveSlots = RPGCraftingClient.showInactiveInventorySlots();
 
 		context.drawTexture(RPGCrafting.identifier("textures/gui/container/crafting_bench/hand_crafting_background.png"), x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 
@@ -326,7 +326,7 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 			ItemStack resultItemStack = this.handler.getCraftingResultInventory().getStack(0);
 			Text resultName;
 			int count = resultItemStack.getCount();
-			if (count > 1) {
+			if (count > 1 && RPGCraftingClient.CLIENT_CONFIG.show_item_count_in_recipe_description.get()) {
 				resultName = Text.translatable("gui.rpg_crafting.recipe_result.results_title", resultItemStack.getName(), resultItemStack.getCount());
 			} else {
 				resultName = resultItemStack.getName();

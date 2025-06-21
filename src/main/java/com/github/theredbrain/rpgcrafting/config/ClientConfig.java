@@ -10,7 +10,7 @@ public class ClientConfig extends Config {
 		super(RPGCrafting.identifier("client"));
 	}
 
-	public ValidatedBoolean show_inactive_slots = new ValidatedBoolean(false);
+	public ValidatedBoolean show_item_count_in_recipe_description = new ValidatedBoolean(true);
 
 }
 

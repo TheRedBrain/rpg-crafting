@@ -250,7 +250,7 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
 		int y = this.y;
 		int k;
 		int m;
-		boolean showInactiveSlots = RPGCraftingClient.CLIENT_CONFIG.show_inactive_slots.get();
+		boolean showInactiveSlots = RPGCraftingClient.showInactiveInventorySlots();
 
 		context.drawTexture(CRAFTING_LIST_BACKGROUND_TEXTURE, x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 
@@ -303,7 +303,7 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
 			ItemStack resultItemStack = this.handler.getCraftingResultInventory().getStack(0);
 			Text resultName;
 			int count = resultItemStack.getCount();
-			if (count > 1) {
+			if (count > 1 && RPGCraftingClient.CLIENT_CONFIG.show_item_count_in_recipe_description.get()) {
 				resultName = Text.translatable("gui.rpg_crafting.recipe_result.results_title", resultItemStack.getName(), resultItemStack.getCount());
 			} else {
 				resultName = resultItemStack.getName();
