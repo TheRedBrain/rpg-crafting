@@ -30,40 +30,42 @@ Example:
 
 ```json
 {
-	"type": "rpgcrafting:rpg_crafting_recipe",
-	"category": "misc",
-	"ingredients": [
-		{
-			"item": "minecraft:oak_planks"
-		},
-		{
-			"item": "minecraft:oak_planks"
-		},
-		{
-			"item": "minecraft:oak_planks"
-		},
-		{
-			"item": "minecraft:oak_planks"
-		},
-		{
-			"item": "minecraft:stick"
-		},
-		{
-			"item": "minecraft:stick"
-		}
-	],
-	"result": {
-		"id": "minecraft:oak_fence",
-		"count": 3
-	},
-	"level": 1,
-	"tab": 1,
-	"recipeType": "STANDARD"
+  "type": "rpgcrafting:rpg_crafting_recipe",
+  "category": "misc",
+  "itemStackIngredients": [
+    {
+      "id": "minecraft:stick",
+      "count": 2
+    }
+  ],
+  "ingredients": [
+    {
+      "item": "minecraft:oak_planks"
+    },
+    {
+      "item": "minecraft:oak_planks"
+    },
+    {
+      "item": "minecraft:oak_planks"
+    },
+    {
+      "item": "minecraft:oak_planks"
+    }
+  ],
+  "result": {
+    "id": "minecraft:oak_fence",
+    "count": 3
+  },
+  "level": 1,
+  "tab": 1,
+  "recipeType": "STANDARD",
+  "requiresUnlockAdvancement": false
 }
 ```
 
 - "type", has to be "rpgcrafting:rpg_crafting_recipe" for RPG Crafting to recognise it.
 - "category", should always be "misc". This is used by the vanilla recipe book to display recipes in different categories, but RPG Crafting doesn't use this feature.
+- "itemStackIngredients", a list of itemStacks, that must be present in the input inventories and which are consumed upon crafting. . When data components are defined for a stack, a stack with the exact same data components is required for the recipe. If no components are defined, any stack of that item type will work.
 - "ingredients", a list of ingredients, that must be present in the input inventories and which are consumed upon crafting. Like for vanilla recipes, this supports items and item tags.
 - "result", an item stack that is given to the player upon crafting
 - "level", an integer. This determines which level the crafting station has to be at a minimum.
@@ -96,7 +98,22 @@ By default, there are 4 Crafting Tab Provider Blocks which look like a crafting 
 
 If other 'crafting tab provider blocks' are in a configurable radius around the interacted block, the corresponding tab can be accessed via a button.
 
-Each crafting tab has a level. It is 0 by default and can be increased by placing specific blocks in a configurable radius around the interacted block. This is controlled by block tags.
+Each crafting tab has a level. It is 0 by default and can be increased in two ways:
+- by placing specific blocks in a configurable radius around the interacted block. This is controlled by block tags.
+- via entity attributes. Each crafting tab has a corresponding attribute (e.g. "rpgcrafting:crafting_tab_1_level" for the first tab)
+
+The server config provides options to customize how exactly the crafting tab level is calculated:
+- addition: the levels provided by both options are added up
+- higher value: the higher value of both options is used
+- blocks required: the attribute level is used, but the maximum value is determined by the block level
+
+### (In-)Active Tab Provider Blocks
+
+RPG Crafting provides a simple Java API to implement custom Tab (Level) Provider Blocks that can be (de-)activated.
+
+Use it by implementing the [TabProvider](https://github.com/TheRedBrain/rpg-crafting/blob/1.21.1/src/main/java/com/github/theredbrain/rpgcrafting/block/TabProvider.java) interface in your block class.
+
+Note that blocks still need to be in the corresponding block tags, to count towards tab( level)s.
 
 ## Stash Crafting
 
@@ -110,7 +127,7 @@ There is also a button that toggles 'stash crafting'. When enabled, items in the
 
 Handcrafting is a special "crafting station", that is accessed via a hotkey/button. This screen doesn't have different tabs.
 
-The level of handcrafting is determined by the new entity attribute "generic.hand_crafting_level".
+The level of handcrafting is determined by the new entity attribute "rpgcrafting:generic.hand_crafting_level".
 
 Handcrafting checks the players inventory for ingredients.
 

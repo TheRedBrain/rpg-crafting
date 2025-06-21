@@ -1,15 +1,17 @@
-# 1.2.0
-
-- added entity attributes for crafting tab levels
-
 # 1.1.0
 
-- added itemStackIngredients to RPGCraftingRecipe. This is a separate list of ingredients that consists of item stacks. When data components are defined for a stack, a stack with the exact same data components is required for the recipe. If no components are defined, any stack of that item type will work. Both types of ingredient lists are active at the same time. Note that existing recipes of the "rpgcrafting:rpg_crafting_recipe" recipe type must be updated!
-- added (in)active tab provider block.
-- potentially fixed lingering crafting result slots
+- added "itemStackIngredients" to RPGCraftingRecipe. This is a separate list of ingredients that consists of item stacks. When data components are defined for a stack, a stack with the exact same data components is required for the recipe. If no components are defined, any stack of that item type will work. Both types of ingredient lists are active at the same time. Note that existing recipes of the "rpgcrafting:rpg_crafting_recipe" recipe type must be updated!
+- added "requiresUnlockAdvancement" boolean to RPGCraftingRecipe (false by default). If set to true, the recipe needs to be unlocked (e.g. by an advancement).
+- added (in)active tab provider block java API
+- added entity attributes for crafting tab levels
 - hand-crafting screen now shows the hand-crafting level
-- added advancement criterion for interacting with a crafting station
-- added loot tables and other survival relevant assets
+- added advancement criterion for interacting with a crafting station (conditions include crafting tab and level)
+- added loot tables and other survival relevant assets for crafting tab (level) providing blocks
+- added client config option to disable item count in recipe description
+
+- removed config option to set default hand-crafting level. It was causing more problems than worth the convenience. There are third-party mods that allow changing the default value of entity attributes.
+
+- fixed lingering crafting result slots
 
 # 1.0.0
 
