@@ -181,7 +181,7 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 	public void populateRecipeLists() {
 
 		this.handCraftingRecipesIdentifierList.clear();
-		int handCraftingLevel = ((DuckPlayerEntityMixin) this.playerInventory.player).rpgcrafting$getActiveHandCraftingLevel();
+		int handCraftingLevel = ((DuckPlayerEntityMixin) this.playerInventory.player).rpgcrafting$getHandCraftingLevel();
 
 		for (RecipeEntry<RPGCraftingRecipe> rpgCraftingRecipeEntry : this.rpgCraftingRecipesList) {
 			CraftingBenchBlockScreenHandler.RecipeType recipeType = CraftingBenchBlockScreenHandler.RecipeType.valueOf(rpgCraftingRecipeEntry.value().recipeType);

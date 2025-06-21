@@ -4,8 +4,6 @@ import com.github.theredbrain.rpgcrafting.inventory.StashInventory;
 
 public interface DuckPlayerEntityMixin {
 
-	int rpgcrafting$getActiveHandCraftingLevel();
-
 	int rpgcrafting$getHandCraftingLevel();
 
 	boolean rpgcrafting$useStashForCrafting();

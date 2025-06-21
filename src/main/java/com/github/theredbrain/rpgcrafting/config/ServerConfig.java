@@ -12,7 +12,6 @@ public class ServerConfig extends Config {
 	}
 
 	public ValidatedInt crafting_bench_block_reach_radius = new ValidatedInt(10);
-	public ValidatedInt default_hand_crafting_level = new ValidatedInt(0);
 	public ValidatedBoolean show_locked_recipes_in_recipe_list = new ValidatedBoolean(true);
 	public ValidatedBoolean show_locked_recipes_in_crafting_screens = new ValidatedBoolean(false);
 	public ValidatedBoolean show_all_unlocked_special_recipes = new ValidatedBoolean(false);
