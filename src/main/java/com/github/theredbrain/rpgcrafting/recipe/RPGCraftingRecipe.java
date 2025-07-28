@@ -137,17 +137,6 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 		return false;
 	}
 
-//	public static boolean areItemStacksEqual(ItemStack itemStack1, ItemStack itemStack2) {
-//		if (itemStack1.getComponentChanges().isEmpty()) {
-//			return itemStack1.getItem() == itemStack2.getItem();
-//		} else {
-//			if (itemStack1.getItem() == itemStack2.getItem()) {
-//				return ItemStack.areItemsAndComponentsEqual(itemStack1, itemStack2);
-//			}
-//		}
-//		return false;
-//	}
-
 	@Override
 	public ItemStack craft(MultipleStackRecipeInput input, RegistryWrapper.WrapperLookup lookup) {
 		return this.result.copy();
@@ -251,60 +240,15 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 		}
 	}
 
-//	public static boolean areItemsAndComponentsEqual(ItemStack stack, ItemStack otherStack) {
-//		if (!stack.isOf(otherStack.getItem())) {
-//			RPGCrafting.info("!stack.isOf(otherStack.getItem())");
-//			return false;
-//		} else {
-//			boolean bl = stack.isEmpty() && otherStack.isEmpty();
-//			RPGCrafting.info("both stacks empty: " + bl);
-//			return bl ? true : Objects.equals(stack.getComponents(), otherStack.getComponents());
-//		}
-//	}
 	public static boolean checkItemStackIngredient(ItemStackIngredient itemStackIngredient, ItemStack itemStack) {
 		if (itemStackIngredient.completeComponentMatch) {
-			RPGCrafting.info("itemStackIngredient.itemStack components: " + itemStackIngredient.itemStack.getComponents());
-			RPGCrafting.info("itemStack components: " + itemStack.getComponents());
-
-			boolean bl = ItemStack.areItemsAndComponentsEqual(itemStackIngredient.itemStack, itemStack);
-			RPGCrafting.info("bl: " + bl);
-			return bl;
+			return ItemStack.areItemsAndComponentsEqual(itemStackIngredient.itemStack, itemStack);
 		} else {
-			RPGCrafting.info("!completeComponentMatch");
-			RPGCrafting.info("itemStack.getComponentChanges().entrySet(): " + itemStack.getComponentChanges().entrySet());
-			RPGCrafting.info("itemStackIngredient.itemStack.getComponentChanges().entrySet(): " + itemStackIngredient.itemStack.getComponentChanges().entrySet());
-
 			if (!itemStackIngredient.itemStack.isOf(itemStack.getItem())) {
-				RPGCrafting.info("!stack.isOf(otherStack.getItem())");
 				return false;
 			} else {
-				boolean bl = itemStackIngredient.itemStack.isEmpty() && itemStack.isEmpty();
-				RPGCrafting.info("both stacks empty: " + bl);
-				return bl ? true : itemStack.getComponentChanges().entrySet().containsAll(itemStackIngredient.itemStack.getComponentChanges().entrySet());
+				return itemStackIngredient.itemStack.isEmpty() && itemStack.isEmpty() ? true : itemStack.getComponentChanges().entrySet().containsAll(itemStackIngredient.itemStack.getComponentChanges().entrySet());
 			}
-//				boolean bl =
-//			RPGCrafting.info("bl: " + bl);
-//			return bl;
-//			boolean bl = true;
-//			for (Map.Entry<ComponentType<?>, Optional<?>> entry : componentChanges.entrySet()) {
-//				Optional<?> optional = componentChanges.get(entry.getKey());
-//				RPGCrafting.info("optional: " + optional);
-//				if (optional != null && optional.isPresent()) {
-//					RPGCrafting.info("optional != null && optional.isPresent()");
-//					if (itemStack.contains(entry.getKey())) {
-//						if (optional.get() != itemStack.get(entry.getKey())) {
-//							RPGCrafting.info("optional.get() != itemStack.get(entry.getKey())");
-//							bl = false;
-//							break;
-//						}
-//					} else {
-//						RPGCrafting.info("else");
-//						bl = false;
-//						break;
-//					}
-//				}
-//			}
-//			return bl;
 		}
 	}
 
