@@ -383,9 +383,9 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 
 				this.handler.getCraftingResultInventory().addStack(craftingRecipeEntry.value().result.copy());
 
-				List<ItemStack> itemStackIngredients = craftingRecipeEntry.value().itemStackIngredients;
-				for (ItemStack itemStackIngredient : itemStackIngredients) {
-					this.handler.getCraftingResultIngredientsInventory().addStack(itemStackIngredient.copy());
+				List<RPGCraftingRecipe.ItemStackIngredient> itemStackIngredients = craftingRecipeEntry.value().itemStackIngredients;
+				for (RPGCraftingRecipe.ItemStackIngredient itemStackIngredient : itemStackIngredients) {
+					this.handler.getCraftingResultIngredientsInventory().addStack(itemStackIngredient.itemStack().copy());
 				}
 
 				List<Ingredient> ingredients = craftingRecipeEntry.value().ingredients;
@@ -405,6 +405,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 					((SlotCustomization) this.handler.slots.get(98 + i)).slotcustomizationapi$setDisabledOverride(i >= ingredientAmount);
 				}
 
+				// TODO add support for item descriptions https://modrinth.com/mod/item-descriptions
 				// recipe description
 				Identifier id = craftingRecipeEntry.id();
 				String craftingResultDescriptionString = "recipe." + id.getNamespace() + "." + id.getPath() + ".description";

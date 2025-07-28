@@ -1,6 +1,7 @@
 package com.github.theredbrain.rpgcrafting;
 
 import com.github.theredbrain.inventorysizeattributes.InventorySizeAttributesClient;
+import com.github.theredbrain.rpgcrafting.compatibility.InventorySizeAttributesClientCompat;
 import com.github.theredbrain.rpgcrafting.config.ClientConfig;
 import com.github.theredbrain.rpgcrafting.gui.screen.ingame.CraftingBenchBlockScreen;
 import com.github.theredbrain.rpgcrafting.gui.screen.ingame.HandCraftingScreen;
@@ -29,7 +30,7 @@ public class RPGCraftingClient implements ClientModInitializer {
 	}
 
 	public static boolean showInactiveInventorySlots() {
-		return RPGCrafting.isInventorySizeAttributesLoaded ? InventorySizeAttributesClient.CLIENT_CONFIG.show_inactive_inventory_slots.get() : true;
+		return RPGCrafting.isInventorySizeAttributesLoaded ? InventorySizeAttributesClientCompat.showInactiveInventorySlots() : true;
 	}
 
 	public static void openCraftingListScreen(MinecraftClient client) {

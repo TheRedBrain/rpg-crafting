@@ -126,9 +126,9 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
 
 			this.handler.getCraftingResultInventory().addStack(craftingRecipeEntry.value().result.copy());
 
-			List<ItemStack> itemStackIngredients = craftingRecipeEntry.value().itemStackIngredients;
-			for (ItemStack itemStackIngredient : itemStackIngredients) {
-				this.handler.getCraftingResultIngredientsInventory().addStack(itemStackIngredient.copy());
+			List<RPGCraftingRecipe.ItemStackIngredient> itemStackIngredients = craftingRecipeEntry.value().itemStackIngredients;
+			for (RPGCraftingRecipe.ItemStackIngredient itemStackIngredient : itemStackIngredients) {
+				this.handler.getCraftingResultIngredientsInventory().addStack(itemStackIngredient.itemStack().copy());
 			}
 
 			List<Ingredient> ingredients = craftingRecipeEntry.value().ingredients;

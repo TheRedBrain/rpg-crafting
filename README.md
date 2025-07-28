@@ -34,8 +34,11 @@ Example:
   "category": "misc",
   "itemStackIngredients": [
     {
-      "id": "minecraft:stick",
-      "count": 2
+      "itemStack": {
+        "id": "minecraft:stick",
+        "count": 2
+      },
+      "completeComponentMatch": true
     }
   ],
   "ingredients": [
@@ -65,7 +68,8 @@ Example:
 
 - "type", has to be "rpgcrafting:rpg_crafting_recipe" for RPG Crafting to recognise it.
 - "category", should always be "misc". This is used by the vanilla recipe book to display recipes in different categories, but RPG Crafting doesn't use this feature.
-- "itemStackIngredients", a list of itemStacks, that must be present in the input inventories and which are consumed upon crafting. . When data components are defined for a stack, a stack with the exact same data components is required for the recipe. If no components are defined, any stack of that item type will work.
+- "itemStackIngredients", a list of itemStackIngredients, that must be present in the input inventories. Each itemStackIngredient contains an itemStack and an optional boolean field "completeComponentMatch", with a default of "true".
+  - When data components are defined for a stack and "completeComponentMatch" is set to "true", a stack with the exact same data components is required for the recipe. If "completeComponentMatch" is set to "false", an itemStack has to contain the components, but can have other components as well. If no components are defined, any stack of that item type will work.
 - "ingredients", a list of ingredients, that must be present in the input inventories and which are consumed upon crafting. Like for vanilla recipes, this supports items and item tags.
 - "result", an item stack that is given to the player upon crafting
 - "level", an integer. This determines which level the crafting station has to be at a minimum.

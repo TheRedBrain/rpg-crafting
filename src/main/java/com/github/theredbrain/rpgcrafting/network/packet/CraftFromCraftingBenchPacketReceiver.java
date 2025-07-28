@@ -49,16 +49,18 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 
 					ItemStack itemStack;
 
-					for (ItemStack itemStackIngredient : rpgCraftingRecipe.itemStackIngredients) {
+					boolean bl = true;
+
+					for (RPGCraftingRecipe.ItemStackIngredient itemStackIngredient : rpgCraftingRecipe.itemStackIngredients) {
 
 						int j;
-						int itemStackIngredientCount = itemStackIngredient.getCount();
-						boolean bl = false;
+						int itemStackIngredientCount = itemStackIngredient.itemStack().getCount();
+						boolean bl1 = false;
 
 						// TODO play test which inventory normally contains the most crafting ingredients and should be checked first
 
 						for (j = 0; j < playerHotbarSize; j++) {
-							if (RPGCraftingRecipe.areItemStacksEqual(itemStackIngredient, craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j))) {
+							if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j))) {
 								itemStack = craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j).copy();
 								int stackCount = itemStack.getCount();
 								if (stackCount > itemStackIngredientCount) {
@@ -70,17 +72,17 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 									craftingBenchBlockScreenHandler.getPlayerInventory().setStack(j, ItemStack.EMPTY);
 								}
 								if (itemStackIngredientCount <= 0) {
-									bl = true;
+									bl1 = true;
 									break;
 								}
 							}
 						}
-						if (bl) {
+						if (bl1) {
 							continue;
 						}
 
 						for (j = 9; j < playerInventorySize; j++) {
-							if (RPGCraftingRecipe.areItemStacksEqual(itemStackIngredient, craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j))) {
+							if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j))) {
 								itemStack = craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j).copy();
 								int stackCount = itemStack.getCount();
 								if (stackCount > itemStackIngredientCount) {
@@ -92,17 +94,17 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 									craftingBenchBlockScreenHandler.getPlayerInventory().setStack(j, ItemStack.EMPTY);
 								}
 								if (itemStackIngredientCount <= 0) {
-									bl = true;
+									bl1 = true;
 									break;
 								}
 							}
 						}
-						if (bl) {
+						if (bl1) {
 							continue;
 						}
 
 						for (j = 0; j < stash0InventorySize; j++) {
-							if (RPGCraftingRecipe.areItemStacksEqual(itemStackIngredient, craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(j))) {
+							if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(j))) {
 								itemStack = craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(j).copy();
 								int stackCount = itemStack.getCount();
 								if (stackCount > itemStackIngredientCount) {
@@ -114,17 +116,17 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 									craftingBenchBlockScreenHandler.getEnderChestInventory().setStack(j, ItemStack.EMPTY);
 								}
 								if (itemStackIngredientCount <= 0) {
-									bl = true;
+									bl1 = true;
 									break;
 								}
 							}
 						}
-						if (bl) {
+						if (bl1) {
 							continue;
 						}
 
 						for (j = 0; j < stash1InventorySize; j++) {
-							if (RPGCraftingRecipe.areItemStacksEqual(itemStackIngredient, craftingBenchBlockScreenHandler.getStashInventory().getStack(j))) {
+							if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, craftingBenchBlockScreenHandler.getStashInventory().getStack(j))) {
 								itemStack = craftingBenchBlockScreenHandler.getStashInventory().getStack(j).copy();
 								int stackCount = itemStack.getCount();
 								if (stackCount > itemStackIngredientCount) {
@@ -136,17 +138,17 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 									craftingBenchBlockScreenHandler.getStashInventory().setStack(j, ItemStack.EMPTY);
 								}
 								if (itemStackIngredientCount <= 0) {
-									bl = true;
+									bl1 = true;
 									break;
 								}
 							}
 						}
-						if (bl) {
+						if (bl1) {
 							continue;
 						}
 
 						for (j = 0; j < stash2InventorySize; j++) {
-							if (RPGCraftingRecipe.areItemStacksEqual(itemStackIngredient, craftingBenchBlockScreenHandler.getStashInventory().getStack(8 + j))) {
+							if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, craftingBenchBlockScreenHandler.getStashInventory().getStack(8 + j))) {
 								itemStack = craftingBenchBlockScreenHandler.getStashInventory().getStack(8 + j).copy();
 								int stackCount = itemStack.getCount();
 								if (stackCount > itemStackIngredientCount) {
@@ -158,17 +160,17 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 									craftingBenchBlockScreenHandler.getStashInventory().setStack(8 + j, ItemStack.EMPTY);
 								}
 								if (itemStackIngredientCount <= 0) {
-									bl = true;
+									bl1 = true;
 									break;
 								}
 							}
 						}
-						if (bl) {
+						if (bl1) {
 							continue;
 						}
 
 						for (j = 0; j < stash3InventorySize; j++) {
-							if (RPGCraftingRecipe.areItemStacksEqual(itemStackIngredient, craftingBenchBlockScreenHandler.getStashInventory().getStack(20 + j))) {
+							if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, craftingBenchBlockScreenHandler.getStashInventory().getStack(20 + j))) {
 								itemStack = craftingBenchBlockScreenHandler.getStashInventory().getStack(20 + j).copy();
 								int stackCount = itemStack.getCount();
 								if (stackCount > itemStackIngredientCount) {
@@ -180,17 +182,17 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 									craftingBenchBlockScreenHandler.getStashInventory().setStack(20 + j, ItemStack.EMPTY);
 								}
 								if (itemStackIngredientCount <= 0) {
-									bl = true;
+									bl1 = true;
 									break;
 								}
 							}
 						}
-						if (bl) {
+						if (bl1) {
 							continue;
 						}
 
 						for (j = 0; j < stash4InventorySize; j++) {
-							if (RPGCraftingRecipe.areItemStacksEqual(itemStackIngredient, craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(6 + j))) {
+							if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(6 + j))) {
 								itemStack = craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(6 + j).copy();
 								int stackCount = itemStack.getCount();
 								if (stackCount > itemStackIngredientCount) {
@@ -202,16 +204,21 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 									craftingBenchBlockScreenHandler.getEnderChestInventory().setStack(6 + j, ItemStack.EMPTY);
 								}
 								if (itemStackIngredientCount <= 0) {
+									bl1 = true;
 									break;
 								}
 							}
+						}
+						if (!bl1) {
+							bl = false;
+							break;
 						}
 					}
 
 					for (Ingredient ingredient : rpgCraftingRecipe.ingredients) {
 
 						int j;
-						boolean bl = false;
+						boolean bl1 = false;
 						// TODO play test which inventory normally contains the most crafting ingredients and should be checked first
 
 						for (j = 0; j < playerHotbarSize; j++) {
@@ -224,11 +231,11 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 								} else {
 									craftingBenchBlockScreenHandler.getPlayerInventory().setStack(j, ItemStack.EMPTY);
 								}
-								bl = true;
+								bl1 = true;
 								break;
 							}
 						}
-						if (bl) {
+						if (bl1) {
 							continue;
 						}
 
@@ -242,11 +249,11 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 								} else {
 									craftingBenchBlockScreenHandler.getPlayerInventory().setStack(j, ItemStack.EMPTY);
 								}
-								bl = true;
+								bl1 = true;
 								break;
 							}
 						}
-						if (bl) {
+						if (bl1) {
 							continue;
 						}
 
@@ -260,11 +267,11 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 								} else {
 									craftingBenchBlockScreenHandler.getEnderChestInventory().setStack(j, ItemStack.EMPTY);
 								}
-								bl = true;
+								bl1 = true;
 								break;
 							}
 						}
-						if (bl) {
+						if (bl1) {
 							continue;
 						}
 
@@ -278,11 +285,11 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 								} else {
 									craftingBenchBlockScreenHandler.getStashInventory().setStack(j, ItemStack.EMPTY);
 								}
-								bl = true;
+								bl1 = true;
 								break;
 							}
 						}
-						if (bl) {
+						if (bl1) {
 							continue;
 						}
 
@@ -296,11 +303,11 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 								} else {
 									craftingBenchBlockScreenHandler.getStashInventory().setStack(8 + j, ItemStack.EMPTY);
 								}
-								bl = true;
+								bl1 = true;
 								break;
 							}
 						}
-						if (bl) {
+						if (bl1) {
 							continue;
 						}
 
@@ -314,11 +321,11 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 								} else {
 									craftingBenchBlockScreenHandler.getStashInventory().setStack(20 + j, ItemStack.EMPTY);
 								}
-								bl = true;
+								bl1 = true;
 								break;
 							}
 						}
-						if (bl) {
+						if (bl1) {
 							continue;
 						}
 
@@ -332,11 +339,18 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 								} else {
 									craftingBenchBlockScreenHandler.getEnderChestInventory().setStack(6 + j, ItemStack.EMPTY);
 								}
+								bl1 = true;
 								break;
 							}
 						}
+						if (!bl1) {
+							bl = false;
+							break;
+						}
 					}
-					player.getInventory().offerOrDrop(rpgCraftingRecipe.result.copy());
+					if (bl) {
+						player.getInventory().offerOrDrop(rpgCraftingRecipe.result.copy());
+					}
 				} else {
 					player.sendMessage(Text.translatable("hud.message.not_all_crafting_ingredients_were_found"));
 				}

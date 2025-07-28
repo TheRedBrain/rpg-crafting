@@ -1,0 +1,43 @@
+{
+  "type": "rpgcrafting:rpg_crafting_recipe",
+  "category": "misc",
+  "itemStackIngredients": [
+    {
+      "itemStack": {
+        "id": "minecraft:wooden_sword",
+        "count": 1,
+        "components": {
+          "minecraft:custom_data": {
+            "dd.rsf": 5
+          }
+        }
+      },
+      "completeComponentMatch": false
+    },
+    {
+      "itemStack": {
+        "id": "minecraft:wooden_sword",
+        "count": 1,
+        "components": {
+          "minecraft:custom_data": {
+            "dd.rsf": 5
+          }
+        }
+      },
+      "completeComponentMatch": false
+    }
+  ],
+  "ingredients": [],
+  "result": {
+    "id": "minecraft:stone_sword",
+    "count": 1,
+    "components": {
+      "minecraft:custom_data": {
+        "dd.rsf": 5
+      }
+    }
+  },
+  "level": 1,
+  "tab": 1,
+  "recipeType": "STANDARD"
+}
