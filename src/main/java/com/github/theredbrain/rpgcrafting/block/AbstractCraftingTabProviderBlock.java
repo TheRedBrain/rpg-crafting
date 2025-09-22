@@ -3,7 +3,6 @@ package com.github.theredbrain.rpgcrafting.block;
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
 import com.github.theredbrain.rpgcrafting.config.ServerConfig;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
-import com.github.theredbrain.rpgcrafting.registry.AdvancementCriteriaRegistry;
 import com.github.theredbrain.rpgcrafting.registry.BlockRegistry;
 import com.github.theredbrain.rpgcrafting.registry.Tags;
 import com.github.theredbrain.rpgcrafting.screen.CraftingBenchBlockScreenHandler;
@@ -29,7 +28,7 @@ import java.util.Set;
 
 public abstract class AbstractCraftingTabProviderBlock extends Block implements TabProvider {
 	public static final int CRAFTING_TAB_AMOUNT = 4;
-	private final int openedTab;
+	protected final int openedTab;
 
 	public AbstractCraftingTabProviderBlock(int openedTab, Settings settings) {
 		super(settings);

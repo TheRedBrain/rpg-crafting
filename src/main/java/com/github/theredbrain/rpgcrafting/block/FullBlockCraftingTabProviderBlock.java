@@ -1,6 +1,8 @@
 package com.github.theredbrain.rpgcrafting.block;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemPlacementContext;
@@ -12,6 +14,11 @@ import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.Direction;
 
 public class FullBlockCraftingTabProviderBlock extends AbstractCraftingTabProviderBlock {
+	public static final MapCodec<FullBlockCraftingTabProviderBlock> CODEC = RecordCodecBuilder.mapCodec((instance) -> {
+		return instance.group(Codec.INT.fieldOf("openedTab").forGetter((block) -> {
+			return block.openedTab;
+		}), createSettingsCodec()).apply(instance, FullBlockCraftingTabProviderBlock::new);
+	});
 	public static final DirectionProperty FACING = Properties.FACING;
 
 	public FullBlockCraftingTabProviderBlock(int openedTab, Settings settings) {
@@ -21,7 +28,7 @@ public class FullBlockCraftingTabProviderBlock extends AbstractCraftingTabProvid
 
 	@Override
 	protected MapCodec<FullBlockCraftingTabProviderBlock> getCodec() {
-		return null;
+		return CODEC;
 	}
 
 	@Override

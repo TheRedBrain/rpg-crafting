@@ -1,6 +1,8 @@
 package com.github.theredbrain.rpgcrafting.block;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalFacingBlock;
@@ -17,6 +19,11 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 
 public class AnvilShapedCraftingTabProviderBlock extends AbstractCraftingTabProviderBlock {
+	public static final MapCodec<AnvilShapedCraftingTabProviderBlock> CODEC = RecordCodecBuilder.mapCodec((instance) -> {
+		return instance.group(Codec.INT.fieldOf("openedTab").forGetter((block) -> {
+			return block.openedTab;
+		}), createSettingsCodec()).apply(instance, AnvilShapedCraftingTabProviderBlock::new);
+	});
 	public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
 	private static final VoxelShape BASE_SHAPE = Block.createCuboidShape(2.0, 0.0, 2.0, 14.0, 4.0, 14.0);
 	private static final VoxelShape X_STEP_SHAPE = Block.createCuboidShape(3.0, 4.0, 4.0, 13.0, 5.0, 12.0);
@@ -35,7 +42,7 @@ public class AnvilShapedCraftingTabProviderBlock extends AbstractCraftingTabProv
 
 	@Override
 	protected MapCodec<AnvilShapedCraftingTabProviderBlock> getCodec() {
-		return null;
+		return CODEC;
 	}
 
 	@Override
