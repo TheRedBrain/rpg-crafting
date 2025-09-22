@@ -3,7 +3,6 @@ package com.github.theredbrain.rpgcrafting.block;
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
 import com.github.theredbrain.rpgcrafting.config.ServerConfig;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
-import com.github.theredbrain.rpgcrafting.registry.BlockRegistry;
 import com.github.theredbrain.rpgcrafting.registry.Tags;
 import com.github.theredbrain.rpgcrafting.screen.CraftingBenchBlockScreenHandler;
 import com.mojang.serialization.MapCodec;
@@ -86,6 +85,10 @@ public abstract class AbstractCraftingTabProviderBlock extends Block implements 
 		BlockState blockState;
 		if (world != null) {
 			boolean stateIsActiveTabProvider = isTabProviderBlockActive(world, state);
+			int stateOpenedTab = 0;
+			if (state.getBlock() instanceof AbstractCraftingTabProviderBlock abstractCraftingTabProviderBlock) {
+				stateOpenedTab = abstractCraftingTabProviderBlock.openedTab;
+			}
 			for (int i = -crafting_root_block_reach_radius; i <= crafting_root_block_reach_radius; i++) {
 				for (int j = -crafting_root_block_reach_radius; j <= crafting_root_block_reach_radius; j++) {
 					for (int k = -crafting_root_block_reach_radius; k <= crafting_root_block_reach_radius; k++) {
@@ -109,16 +112,16 @@ public abstract class AbstractCraftingTabProviderBlock extends Block implements 
 
 						isStorageTabProviderInReach = isStorageArea0ProviderInReach || isStorageArea1ProviderInReach || isStorageArea2ProviderInReach || isStorageArea3ProviderInReach || isStorageArea4ProviderInReach;
 
-						if ((blockState.isOf(BlockRegistry.CRAFTING_TAB_1_PROVIDER_BLOCK) && isTabProviderBlockActive(world, blockState)) || (state.isOf(BlockRegistry.CRAFTING_TAB_1_PROVIDER_BLOCK) && stateIsActiveTabProvider)) {
+						if ((blockState.getBlock() instanceof AbstractCraftingTabProviderBlock abstractCraftingTabProviderBlock && abstractCraftingTabProviderBlock.openedTab == 1 && isTabProviderBlockActive(world, blockState)) || (stateOpenedTab == 1 && stateIsActiveTabProvider)) {
 							isCraftingTab1ProviderInReach = true;
 						}
-						if ((blockState.isOf(BlockRegistry.CRAFTING_TAB_2_PROVIDER_BLOCK) && isTabProviderBlockActive(world, blockState)) || (state.isOf(BlockRegistry.CRAFTING_TAB_2_PROVIDER_BLOCK) && stateIsActiveTabProvider)) {
+						if ((blockState.getBlock() instanceof AbstractCraftingTabProviderBlock abstractCraftingTabProviderBlock && abstractCraftingTabProviderBlock.openedTab == 2 && isTabProviderBlockActive(world, blockState)) || (stateOpenedTab == 2 && stateIsActiveTabProvider)) {
 							isCraftingTab2ProviderInReach = true;
 						}
-						if ((blockState.isOf(BlockRegistry.CRAFTING_TAB_3_PROVIDER_BLOCK) && isTabProviderBlockActive(world, blockState)) || (state.isOf(BlockRegistry.CRAFTING_TAB_3_PROVIDER_BLOCK) && stateIsActiveTabProvider)) {
+						if ((blockState.getBlock() instanceof AbstractCraftingTabProviderBlock abstractCraftingTabProviderBlock && abstractCraftingTabProviderBlock.openedTab == 3 && isTabProviderBlockActive(world, blockState)) || (stateOpenedTab == 3 && stateIsActiveTabProvider)) {
 							isCraftingTab3ProviderInReach = true;
 						}
-						if ((blockState.isOf(BlockRegistry.CRAFTING_TAB_4_PROVIDER_BLOCK) && isTabProviderBlockActive(world, blockState)) || (state.isOf(BlockRegistry.CRAFTING_TAB_4_PROVIDER_BLOCK) && stateIsActiveTabProvider)) {
+						if ((blockState.getBlock() instanceof AbstractCraftingTabProviderBlock abstractCraftingTabProviderBlock && abstractCraftingTabProviderBlock.openedTab == 4 && isTabProviderBlockActive(world, blockState)) || (stateOpenedTab == 4 && stateIsActiveTabProvider)) {
 							isCraftingTab4ProviderInReach = true;
 						}
 						if (blockState.isIn(Tags.PROVIDES_CRAFTING_TAB_1_LEVEL) && isTabProviderBlockActive(world, blockState)) {
