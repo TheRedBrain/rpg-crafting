@@ -14,7 +14,7 @@ public class ServerConfig extends Config {
 		super(RPGCrafting.identifier("server"));
 	}
 
-	public ValidatedIdentifier crafting_tab_0_display_item = ValidatedIdentifier.ofRegistry(RPGCrafting.identifier("storage_area_0_provider_block"), Registries.ITEM);
+	public ValidatedIdentifier storage_tab_display_item = ValidatedIdentifier.ofRegistry(RPGCrafting.identifier("storage_area_0_provider_block"), Registries.ITEM);
 	public ValidatedIdentifier crafting_tab_1_display_item = ValidatedIdentifier.ofRegistry(RPGCrafting.identifier("crafting_tab_1_provider_block"), Registries.ITEM);
 	public ValidatedIdentifier crafting_tab_2_display_item = ValidatedIdentifier.ofRegistry(RPGCrafting.identifier("crafting_tab_2_provider_block"), Registries.ITEM);
 	public ValidatedIdentifier crafting_tab_3_display_item = ValidatedIdentifier.ofRegistry(RPGCrafting.identifier("crafting_tab_3_provider_block"), Registries.ITEM);

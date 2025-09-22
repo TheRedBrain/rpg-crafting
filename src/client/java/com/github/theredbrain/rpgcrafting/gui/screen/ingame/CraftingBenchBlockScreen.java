@@ -49,6 +49,11 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 	private static final int TAB_4 = 4;
 	private static final Text TOGGLE_USE_STASH_FOR_CRAFTING_ON_BUTTON_LABEL_TEXT = Text.translatable("gui.crafting_bench.toggle_use_stash_for_crafting_button_label.on");
 	private static final Text TOGGLE_USE_STASH_FOR_CRAFTING_OFF_BUTTON_LABEL_TEXT = Text.translatable("gui.crafting_bench.toggle_use_stash_for_crafting_button_label.off");
+	private static final Text TOGGLE_TAB_1_BUTTON_LABEL_TEXT = Text.translatable("gui.crafting_bench.tab_1_tooltip");
+	private static final Text TOGGLE_TAB_2_BUTTON_LABEL_TEXT = Text.translatable("gui.crafting_bench.tab_2_tooltip");
+	private static final Text TOGGLE_TAB_3_BUTTON_LABEL_TEXT = Text.translatable("gui.crafting_bench.tab_3_tooltip");
+	private static final Text TOGGLE_TAB_4_BUTTON_LABEL_TEXT = Text.translatable("gui.crafting_bench.tab_4_tooltip");
+	private static final Text TOGGLE_STORAGE_TAB_BUTTON_LABEL_TEXT = Text.translatable("gui.crafting_bench.stash_tooltip");
 	private static final Text TOGGLE_STANDARD_CRAFTING_TAB_1_BUTTON_LABEL_TEXT = Text.translatable("gui.crafting_bench.toggle_standard_crafting_button_label.1");
 	private static final Text TOGGLE_STANDARD_CRAFTING_TAB_2_BUTTON_LABEL_TEXT = Text.translatable("gui.crafting_bench.toggle_standard_crafting_button_label.2");
 	private static final Text TOGGLE_STANDARD_CRAFTING_TAB_3_BUTTON_LABEL_TEXT = Text.translatable("gui.crafting_bench.toggle_standard_crafting_button_label.3");
@@ -133,19 +138,19 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 		this.toggleUseStashForCraftingButton = this.addDrawableChild(ButtonWidget.builder(useStashForCrafting ? TOGGLE_USE_STASH_FOR_CRAFTING_ON_BUTTON_LABEL_TEXT : TOGGLE_USE_STASH_FOR_CRAFTING_OFF_BUTTON_LABEL_TEXT, button -> this.toggleUseStorageForCrafting()).dimensions(this.x + 61, this.y + 17, 104, 20).build());
 
 		this.toggleTab1Button = this.addDrawableChild(ItemButtonWidget.builder(Registries.ITEM.get(RPGCrafting.SERVER_CONFIG.crafting_tab_1_display_item.get()).getDefaultStack(), button -> this.toggleTab(1)).dimensions(this.x + 7, this.y + 17, 50, 20).build());
-		this.toggleTab1Button.setTooltip(Tooltip.of(BlockRegistry.CRAFTING_TAB_1_PROVIDER_BLOCK.getName()));
+		this.toggleTab1Button.setTooltip(Tooltip.of(TOGGLE_TAB_1_BUTTON_LABEL_TEXT));
 
 		this.toggleTab2Button = this.addDrawableChild(ItemButtonWidget.builder(Registries.ITEM.get(RPGCrafting.SERVER_CONFIG.crafting_tab_2_display_item.get()).getDefaultStack(), button -> this.toggleTab(2)).dimensions(this.x + 7, this.y + 41, 50, 20).build());
-		this.toggleTab2Button.setTooltip(Tooltip.of(BlockRegistry.CRAFTING_TAB_2_PROVIDER_BLOCK.getName()));
+		this.toggleTab2Button.setTooltip(Tooltip.of(TOGGLE_TAB_2_BUTTON_LABEL_TEXT));
 
 		this.toggleTab3Button = this.addDrawableChild(ItemButtonWidget.builder(Registries.ITEM.get(RPGCrafting.SERVER_CONFIG.crafting_tab_3_display_item.get()).getDefaultStack(), button -> this.toggleTab(3)).dimensions(this.x + 7, this.y + 65, 50, 20).build());
-		this.toggleTab3Button.setTooltip(Tooltip.of(BlockRegistry.CRAFTING_TAB_3_PROVIDER_BLOCK.getName()));
+		this.toggleTab3Button.setTooltip(Tooltip.of(TOGGLE_TAB_3_BUTTON_LABEL_TEXT));
 
 		this.toggleTab4Button = this.addDrawableChild(ItemButtonWidget.builder(Registries.ITEM.get(RPGCrafting.SERVER_CONFIG.crafting_tab_4_display_item.get()).getDefaultStack(), button -> this.toggleTab(4)).dimensions(this.x + 7, this.y + 89, 50, 20).build());
-		this.toggleTab4Button.setTooltip(Tooltip.of(BlockRegistry.CRAFTING_TAB_4_PROVIDER_BLOCK.getName()));
+		this.toggleTab4Button.setTooltip(Tooltip.of(TOGGLE_TAB_4_BUTTON_LABEL_TEXT));
 
-		this.toggleStorageTabButton = this.addDrawableChild(ItemButtonWidget.builder(Registries.ITEM.get(RPGCrafting.SERVER_CONFIG.crafting_tab_0_display_item.get()).getDefaultStack(), button -> this.toggleTab(-1)).dimensions(this.x + 7, this.y + 116, 50, 20).build());
-		this.toggleStorageTabButton.setTooltip(Tooltip.of(BlockRegistry.STORAGE_AREA_0_PROVIDER_BLOCK.getName()));
+		this.toggleStorageTabButton = this.addDrawableChild(ItemButtonWidget.builder(Registries.ITEM.get(RPGCrafting.SERVER_CONFIG.storage_tab_display_item.get()).getDefaultStack(), button -> this.toggleTab(-1)).dimensions(this.x + 7, this.y + 116, 50, 20).build());
+		this.toggleStorageTabButton.setTooltip(Tooltip.of(TOGGLE_STORAGE_TAB_BUTTON_LABEL_TEXT));
 
 		this.toggleStandardCraftingButton = this.addDrawableChild(ButtonWidget.builder(TOGGLE_STANDARD_CRAFTING_TAB_1_BUTTON_LABEL_TEXT, button -> this.toggleRecipeType(true)).dimensions(this.x + 61, this.y + 17, 65, 20).build());
 		this.toggleSpecialCraftingButton = this.addDrawableChild(ButtonWidget.builder(TOGGLE_SPECIAL_CRAFTING_TAB_1_BUTTON_LABEL_TEXT, button -> this.toggleRecipeType(false)).dimensions(this.x + 61, this.y + 41, 65, 20).build());
