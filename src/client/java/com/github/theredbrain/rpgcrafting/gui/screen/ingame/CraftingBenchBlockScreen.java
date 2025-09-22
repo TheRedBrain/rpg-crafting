@@ -160,6 +160,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 
 	@Override
 	protected void handledScreenTick() {
+		super.handledScreenTick();
 		if (this.handler.shouldScreenCalculateCraftingStatus() != 0) {
 			int oldSelectedRecipe = this.handler.getSelectedRecipe();
 			int oldRecipeListHash = this.recipeList.hashCode();
@@ -567,13 +568,16 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 				} else {
 					resultName = resultItemStack.getName();
 				}
-				context.drawText(this.textRenderer, resultName, x + 155, y + 26, 16777215, false);
+				Integer color = resultItemStack.getRarity().getFormatting().getColorValue();
+				context.drawText(this.textRenderer, resultName, x + 155, y + 26, color != null ? color : 16777215, false);
 
 				if (this.craftingResultDescription != Text.EMPTY) {
 					context.drawTextWrapped(this.textRenderer, this.craftingResultDescription, x + 139, y + 42, 132, 16777215);
 				}
 
-				context.drawText(this.textRenderer, Text.translatable("gui.rpg_crafting.recipe_result.ingredients_title").formatted(Formatting.UNDERLINE), x + 135, y + 80, 16777215, false);
+				if (!this.handler.getCraftingResultIngredientsInventory().isEmpty()) {
+					context.drawText(this.textRenderer, Text.translatable("gui.rpg_crafting.recipe_result.ingredients_title").formatted(Formatting.UNDERLINE), x + 135, y + 80, 16777215, false);
+				}
 
 			}
 		}

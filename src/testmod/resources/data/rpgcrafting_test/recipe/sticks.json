@@ -3,9 +3,6 @@
 	"category": "misc",
 	"itemStackIngredients": [],
 	"ingredients": [
-		{
-			"item": "minecraft:oak_planks"
-		}
 	],
 	"result": {
 		"id": "minecraft:stick",

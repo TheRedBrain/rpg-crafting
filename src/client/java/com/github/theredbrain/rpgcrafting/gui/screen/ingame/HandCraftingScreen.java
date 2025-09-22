@@ -7,7 +7,6 @@ import com.github.theredbrain.rpgcrafting.network.packet.CraftFromHandCraftingPa
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateHandCraftingScreenHandlerPropertyPacket;
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateHandCraftingScreenHandlerSelectedRecipePacket;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
-import com.github.theredbrain.rpgcrafting.registry.Tags;
 import com.github.theredbrain.rpgcrafting.screen.HandCraftingScreenHandler;
 import com.github.theredbrain.slotcustomizationapi.api.SlotCustomization;
 import net.fabricmc.api.EnvType;
@@ -24,8 +23,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -88,6 +85,7 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 
 	@Override
 	protected void handledScreenTick() {
+		super.handledScreenTick();
 		if (this.handler.shouldScreenCalculateCraftingStatus() != 0) {
 			int oldSelectedRecipe = this.handler.getSelectedRecipe();
 			int oldRecipeListHash = this.recipeList.hashCode();
@@ -194,7 +192,7 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 
 	private Text getModifiedTitle() {
 		if (this.playerEntity != null) {
-			return Text.translatable("gui.hand_crafting.title_with_level", ((DuckPlayerEntityMixin)this.playerEntity).rpgcrafting$getHandCraftingLevel());
+			return Text.translatable("gui.hand_crafting.title_with_level", ((DuckPlayerEntityMixin) this.playerEntity).rpgcrafting$getHandCraftingLevel());
 		} else {
 			return this.title;
 		}
@@ -331,13 +329,16 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 			} else {
 				resultName = resultItemStack.getName();
 			}
-			context.drawText(this.textRenderer, resultName, x + 155, y + 26, 16777215, false);
+			Integer color = resultItemStack.getRarity().getFormatting().getColorValue();
+			context.drawText(this.textRenderer, resultName, x + 155, y + 26, color != null ? color : 16777215, false);
 
 			if (this.craftingResultDescription != Text.EMPTY) {
 				context.drawTextWrapped(this.textRenderer, this.craftingResultDescription, x + 139, y + 42, 132, 16777215);
 			}
 
-			context.drawText(this.textRenderer, Text.translatable("gui.rpg_crafting.recipe_result.ingredients_title").formatted(Formatting.UNDERLINE), x + 135, y + 80, 16777215, false);
+			if (!this.handler.getCraftingResultIngredientsInventory().isEmpty()) {
+				context.drawText(this.textRenderer, Text.translatable("gui.rpg_crafting.recipe_result.ingredients_title").formatted(Formatting.UNDERLINE), x + 135, y + 80, 16777215, false);
+			}
 
 		}
 	}

@@ -14,7 +14,10 @@
 		}
 	],
 	"result": {
-		"id": "minecraft:wooden_sword"
+		"id": "minecraft:wooden_sword",
+		"components": {
+			"minecraft:rarity": "rare"
+		}
 	},
 	"level": 1,
 	"tab": 1,
