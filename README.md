@@ -77,6 +77,8 @@ Example:
   - 0: handcrafting
   - 1 to 4: the different tabs in the Crafting Bench screen
 - "recipeType", either "STANDARD" or "SPECIAL". This is not used, when the "tab" is set to 0.
+- "showNotification", a boolean. Whether a toast is displayed when this recipe is unlocked, "true" by default.
+- "requiresUnlockAdvancement", a boolean. Whether this recipe has to be unlocked, typically via an advancement, "false" by default.
 
 ### Recipe Descriptions
 

@@ -1,3 +1,13 @@
+# 1.3.0
+
+- added Altar Shaped Crafting Tab Provider Block, unused by default. Acts as a simple API for add-on mods.
+- added Enchanting Table Shaped Crafting Tab Provider Block, unused by default. Acts as a simple API for add-on mods.
+- added Lectern Shaped Crafting Tab Provider Block, unused by default. Acts as a simple API for add-on mods.
+- added support for multiple tab provider blocks per tab
+- tab tooltips are now properly localized
+- replaced game rules with server config settings
+- internal improvements
+
 # 1.2.0
 
 - added an optional "completeComponentMatch" boolean field to each entry of the "itemStackIngredients" list, with a default of true
