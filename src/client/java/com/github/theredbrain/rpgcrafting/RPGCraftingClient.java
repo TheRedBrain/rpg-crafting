@@ -1,6 +1,5 @@
 package com.github.theredbrain.rpgcrafting;
 
-import com.github.theredbrain.inventorysizeattributes.InventorySizeAttributesClient;
 import com.github.theredbrain.rpgcrafting.compatibility.InventorySizeAttributesClientCompat;
 import com.github.theredbrain.rpgcrafting.config.ClientConfig;
 import com.github.theredbrain.rpgcrafting.gui.screen.ingame.CraftingBenchBlockScreen;

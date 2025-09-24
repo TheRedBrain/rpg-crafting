@@ -55,6 +55,7 @@ public class LecternShapedCraftingTabProviderBlock extends AbstractCraftingTabPr
 			Block.createCuboidShape(0.0, 14.0, 2.0, 16.0, 18.0, 6.333333),
 			BASE_SHAPE
 	);
+
 	public LecternShapedCraftingTabProviderBlock(int openedTab, Settings settings) {
 		super(openedTab, settings);
 		this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
@@ -92,7 +93,7 @@ public class LecternShapedCraftingTabProviderBlock extends AbstractCraftingTabPr
 
 	@Override
 	protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-		switch ((Direction)state.get(FACING)) {
+		switch ((Direction) state.get(FACING)) {
 			case NORTH:
 				return NORTH_SHAPE;
 			case SOUTH:

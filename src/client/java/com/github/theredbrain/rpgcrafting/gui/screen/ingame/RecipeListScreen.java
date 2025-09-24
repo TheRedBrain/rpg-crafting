@@ -69,7 +69,8 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
 		this.playerInventoryTitleY = 139;
 		super.init();
 
-		this.craftButton = this.addDrawableChild(ButtonWidget.builder(Text.empty(), button -> {}).dimensions(this.x + 130, this.y + 116, 147, 20).build());
+		this.craftButton = this.addDrawableChild(ButtonWidget.builder(Text.empty(), button -> {
+		}).dimensions(this.x + 130, this.y + 116, 147, 20).build());
 		this.craftButton.active = false;
 
 		this.updateRecipeList();

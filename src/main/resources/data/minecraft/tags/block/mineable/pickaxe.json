@@ -1,7 +1,7 @@
 {
-	"values": [
-		"rpgcrafting:crafting_tab_2_provider_block",
-		"rpgcrafting:crafting_tab_3_provider_block",
-		"rpgcrafting:crafting_tab_4_provider_block"
-	]
+  "values": [
+    "rpgcrafting:crafting_tab_2_provider_block",
+    "rpgcrafting:crafting_tab_3_provider_block",
+    "rpgcrafting:crafting_tab_4_provider_block"
+  ]
 }

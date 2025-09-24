@@ -5,10 +5,6 @@ import com.github.theredbrain.rpgcrafting.recipe.input.MultipleStackRecipeInput;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.netty.handler.codec.DecoderException;
-import io.netty.handler.codec.EncoderException;
-import net.minecraft.component.ComponentChanges;
-import net.minecraft.component.ComponentType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
@@ -25,9 +21,6 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 	public final List<ItemStackIngredient> itemStackIngredients;

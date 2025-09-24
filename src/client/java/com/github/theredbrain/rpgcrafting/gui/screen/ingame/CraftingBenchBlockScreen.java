@@ -9,7 +9,6 @@ import com.github.theredbrain.rpgcrafting.network.packet.ToggleUseStashForCrafti
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateCraftingBenchScreenHandlerPropertyPacket;
 import com.github.theredbrain.rpgcrafting.network.packet.UpdateCraftingBenchScreenHandlerSelectedRecipePacket;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
-import com.github.theredbrain.rpgcrafting.registry.BlockRegistry;
 import com.github.theredbrain.rpgcrafting.screen.CraftingBenchBlockScreenHandler;
 import com.github.theredbrain.slotcustomizationapi.api.SlotCustomization;
 import net.fabricmc.api.EnvType;

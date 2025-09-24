@@ -1,14 +1,14 @@
 {
-	"required": true,
-	"package": "com.github.theredbrain.rpgcrafting.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"entity.LivingEntityMixin",
-		"entity.attribute.EntityAttributesMixin",
-		"entity.player.PlayerEntityMixin",
-		"server.network.ServerPlayerEntityMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	}
+  "required": true,
+  "package": "com.github.theredbrain.rpgcrafting.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "entity.LivingEntityMixin",
+    "entity.attribute.EntityAttributesMixin",
+    "entity.player.PlayerEntityMixin",
+    "server.network.ServerPlayerEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

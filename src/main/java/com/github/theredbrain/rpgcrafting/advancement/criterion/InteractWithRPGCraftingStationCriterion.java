@@ -28,7 +28,7 @@ public class InteractWithRPGCraftingStationCriterion extends AbstractCriterion<I
 	}
 
 	public record Conditions(Optional<LootContextPredicate> player, Optional<Integer> tab,
-									Optional<Integer> level)
+							 Optional<Integer> level)
 			implements AbstractCriterion.Conditions {
 		public static final Codec<InteractWithRPGCraftingStationCriterion.Conditions> CODEC = RecordCodecBuilder.<InteractWithRPGCraftingStationCriterion.Conditions>create(
 				instance -> instance.group(
