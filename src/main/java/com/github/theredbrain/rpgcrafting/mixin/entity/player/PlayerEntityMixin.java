@@ -1,9 +1,9 @@
 package com.github.theredbrain.rpgcrafting.mixin.entity.player;
 
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
+import com.github.theredbrain.rpgcrafting.config.ServerConfig;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.inventory.StashInventory;
-import com.github.theredbrain.rpgcrafting.registry.GameRulesRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -46,8 +46,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements DuckPlay
 
 	@Inject(method = "dropInventory", at = @At("TAIL"))
 	protected void rpgcrafting$dropInventory(CallbackInfo ci) {
-		if (!this.getWorld().getGameRules().getBoolean(GameRulesRegistry.KEEP_STASH_INVENTORY)) {
-			if (this.getWorld().getGameRules().getBoolean(GameRulesRegistry.CLEAR_STASH_INVENTORY_ON_DEATH)) {
+		ServerConfig serverConfig = RPGCrafting.SERVER_CONFIG;
+		if (!serverConfig.keep_stash_inventory_on_death.get()) {
+			if (serverConfig.clear_stash_inventory_on_death.get()) {
 				this.stashInventory.clear();
 			} else {
 				this.stashInventory.dropAll();

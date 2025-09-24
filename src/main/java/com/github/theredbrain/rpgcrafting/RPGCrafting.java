@@ -5,7 +5,6 @@ import com.github.theredbrain.rpgcrafting.compatibility.InventorySizeAttributesC
 import com.github.theredbrain.rpgcrafting.config.ServerConfig;
 import com.github.theredbrain.rpgcrafting.registry.AdvancementCriteriaRegistry;
 import com.github.theredbrain.rpgcrafting.registry.BlockRegistry;
-import com.github.theredbrain.rpgcrafting.registry.GameRulesRegistry;
 import com.github.theredbrain.rpgcrafting.registry.ItemGroupRegistry;
 import com.github.theredbrain.rpgcrafting.registry.RecipeRegistry;
 import com.github.theredbrain.rpgcrafting.registry.ScreenHandlerTypesRegistry;
@@ -62,7 +61,6 @@ public class RPGCrafting implements ModInitializer {
 		AdvancementCriteriaRegistry.init();
 		BlockRegistry.init();
 		ItemGroupRegistry.init();
-		GameRulesRegistry.init();
 		RecipeRegistry.init();
 		ScreenHandlerTypesRegistry.registerAll();
 		ServerPacketRegistry.init();

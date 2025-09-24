@@ -17,10 +17,6 @@
 
 	"category.rpgcrafting.category": "RPG Crafting",
 
-	"gamerule.keepStashInventory": "Keep stash inventory on death",
-	"gamerule.clearStashInventoryOnDeath": "Stash is cleared on death",
-	"gamerule.showAllRecipesInCraftingList": "Crafting list shows locked recipes",
-
 	"gui.crafting_bench.default_title": "Crafting Bench",
 	"gui.crafting_bench.tab_1_title": "Crafting Bench: Level %s",
 	"gui.crafting_bench.tab_2_title": "Smithy: Level %s",

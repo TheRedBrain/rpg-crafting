@@ -25,5 +25,7 @@ public class ServerConfig extends Config {
 	public ValidatedBoolean show_all_unlocked_special_recipes = new ValidatedBoolean(false);
 	public ValidatedBoolean is_crafting_list_screen_hotkey_enabled = new ValidatedBoolean(true);
 	public ValidatedBoolean is_hand_crafting_screen_hotkey_enabled = new ValidatedBoolean(true);
+	public ValidatedBoolean keep_stash_inventory_on_death = new ValidatedBoolean(false);
+	public ValidatedBoolean clear_stash_inventory_on_death = new ValidatedBoolean(false);
 	public ValidatedEnum<RPGCrafting.CraftingLevelCalculation> crafting_bench_level_calculation = new ValidatedEnum<RPGCrafting.CraftingLevelCalculation>(RPGCrafting.CraftingLevelCalculation.ADDITION);
 }
