@@ -73,8 +73,6 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
 		}).dimensions(this.x + 130, this.y + 116, 147, 20).build());
 		this.craftButton.active = false;
 
-		this.updateRecipeList();
-
 		ClientPlayNetworking.send(new UpdateRecipeListScreenHandlerPropertyPacket(
 				1
 		));

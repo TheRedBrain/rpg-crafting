@@ -77,7 +77,6 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 
 		this.craftButton = this.addDrawableChild(ButtonWidget.builder(HAND_CRAFT_BUTTON_LABEL_TEXT, button -> this.craft()).dimensions(this.x + 130, this.y + 116, 147, 20).build());
 
-		this.updateRecipeList();
 		ClientPlayNetworking.send(new UpdateHandCraftingScreenHandlerPropertyPacket(
 				1
 		));

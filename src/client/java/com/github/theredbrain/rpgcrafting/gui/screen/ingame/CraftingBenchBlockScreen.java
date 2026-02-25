@@ -155,9 +155,6 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 		this.toggleSpecialCraftingButton = this.addDrawableChild(ButtonWidget.builder(TOGGLE_SPECIAL_CRAFTING_TAB_1_BUTTON_LABEL_TEXT, button -> this.toggleRecipeType(false)).dimensions(this.x + 61, this.y + 41, 65, 20).build());
 		this.craftButton = this.addDrawableChild(ButtonWidget.builder(STANDARD_CRAFT_TAB_1_BUTTON_LABEL_TEXT, button -> this.craft()).dimensions(this.x + 130, this.y + 116, 147, 20).build());
 
-		this.updateRecipeList();
-		this.updateWidgets();
-
 		ClientPlayNetworking.send(new UpdateCraftingBenchScreenHandlerPropertyPacket(
 				1
 		));
@@ -173,6 +170,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 					0
 			));
 			this.updateRecipeList();
+			this.updateWidgets();
 			this.calculateCraftingStatus();
 			int newSelectedRecipe = oldSelectedRecipe;
 			if (oldRecipeListHash != this.recipeList.hashCode()) {
@@ -331,7 +329,6 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 				this.useStashForCrafting
 		));
 		this.toggleUseStashForCraftingButton.setMessage(this.useStashForCrafting ? TOGGLE_USE_STASH_FOR_CRAFTING_ON_BUTTON_LABEL_TEXT : TOGGLE_USE_STASH_FOR_CRAFTING_OFF_BUTTON_LABEL_TEXT);
-		this.updateWidgets();
 
 		ClientPlayNetworking.send(new UpdateCraftingBenchScreenHandlerPropertyPacket(
 				1
@@ -341,7 +338,6 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 	private void toggleTab(int tabIndex) {
 		this.handler.setCurrentTab(tabIndex);
 		this.handler.setCurrentRecipeType(true);
-		this.updateWidgets();
 
 		ClientPlayNetworking.send(new UpdateCraftingBenchScreenHandlerPropertyPacket(
 				1
@@ -350,7 +346,6 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 
 	private void toggleRecipeType(boolean isStandard) {
 		this.handler.setCurrentRecipeType(isStandard);
-		this.updateWidgets();
 
 		ClientPlayNetworking.send(new UpdateCraftingBenchScreenHandlerPropertyPacket(
 				1
