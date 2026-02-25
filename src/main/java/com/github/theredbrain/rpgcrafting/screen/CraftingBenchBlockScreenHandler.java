@@ -1,12 +1,12 @@
 package com.github.theredbrain.rpgcrafting.screen;
 
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
-import com.github.theredbrain.rpgcrafting.block.AbstractCraftingTabProviderBlock;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
 import com.github.theredbrain.rpgcrafting.recipe.input.MultipleStackRecipeInput;
 import com.github.theredbrain.rpgcrafting.registry.ScreenHandlerTypesRegistry;
 import com.github.theredbrain.rpgcrafting.screen.slot.RPGCraftingResultSlot;
+import com.github.theredbrain.rpgcrafting.util.RPGCraftingHelper;
 import com.github.theredbrain.slotcustomizationapi.api.SlotCustomization;
 import com.mojang.serialization.Codec;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,7 +23,6 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.StringIdentifiable;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -37,7 +36,6 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 	private static final int TAB_2 = 2;
 	private static final int TAB_3 = 3;
 	private static final int TAB_4 = 4;
-	private final BlockPos blockPos;
 	private final boolean isStorageTabProviderInReach;
 	private final boolean isTab1ProviderInReach;
 	private final boolean isTab2ProviderInReach;
@@ -71,14 +69,13 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 
 	public CraftingBenchBlockScreenHandler(int syncId, PlayerInventory playerInventory, CraftingBenchBlockData data) {
 
-		this(syncId, playerInventory, playerInventory.player.getEnderChestInventory(), ((DuckPlayerEntityMixin) playerInventory.player).rpgcrafting$getStashInventory(), data.blockPos, data.initialTab, data.tabProvidersInReach, data.storageProvidersInReach, data.tabLevels);
+		this(syncId, playerInventory, playerInventory.player.getEnderChestInventory(), ((DuckPlayerEntityMixin) playerInventory.player).rpgcrafting$getStashInventory(), data.initialTab, data.tabProvidersInReach, data.storageProvidersInReach, data.tabLevels, data.isolated);
 	}
 
-	public CraftingBenchBlockScreenHandler(int syncId, PlayerInventory playerInventory, EnderChestInventory enderChestInventory, SimpleInventory stashInventory, BlockPos blockPos, int initialTab, byte tabProvidersInReach, byte storageProvidersInReach, int[] tabLevels) {
+	public CraftingBenchBlockScreenHandler(int syncId, PlayerInventory playerInventory, EnderChestInventory enderChestInventory, SimpleInventory stashInventory, int initialTab, byte tabProvidersInReach, byte storageProvidersInReach, int[] tabLevels, boolean isolated) {
 		super(ScreenHandlerTypesRegistry.CRAFTING_BENCH_BLOCK_SCREEN_HANDLER, syncId);
 		this.playerInventory = playerInventory;
 		this.world = playerInventory.player.getWorld();
-		this.blockPos = blockPos;
 		this.currentTab = initialTab;
 		this.currentRecipeType = RecipeType.STANDARD;
 		this.isStorageTabProviderInReach = (tabProvidersInReach & 1 << 0) != 0;
@@ -98,7 +95,7 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 		this.craftingResultIngredientsInventory = new SimpleInventory(4);
 
 		if (this.playerInventory.player instanceof ServerPlayerEntity serverPlayerEntity) {
-			AbstractCraftingTabProviderBlock.triggerAdvancementCriterion(serverPlayerEntity, tabProvidersInReach, tabLevels);
+			RPGCraftingHelper.triggerAdvancementCriterion(serverPlayerEntity, tabProvidersInReach, tabLevels);
 		}
 
 		this.updateRPGCraftingRecipesList();
@@ -449,25 +446,31 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 	}
 
 	public record CraftingBenchBlockData(
-			BlockPos blockPos,
 			int initialTab,
 			byte tabProvidersInReach,
 			byte storageProvidersInReach,
-			int[] tabLevels
+			int[] tabLevels,
+			boolean isolated
 	) {
 
 		public static final PacketCodec<RegistryByteBuf, CraftingBenchBlockData> PACKET_CODEC = PacketCodec.of(CraftingBenchBlockData::write, CraftingBenchBlockData::new);
 
 		public CraftingBenchBlockData(RegistryByteBuf registryByteBuf) {
-			this(registryByteBuf.readBlockPos(), registryByteBuf.readInt(), registryByteBuf.readByte(), registryByteBuf.readByte(), registryByteBuf.readIntArray());
+			this(
+					registryByteBuf.readInt(),
+					registryByteBuf.readByte(),
+					registryByteBuf.readByte(),
+					registryByteBuf.readIntArray(),
+					registryByteBuf.readBoolean()
+			);
 		}
 
 		private void write(RegistryByteBuf registryByteBuf) {
-			registryByteBuf.writeBlockPos(blockPos);
-			registryByteBuf.writeInt(initialTab);
-			registryByteBuf.writeByte(tabProvidersInReach);
-			registryByteBuf.writeByte(storageProvidersInReach);
-			registryByteBuf.writeIntArray(tabLevels);
+			registryByteBuf.writeInt(this.initialTab);
+			registryByteBuf.writeByte(this.tabProvidersInReach);
+			registryByteBuf.writeByte(this.storageProvidersInReach);
+			registryByteBuf.writeIntArray(this.tabLevels);
+			registryByteBuf.writeBoolean(this.isolated);
 		}
 	}
 
