@@ -1,5 +1,6 @@
 package com.github.theredbrain.rpgcrafting.block;
 
+import com.github.theredbrain.rpgcrafting.RPGCrafting;
 import com.github.theredbrain.rpgcrafting.util.RPGCraftingHelper;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.Block;
@@ -27,7 +28,7 @@ public abstract class AbstractCraftingTabProviderBlock extends Block implements 
 		if (world.isClient) {
 			return ActionResult.SUCCESS;
 		}
-		player.openHandledScreen(RPGCraftingHelper.supplyCraftingTabProviderBlockScreenHandlerFactoryFromBlockPos(state, world, pos, player, this.openedTab, false));
+		player.openHandledScreen(RPGCraftingHelper.supplyCraftingTabProviderBlockScreenHandlerFactoryFromBlockPos(state, world, pos, player, this.openedTab, RPGCrafting.SERVER_CONFIG.isolate_crafting_tabs_from_blocks.get()));
 //		player.sendMessage(Text.translatable("gui.crafting_bench.no_crafting_root_block_nearby"), true);
 		return ActionResult.CONSUME;
 //        player.incrementStat(Stats.INTERACT_WITH_CRAFTING_TABLE); // TODO stats

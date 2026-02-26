@@ -28,5 +28,6 @@ public class ServerConfig extends Config {
 	public ValidatedBoolean is_hand_crafting_screen_hotkey_enabled = new ValidatedBoolean(true);
 	public ValidatedBoolean keep_stash_inventory_on_death = new ValidatedBoolean(false);
 	public ValidatedBoolean clear_stash_inventory_on_death = new ValidatedBoolean(false);
+	public ValidatedBoolean isolate_crafting_tabs_from_blocks = new ValidatedBoolean(false);
 	public ValidatedEnum<RPGCrafting.CraftingLevelCalculation> crafting_bench_level_calculation = new ValidatedEnum<RPGCrafting.CraftingLevelCalculation>(RPGCrafting.CraftingLevelCalculation.ADDITION);
 }

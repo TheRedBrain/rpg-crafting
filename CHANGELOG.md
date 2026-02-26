@@ -3,6 +3,7 @@
 ## Additions
 
 - added server config option to show locked handcrafted recipes
+- added server config option to isolate crafting tabs (remove the buttons to switch to another crafting tab)
 
 # 1.3.0
 
