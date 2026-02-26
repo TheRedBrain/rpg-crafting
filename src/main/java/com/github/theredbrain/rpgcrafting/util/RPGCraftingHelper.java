@@ -299,6 +299,7 @@ public class RPGCraftingHelper {
 			if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, inventory.getStack(loopIndexOffset + j))) {
 				int oldItemStackIngredientCount = itemStackIngredientCount;
 				ItemStack itemStack = inventory.getStack(loopIndexOffset + j).copy();
+				Item recipeRemainderItem = itemStack.getItem().getRecipeRemainder();
 				int stackCount = itemStack.getCount();
 				if (stackCount > itemStackIngredientCount) {
 					itemStack.setCount(stackCount - itemStackIngredientCount);
@@ -310,7 +311,6 @@ public class RPGCraftingHelper {
 				}
 				int itemStackIngredientCountDelta = oldItemStackIngredientCount - itemStackIngredientCount;
 
-				Item recipeRemainderItem = itemStack.getItem().getRecipeRemainder();
 				if (recipeRemainderItem != null) {
 					ItemStack remainderStack = recipeRemainderItem.getDefaultStack();
 					remainderStack.setCount(itemStackIngredientCountDelta);
@@ -329,6 +329,7 @@ public class RPGCraftingHelper {
 		for (int j = 0; j < loopEndIndex; j++) {
 			if (rpgIngredient.ingredient().test(inventory.getStack(loopIndexOffset + j))) {
 				ItemStack itemStack = inventory.getStack(loopIndexOffset + j).copy();
+				Item recipeRemainderItem = itemStack.getItem().getRecipeRemainder();
 				int stackCount = itemStack.getCount();
 				if (stackCount >= 1) {
 					itemStack.setCount(stackCount - 1);
@@ -336,8 +337,8 @@ public class RPGCraftingHelper {
 				} else {
 					inventory.setStack(loopIndexOffset + j, ItemStack.EMPTY);
 				}
-				if (itemStack.getItem().hasRecipeRemainder()) {
-					playerInventory.offerOrDrop(itemStack.getItem().getRecipeRemainder(itemStack));
+				if (recipeRemainderItem != null) {
+					playerInventory.offerOrDrop(recipeRemainderItem.getDefaultStack());
 				}
 				return true;
 			}
