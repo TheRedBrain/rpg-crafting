@@ -185,7 +185,7 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 
 		for (RecipeEntry<RPGCraftingRecipe> rpgCraftingRecipeEntry : this.rpgCraftingRecipesList) {
 			if (rpgCraftingRecipeEntry.value().tab == 0 && handCraftingLevel >= rpgCraftingRecipeEntry.value().level) {
-				if (rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(), world)) {
+				if (rpgCraftingRecipeEntry.value().matches(this.getCraftingInputInventory(), world) || RPGCrafting.SERVER_CONFIG.show_locked_recipes_in_hand_crafting_screen.get()) {
 					this.handCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
 				}
 			}

@@ -1,3 +1,9 @@
+# 1.4.0
+
+## Additions
+
+- added server config option to show locked handcrafted recipes
+
 # 1.3.0
 
 - added Altar Shaped Crafting Tab Provider Block, unused by default. Acts as a simple API for add-on mods.
