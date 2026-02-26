@@ -5,6 +5,7 @@
 - added server config option to show locked handcrafted recipes
 - added server config option to isolate crafting tabs (remove the buttons to switch to another crafting tab)
 - add "is_consumed" boolean to (itemStack)ingredients ("true" by default). If set to "false", the ingredient is not consumed upon crafting.
+- RPGCraftingRecipes now return recipe remainders to the players inventory
 
 ## Changes
 

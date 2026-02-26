@@ -13,6 +13,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
@@ -292,10 +293,11 @@ public class RPGCraftingHelper {
 		}
 	}
 
-	public static int removeItemStackIngredientFromInventory(Inventory inventory, int loopEndIndex, int loopIndexOffset, RPGCraftingRecipe.RPGItemStackIngredient itemStackIngredient, int itemStackIngredientCount) {
+	public static int removeItemStackIngredientFromInventory(PlayerInventory playerInventory, Inventory inventory, int loopEndIndex, int loopIndexOffset, RPGCraftingRecipe.RPGItemStackIngredient itemStackIngredient, int itemStackIngredientCount) {
 
 		for (int j = 0; j < loopEndIndex; j++) {
 			if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, inventory.getStack(loopIndexOffset + j))) {
+				int oldItemStackIngredientCount = itemStackIngredientCount;
 				ItemStack itemStack = inventory.getStack(loopIndexOffset + j).copy();
 				int stackCount = itemStack.getCount();
 				if (stackCount > itemStackIngredientCount) {
@@ -306,6 +308,14 @@ public class RPGCraftingHelper {
 					itemStackIngredientCount -= stackCount;
 					inventory.setStack(loopIndexOffset + j, ItemStack.EMPTY);
 				}
+				int itemStackIngredientCountDelta = oldItemStackIngredientCount - itemStackIngredientCount;
+
+				Item recipeRemainderItem = itemStack.getItem().getRecipeRemainder();
+				if (recipeRemainderItem != null) {
+					ItemStack remainderStack = recipeRemainderItem.getDefaultStack();
+					remainderStack.setCount(itemStackIngredientCountDelta);
+					playerInventory.offerOrDrop(remainderStack);
+				}
 				if (itemStackIngredientCount <= 0) {
 					break;
 				}
@@ -314,7 +324,7 @@ public class RPGCraftingHelper {
 		return itemStackIngredientCount;
 	}
 
-	public static boolean removeRPGIngredientFromInventory(Inventory inventory, int loopEndIndex, int loopIndexOffset, RPGCraftingRecipe.RPGIngredient rpgIngredient) {
+	public static boolean removeRPGIngredientFromInventory(PlayerInventory playerInventory, Inventory inventory, int loopEndIndex, int loopIndexOffset, RPGCraftingRecipe.RPGIngredient rpgIngredient) {
 
 		for (int j = 0; j < loopEndIndex; j++) {
 			if (rpgIngredient.ingredient().test(inventory.getStack(loopIndexOffset + j))) {
@@ -325,6 +335,9 @@ public class RPGCraftingHelper {
 					inventory.setStack(loopIndexOffset + j, itemStack);
 				} else {
 					inventory.setStack(loopIndexOffset + j, ItemStack.EMPTY);
+				}
+				if (itemStack.getItem().hasRecipeRemainder()) {
+					playerInventory.offerOrDrop(itemStack.getItem().getRecipeRemainder(itemStack));
 				}
 				return true;
 			}

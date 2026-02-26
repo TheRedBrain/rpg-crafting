@@ -60,6 +60,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 
 						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
 								craftingBenchBlockScreenHandler.getPlayerInventory(),
+								craftingBenchBlockScreenHandler.getPlayerInventory(),
 								playerHotbarSize,
 								0,
 								itemStackIngredient,
@@ -71,6 +72,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 
 						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
 								craftingBenchBlockScreenHandler.getPlayerInventory(),
+								craftingBenchBlockScreenHandler.getPlayerInventory(),
 								playerInventorySize,
 								9,
 								itemStackIngredient,
@@ -81,6 +83,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 						}
 
 						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
+								craftingBenchBlockScreenHandler.getPlayerInventory(),
 								craftingBenchBlockScreenHandler.getEnderChestInventory(),
 								stash0InventorySize,
 								0,
@@ -92,6 +95,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 						}
 
 						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
+								craftingBenchBlockScreenHandler.getPlayerInventory(),
 								craftingBenchBlockScreenHandler.getStashInventory(),
 								stash1InventorySize,
 								0,
@@ -103,6 +107,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 						}
 
 						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
+								craftingBenchBlockScreenHandler.getPlayerInventory(),
 								craftingBenchBlockScreenHandler.getStashInventory(),
 								stash2InventorySize,
 								8,
@@ -114,6 +119,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 						}
 
 						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
+								craftingBenchBlockScreenHandler.getPlayerInventory(),
 								craftingBenchBlockScreenHandler.getStashInventory(),
 								stash3InventorySize,
 								20,
@@ -125,6 +131,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 						}
 
 						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
+								craftingBenchBlockScreenHandler.getPlayerInventory(),
 								craftingBenchBlockScreenHandler.getEnderChestInventory(),
 								stash4InventorySize,
 								6,
@@ -151,6 +158,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 
 							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
 									craftingBenchBlockScreenHandler.getPlayerInventory(),
+									craftingBenchBlockScreenHandler.getPlayerInventory(),
 									playerHotbarSize,
 									0,
 									rpgIngredient
@@ -161,6 +169,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 
 							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
 									craftingBenchBlockScreenHandler.getPlayerInventory(),
+									craftingBenchBlockScreenHandler.getPlayerInventory(),
 									playerInventorySize,
 									9,
 									rpgIngredient
@@ -170,6 +179,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 							}
 
 							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
+									craftingBenchBlockScreenHandler.getPlayerInventory(),
 									craftingBenchBlockScreenHandler.getEnderChestInventory(),
 									stash0InventorySize,
 									0,
@@ -180,6 +190,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 							}
 
 							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
+									craftingBenchBlockScreenHandler.getPlayerInventory(),
 									craftingBenchBlockScreenHandler.getStashInventory(),
 									stash1InventorySize,
 									0,
@@ -190,6 +201,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 							}
 
 							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
+									craftingBenchBlockScreenHandler.getPlayerInventory(),
 									craftingBenchBlockScreenHandler.getStashInventory(),
 									stash2InventorySize,
 									8,
@@ -200,6 +212,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 							}
 
 							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
+									craftingBenchBlockScreenHandler.getPlayerInventory(),
 									craftingBenchBlockScreenHandler.getStashInventory(),
 									stash3InventorySize,
 									20,
@@ -210,6 +223,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 							}
 
 							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
+									craftingBenchBlockScreenHandler.getPlayerInventory(),
 									craftingBenchBlockScreenHandler.getEnderChestInventory(),
 									stash4InventorySize,
 									6,

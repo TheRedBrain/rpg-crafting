@@ -45,6 +45,7 @@ public class CraftFromHandCraftingPacketReceiver implements ServerPlayNetworking
 
 						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
 								handCraftingScreenHandler.getPlayerInventory(),
+								handCraftingScreenHandler.getPlayerInventory(),
 								playerHotbarSize,
 								0,
 								itemStackIngredient,
@@ -55,6 +56,7 @@ public class CraftFromHandCraftingPacketReceiver implements ServerPlayNetworking
 						}
 
 						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
+								handCraftingScreenHandler.getPlayerInventory(),
 								handCraftingScreenHandler.getPlayerInventory(),
 								playerInventorySize,
 								9,
@@ -78,6 +80,7 @@ public class CraftFromHandCraftingPacketReceiver implements ServerPlayNetworking
 
 							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
 									handCraftingScreenHandler.getPlayerInventory(),
+									handCraftingScreenHandler.getPlayerInventory(),
 									playerHotbarSize,
 									0,
 									rpgIngredient
@@ -87,6 +90,7 @@ public class CraftFromHandCraftingPacketReceiver implements ServerPlayNetworking
 							}
 
 							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
+									handCraftingScreenHandler.getPlayerInventory(),
 									handCraftingScreenHandler.getPlayerInventory(),
 									playerInventorySize,
 									9,
