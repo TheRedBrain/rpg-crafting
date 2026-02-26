@@ -2,6 +2,7 @@ package com.github.theredbrain.rpgcrafting.config;
 
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
 import me.fzzyhmstrs.fzzy_config.config.Config;
+import me.fzzyhmstrs.fzzy_config.config.ConfigSection;
 import me.fzzyhmstrs.fzzy_config.validation.minecraft.ValidatedIdentifier;
 import me.fzzyhmstrs.fzzy_config.validation.misc.ValidatedBoolean;
 import me.fzzyhmstrs.fzzy_config.validation.misc.ValidatedEnum;
@@ -30,4 +31,14 @@ public class ServerConfig extends Config {
 	public ValidatedBoolean clear_stash_inventory_on_death = new ValidatedBoolean(false);
 	public ValidatedBoolean isolate_crafting_tabs_from_blocks = new ValidatedBoolean(false);
 	public ValidatedEnum<RPGCrafting.CraftingLevelCalculation> crafting_bench_level_calculation = new ValidatedEnum<RPGCrafting.CraftingLevelCalculation>(RPGCrafting.CraftingLevelCalculation.ADDITION);
+
+	public NaturalPlayerAttributeValuesSection naturalPlayerAttributeValues = new NaturalPlayerAttributeValuesSection();
+
+	public static class NaturalPlayerAttributeValuesSection extends ConfigSection {
+		public float natural_hand_crafting_level = 0.0F;
+		public float natural_crafting_tab_1_level = 0.0F;
+		public float natural_crafting_tab_2_level = 0.0F;
+		public float natural_crafting_tab_3_level = 0.0F;
+		public float natural_crafting_tab_4_level = 0.0F;
+	}
 }

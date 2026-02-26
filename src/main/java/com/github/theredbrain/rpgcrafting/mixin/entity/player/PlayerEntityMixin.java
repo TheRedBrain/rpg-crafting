@@ -3,6 +3,7 @@ package com.github.theredbrain.rpgcrafting.mixin.entity.player;
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
 import com.github.theredbrain.rpgcrafting.config.ServerConfig;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
+import com.github.theredbrain.rpgcrafting.entity.player.PlayerHelper;
 import com.github.theredbrain.rpgcrafting.inventory.StashInventory;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -75,6 +76,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements DuckPlay
 		nbt.put("stash_items", this.stashInventory.toNbtList(this.getRegistryManager()));
 
 		nbt.putBoolean("use_stash_for_crafting", this.rpgcrafting$useStashForCrafting());
+	}
+
+	@Inject(method = "tick", at = @At("TAIL"))
+	public void staminaattributes$tick(CallbackInfo ci) {
+		if (!this.getEntityWorld().isClient()) {
+			this.getAttributes().addTemporaryModifiers(PlayerHelper.getNaturalAttributeModifiers());
+		}
 	}
 
 	@Override
