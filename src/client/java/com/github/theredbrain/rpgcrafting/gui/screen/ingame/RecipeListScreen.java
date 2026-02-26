@@ -32,7 +32,7 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
-	private static final int RECIPE_FIELD_HEIGTH = 4;
+	private static final int RECIPE_FIELD_HEIGHT = 4;
 	private static final int RECIPE_FIELD_WIDTH = 3;
 	private static final Identifier RECIPE_SELECTED_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe_selected");
 	private static final Identifier RECIPE_HIGHLIGHTED_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe_highlighted");
@@ -188,7 +188,7 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
 		this.mouseClicked = false;
 		int i = this.x + 62;
 		int j = this.y + 63;
-		int k = this.scrollPosition + (RECIPE_FIELD_HEIGTH * RECIPE_FIELD_WIDTH);
+		int k = this.scrollPosition + (RECIPE_FIELD_HEIGHT * RECIPE_FIELD_WIDTH);
 
 		for (int l = this.scrollPosition; l < k; ++l) {
 			int m = l - this.scrollPosition;
@@ -265,7 +265,7 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
 		int index = 0;
 		List<RecipeEntry<RPGCraftingRecipe>> recipeList = this.recipeList;
 		int recipeCounter = recipeList.size();
-		for (int i = this.scrollPosition; i < Math.min(this.scrollPosition + (RECIPE_FIELD_HEIGTH * RECIPE_FIELD_WIDTH), recipeCounter); i++) {
+		for (int i = this.scrollPosition; i < Math.min(this.scrollPosition + (RECIPE_FIELD_HEIGHT * RECIPE_FIELD_WIDTH), recipeCounter); i++) {
 			if (i > recipeList.size()) {
 				break;
 			}
@@ -328,12 +328,11 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
 	}
 
 	private boolean shouldScroll() {
-		return this.recipeList.size() > (RECIPE_FIELD_HEIGTH * RECIPE_FIELD_WIDTH);
+		return this.recipeList.size() > (RECIPE_FIELD_HEIGHT * RECIPE_FIELD_WIDTH);
 	}
 
 	protected int getMaxScroll() {
-//        return (this.recipeList.size() + 3 - 1) / 3 - 3; // TODO testing
-//		return (this.recipeList.size() + RECIPE_FIELD_WIDTH - RECIPE_FIELD_WIDTH - 1) / RECIPE_FIELD_WIDTH - RECIPE_FIELD_WIDTH;
-		return (this.recipeList.size() + 1) / RECIPE_FIELD_WIDTH - RECIPE_FIELD_WIDTH;
+		int overflowAmount = Math.max(0, this.recipeList.size() - (RECIPE_FIELD_WIDTH * RECIPE_FIELD_HEIGHT));
+		return overflowAmount / RECIPE_FIELD_WIDTH + (overflowAmount % RECIPE_FIELD_WIDTH > 0 ? 1 : 0);
 	}
 }

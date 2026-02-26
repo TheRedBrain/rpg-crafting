@@ -40,8 +40,6 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockScreenHandler> {
-	private static final int RECIPE_FIELD_HEIGTH = 4;
-	private static final int RECIPE_FIELD_WIDTH = 3;
 	private static final int TAB_1 = 1;
 	private static final int TAB_2 = 2;
 	private static final int TAB_3 = 3;
@@ -83,6 +81,8 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 	private static final Identifier SCROLLER_VERTICAL_6_7_DISABLED_TEXTURE = RPGCrafting.identifier("scroll_bar/scroller_vertical_6_7_disabled");
 	private final int hotbarSize;
 	private final int inventorySize;
+	private int recipeFieldHeight = 4;
+	private int recipeFieldWidth = 3;
 
 	private List<RecipeEntry<RPGCraftingRecipe>> recipeList = new ArrayList<>();
 
@@ -127,6 +127,14 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 		this.playerInventoryTitleY = 139;
 		super.init();
 
+		if (this.handler.isolated()) {
+			this.recipeFieldHeight = 4;
+			this.recipeFieldWidth = 6;
+		} else {
+			this.recipeFieldHeight = 4;
+			this.recipeFieldWidth = 3;
+		}
+
 		this.isStorageArea0ProviderInReach = this.handler.isStorageArea0ProviderInReach();
 		this.isStorageArea1ProviderInReach = this.handler.isStorageArea1ProviderInReach();
 		this.isStorageArea2ProviderInReach = this.handler.isStorageArea2ProviderInReach();
@@ -154,6 +162,10 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 		this.toggleStandardCraftingButton = this.addDrawableChild(ButtonWidget.builder(TOGGLE_STANDARD_CRAFTING_TAB_1_BUTTON_LABEL_TEXT, button -> this.toggleRecipeType(true)).dimensions(this.x + 61, this.y + 17, 65, 20).build());
 		this.toggleSpecialCraftingButton = this.addDrawableChild(ButtonWidget.builder(TOGGLE_SPECIAL_CRAFTING_TAB_1_BUTTON_LABEL_TEXT, button -> this.toggleRecipeType(false)).dimensions(this.x + 61, this.y + 41, 65, 20).build());
 		this.craftButton = this.addDrawableChild(ButtonWidget.builder(STANDARD_CRAFT_TAB_1_BUTTON_LABEL_TEXT, button -> this.craft()).dimensions(this.x + 130, this.y + 116, 147, 20).build());
+
+		// redundant calls to avoid visual glitches
+		this.updateRecipeList();
+		this.updateWidgets();
 
 		ClientPlayNetworking.send(new UpdateCraftingBenchScreenHandlerPropertyPacket(
 				1
@@ -245,34 +257,37 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 		this.toggleTab2Button.visible = false;
 		this.toggleTab3Button.visible = false;
 		this.toggleTab4Button.visible = false;
-		this.toggleStorageTabButton.visible = this.handler.isStorageTabProviderInReach();
+		this.toggleStorageTabButton.visible = this.handler.isStorageTabProviderInReach() && !this.handler.isolated();
 
-		this.toggleTab1Button.active = this.currentTab != TAB_1;
-		this.toggleTab2Button.active = this.currentTab != TAB_2;
-		this.toggleTab3Button.active = this.currentTab != TAB_3;
-		this.toggleTab4Button.active = this.currentTab != TAB_4;
-		this.toggleStorageTabButton.active = this.currentTab != -1;
+		this.toggleTab1Button.active = this.currentTab != TAB_1 && !this.handler.isolated();
+		this.toggleTab2Button.active = this.currentTab != TAB_2 && !this.handler.isolated();
+		this.toggleTab3Button.active = this.currentTab != TAB_3 && !this.handler.isolated();
+		this.toggleTab4Button.active = this.currentTab != TAB_4 && !this.handler.isolated();
+		this.toggleStorageTabButton.active = this.currentTab != -1 && !this.handler.isolated();
 
-		int y = this.y + 17;
+		if (!this.handler.isolated()) {
 
-		if (this.handler.isTab1ProviderInReach()) {
-			this.toggleTab1Button.visible = true;
-			this.toggleTab1Button.setY(y);
-			y += 24;
-		}
-		if (this.handler.isTab2ProviderInReach()) {
-			this.toggleTab2Button.visible = true;
-			this.toggleTab2Button.setY(y);
-			y += 24;
-		}
-		if (this.handler.isTab3ProviderInReach()) {
-			this.toggleTab3Button.visible = true;
-			this.toggleTab3Button.setY(y);
-			y += 24;
-		}
-		if (this.handler.isTab4ProviderInReach()) {
-			this.toggleTab4Button.visible = true;
-			this.toggleTab4Button.setY(y);
+			int y = this.y + 17;
+
+			if (this.handler.isTab1ProviderInReach()) {
+				this.toggleTab1Button.visible = true;
+				this.toggleTab1Button.setY(y);
+				y += 24;
+			}
+			if (this.handler.isTab2ProviderInReach()) {
+				this.toggleTab2Button.visible = true;
+				this.toggleTab2Button.setY(y);
+				y += 24;
+			}
+			if (this.handler.isTab3ProviderInReach()) {
+				this.toggleTab3Button.visible = true;
+				this.toggleTab3Button.setY(y);
+				y += 24;
+			}
+			if (this.handler.isTab4ProviderInReach()) {
+				this.toggleTab4Button.visible = true;
+				this.toggleTab4Button.setY(y);
+			}
 		}
 
 		if (this.currentTab >= 1) {
@@ -283,6 +298,12 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 
 			this.toggleStandardCraftingButton.active = !isCurrentRecipeTypeStandard;
 			this.toggleSpecialCraftingButton.active = isCurrentRecipeTypeStandard;
+
+			this.toggleStandardCraftingButton.setX(this.handler.isolated() ? this.x + 7 : this.x + 61);
+			this.toggleStandardCraftingButton.setWidth(this.handler.isolated() ? 117 : 63);
+
+			this.toggleSpecialCraftingButton.setX(this.handler.isolated() ? this.x + 7 : this.x + 61);
+			this.toggleSpecialCraftingButton.setWidth(this.handler.isolated() ? 117 : 63);
 
 			Text toggleStandardCraftingButtonMessage = Text.empty();
 			Text toggleSpecialCraftingButtonMessage = Text.empty();
@@ -417,7 +438,6 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 				this.craftingResultDescription = newCraftingResultDescription;
 
 				craftButtonActive = craftingRecipeEntry.value().matches(this.handler.getCraftingInputInventory(((DuckPlayerEntityMixin) this.handler.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world);
-			} else {
 			}
 		}
 		this.craftButton.active = craftButtonActive;
@@ -436,14 +456,14 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		this.mouseClicked = false;
 		if (this.currentTab >= 1) {
-			int i = this.x + 62;
+			int i = this.x + (this.handler.isolated() ? 8 : 62);
 			int j = this.y + 63;
-			int k = this.scrollPosition + (RECIPE_FIELD_HEIGTH * RECIPE_FIELD_WIDTH);
+			int k = this.scrollPosition + (this.recipeFieldHeight * this.recipeFieldWidth);
 
 			for (int l = this.scrollPosition; l < k; ++l) {
 				int m = l - this.scrollPosition;
-				double d = mouseX - (double) (i + m % RECIPE_FIELD_WIDTH * 18);
-				double e = mouseY - (double) (j + m / RECIPE_FIELD_WIDTH * 18);
+				double d = mouseX - (double) (i + m % this.recipeFieldWidth * 18);
+				double e = mouseY - (double) (j + m / this.recipeFieldWidth * 18);
 				if (d >= 0.0 && e >= 0.0 && d < 18.0 && e < 18.0 && this.client != null && this.client.interactionManager != null && this.handler.onButtonClick(this.client.player, l)) {
 					MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_STONECUTTER_SELECT_RECIPE, 1.0F));
 					if (this.isInBounds(l - this.scrollPosition)) {
@@ -476,7 +496,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 			int j = i + 54;
 			this.scrollAmount = ((float) mouseY - (float) i - 7.5F) / ((float) (j - i) - 15.0F);
 			this.scrollAmount = MathHelper.clamp(this.scrollAmount, 0.0F, 1.0F);
-			this.scrollPosition = (int) ((double) (this.scrollAmount * (float) this.getMaxScroll()) + 0.5) * 3;
+			this.scrollPosition = (int) ((double) (this.scrollAmount * (float) this.getMaxScroll())/* + 0.5*/) * this.recipeFieldWidth;
 			return true;
 		} else {
 			return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
@@ -489,7 +509,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 			int i = this.getMaxScroll();
 			float f = (float) verticalAmount / (float) i;
 			this.scrollAmount = MathHelper.clamp(this.scrollAmount - f, 0.0F, 1.0F);
-			this.scrollPosition = (int) ((double) (this.scrollAmount * (float) i) + 0.5) * RECIPE_FIELD_WIDTH;
+			this.scrollPosition = (int) ((double) (this.scrollAmount * (float) i)/* + 0.5*/) * this.recipeFieldWidth;
 		}
 
 		return true;
@@ -521,19 +541,19 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 				context.drawTexture(STASH_AREA_4_BACKGROUND_TEXTURE, x + 68, y + 82, 0, 0, 126, 54, 126, 54);
 			}
 		} else {
-			context.drawTexture(RPGCrafting.identifier("textures/gui/container/crafting_bench/tab_" + this.currentTab + "_background.png"), x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
+			context.drawTexture(RPGCrafting.identifier("textures/gui/container/crafting_bench/tab_" + this.currentTab + (this.handler.isolated() ? "_isolated" : "") + "_background.png"), x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 			int index = 0;
 			List<RecipeEntry<RPGCraftingRecipe>> recipeList = this.recipeList;
 			int recipeCounter = recipeList.size();
-			for (int i = this.scrollPosition; i < Math.min(this.scrollPosition + (RECIPE_FIELD_HEIGTH * RECIPE_FIELD_WIDTH), recipeCounter); i++) {
+			for (int i = this.scrollPosition; i < Math.min(this.scrollPosition + (this.recipeFieldHeight * this.recipeFieldWidth), recipeCounter); i++) {
 				if (i > recipeList.size()) {
 					break;
 				}
 				RPGCraftingRecipe craftingRecipe = recipeList.get(i).value();
 				if (craftingRecipe != null && this.client != null && this.client.world != null) {
 
-					x = this.x + 62 + (index % RECIPE_FIELD_WIDTH * 18);
-					y = this.y + 63 + (index / RECIPE_FIELD_WIDTH) * 18;
+					x = this.x + (this.handler.isolated() ? 8 : 62) + (index % this.recipeFieldWidth * 18);
+					y = this.y + 63 + (index / this.recipeFieldWidth) * 18;
 
 					ItemStack resultItemStack = craftingRecipe.getResult(this.client.world.getRegistryManager());
 					Identifier identifier;
@@ -603,12 +623,11 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 	}
 
 	private boolean shouldScroll() {
-		return this.recipeList.size() > (RECIPE_FIELD_HEIGTH * RECIPE_FIELD_WIDTH);
+		return this.recipeList.size() > (this.recipeFieldHeight * this.recipeFieldWidth);
 	}
 
 	protected int getMaxScroll() {
-//        return (this.recipeList.size() + 3 - 1) / 3 - 3; // TODO testing
-//		return (this.recipeList.size() + RECIPE_FIELD_WIDTH - 1) / RECIPE_FIELD_WIDTH - RECIPE_FIELD_WIDTH;
-		return (this.recipeList.size() + 1) / RECIPE_FIELD_WIDTH - RECIPE_FIELD_WIDTH;
+		int overflowAmount = Math.max(0, this.recipeList.size() - (this.recipeFieldWidth * this.recipeFieldHeight));
+		return overflowAmount / this.recipeFieldWidth + (overflowAmount % this.recipeFieldWidth > 0 ? 1 : 0);
 	}
 }

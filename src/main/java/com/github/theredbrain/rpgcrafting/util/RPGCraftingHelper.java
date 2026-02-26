@@ -63,10 +63,7 @@ public class RPGCraftingHelper {
 		boolean blockStateIsActiveTabProvider;
 		if (world != null) {
 			boolean stateIsActiveTabProvider = isTabProviderBlockActive(world, state);
-//			int stateOpenedTab = 0;
-//			if (state.getBlock() instanceof AbstractCraftingTabProviderBlock abstractCraftingTabProviderBlock) {
-//				stateOpenedTab = abstractCraftingTabProviderBlock.getOpenedTab();
-//			}
+
 			for (int i = -crafting_root_block_reach_radius; i <= crafting_root_block_reach_radius; i++) {
 				for (int j = -crafting_root_block_reach_radius; j <= crafting_root_block_reach_radius; j++) {
 					for (int k = -crafting_root_block_reach_radius; k <= crafting_root_block_reach_radius; k++) {
@@ -208,20 +205,20 @@ public class RPGCraftingHelper {
 		int craftingTab4AttributeLevel = ((DuckPlayerEntityMixin) player).rpgcrafting$getCraftingTab4Level();
 
 		if (serverConfig.crafting_bench_level_calculation.get() == RPGCrafting.CraftingLevelCalculation.ADDITION) {
-			tabLevels[0] = !isolated || initialTab == 0 ? craftingTab1LevelProviders.size() + craftingTab1AttributeLevel : 0;
-			tabLevels[1] = !isolated || initialTab == 1 ? craftingTab2LevelProviders.size() + craftingTab2AttributeLevel : 0;
-			tabLevels[2] = !isolated || initialTab == 2 ? craftingTab3LevelProviders.size() + craftingTab3AttributeLevel : 0;
-			tabLevels[3] = !isolated || initialTab == 3 ? craftingTab4LevelProviders.size() + craftingTab4AttributeLevel : 0;
+			tabLevels[0] = !isolated || initialTab == 1 ? craftingTab1LevelProviders.size() + craftingTab1AttributeLevel : 0;
+			tabLevels[1] = !isolated || initialTab == 2 ? craftingTab2LevelProviders.size() + craftingTab2AttributeLevel : 0;
+			tabLevels[2] = !isolated || initialTab == 3 ? craftingTab3LevelProviders.size() + craftingTab3AttributeLevel : 0;
+			tabLevels[3] = !isolated || initialTab == 4 ? craftingTab4LevelProviders.size() + craftingTab4AttributeLevel : 0;
 		} else if (serverConfig.crafting_bench_level_calculation.get() == RPGCrafting.CraftingLevelCalculation.BLOCKS_REQUIRED) {
-			tabLevels[0] = !isolated || initialTab == 0 ? (int) Math.clamp(craftingTab1AttributeLevel, 0.0, craftingTab1LevelProviders.size()) : 0;
-			tabLevels[1] = !isolated || initialTab == 1 ? (int) Math.clamp(craftingTab2AttributeLevel, 0.0, craftingTab2LevelProviders.size()) : 0;
-			tabLevels[2] = !isolated || initialTab == 2 ? (int) Math.clamp(craftingTab3AttributeLevel, 0.0, craftingTab3LevelProviders.size()) : 0;
-			tabLevels[3] = !isolated || initialTab == 3 ? (int) Math.clamp(craftingTab4AttributeLevel, 0.0, craftingTab4LevelProviders.size()) : 0;
+			tabLevels[0] = !isolated || initialTab == 1 ? (int) Math.clamp(craftingTab1AttributeLevel, 0.0, craftingTab1LevelProviders.size()) : 0;
+			tabLevels[1] = !isolated || initialTab == 2 ? (int) Math.clamp(craftingTab2AttributeLevel, 0.0, craftingTab2LevelProviders.size()) : 0;
+			tabLevels[2] = !isolated || initialTab == 3 ? (int) Math.clamp(craftingTab3AttributeLevel, 0.0, craftingTab3LevelProviders.size()) : 0;
+			tabLevels[3] = !isolated || initialTab == 4 ? (int) Math.clamp(craftingTab4AttributeLevel, 0.0, craftingTab4LevelProviders.size()) : 0;
 		} else if (serverConfig.crafting_bench_level_calculation.get() == RPGCrafting.CraftingLevelCalculation.HIGHER_VALUE) {
-			tabLevels[0] = !isolated || initialTab == 0 ? Math.max(craftingTab1LevelProviders.size(), craftingTab1AttributeLevel) : 0;
-			tabLevels[1] = !isolated || initialTab == 1 ? Math.max(craftingTab2LevelProviders.size(), craftingTab2AttributeLevel) : 0;
-			tabLevels[2] = !isolated || initialTab == 2 ? Math.max(craftingTab3LevelProviders.size(), craftingTab3AttributeLevel) : 0;
-			tabLevels[3] = !isolated || initialTab == 3 ? Math.max(craftingTab4LevelProviders.size(), craftingTab4AttributeLevel) : 0;
+			tabLevels[0] = !isolated || initialTab == 1 ? Math.max(craftingTab1LevelProviders.size(), craftingTab1AttributeLevel) : 0;
+			tabLevels[1] = !isolated || initialTab == 2 ? Math.max(craftingTab2LevelProviders.size(), craftingTab2AttributeLevel) : 0;
+			tabLevels[2] = !isolated || initialTab == 3 ? Math.max(craftingTab3LevelProviders.size(), craftingTab3AttributeLevel) : 0;
+			tabLevels[3] = !isolated || initialTab == 4 ? Math.max(craftingTab4LevelProviders.size(), craftingTab4AttributeLevel) : 0;
 		} else {
 			tabLevels[0] = 0;
 			tabLevels[1] = 0;
