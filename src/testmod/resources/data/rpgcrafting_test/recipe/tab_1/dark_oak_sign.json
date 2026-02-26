@@ -1,0 +1,35 @@
+{
+	"type": "rpgcrafting:rpg_crafting_recipe",
+	"category": "misc",
+	"itemStackIngredients": [],
+	"ingredients": [
+		{
+			"item": "minecraft:dark_oak_planks"
+		},
+		{
+			"item": "minecraft:dark_oak_planks"
+		},
+		{
+			"item": "minecraft:dark_oak_planks"
+		},
+		{
+			"item": "minecraft:dark_oak_planks"
+		},
+		{
+			"item": "minecraft:dark_oak_planks"
+		},
+		{
+			"item": "minecraft:dark_oak_planks"
+		},
+		{
+			"item": "minecraft:stick"
+		}
+	],
+	"result": {
+		"id": "minecraft:dark_oak_sign",
+		"count": 3
+	},
+	"level": 1,
+	"tab": 1,
+	"recipeType": "STANDARD"
+}

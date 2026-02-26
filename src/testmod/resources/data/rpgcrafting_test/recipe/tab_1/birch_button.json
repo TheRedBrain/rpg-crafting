@@ -1,0 +1,16 @@
+{
+	"type": "rpgcrafting:rpg_crafting_recipe",
+	"category": "misc",
+	"itemStackIngredients": [],
+	"ingredients": [
+		{
+			"item": "minecraft:birch_planks"
+		}
+	],
+	"result": {
+		"id": "minecraft:birch_button"
+	},
+	"level": 1,
+	"tab": 1,
+	"recipeType": "STANDARD"
+}

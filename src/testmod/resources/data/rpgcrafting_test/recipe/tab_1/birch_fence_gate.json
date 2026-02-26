@@ -1,0 +1,31 @@
+{
+	"type": "rpgcrafting:rpg_crafting_recipe",
+	"category": "misc",
+	"itemStackIngredients": [],
+	"ingredients": [
+		{
+			"item": "minecraft:birch_planks"
+		},
+		{
+			"item": "minecraft:birch_planks"
+		},
+		{
+			"item": "minecraft:stick"
+		},
+		{
+			"item": "minecraft:stick"
+		},
+		{
+			"item": "minecraft:stick"
+		},
+		{
+			"item": "minecraft:stick"
+		}
+	],
+	"result": {
+		"id": "minecraft:birch_fence_gate"
+	},
+	"level": 1,
+	"tab": 1,
+	"recipeType": "STANDARD"
+}
