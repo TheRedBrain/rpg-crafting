@@ -171,7 +171,7 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
 		} else {
 			this.craftButton.setMessage(Text.empty());
 			this.craftButton.setTooltip(Tooltip.of(Text.empty()));
-			for (int i = 0; i < 8; i++) {
+			for (int i = 0; i < 9; i++) {
 				((SlotCustomization) this.handler.slots.get(37 + i)).slotcustomizationapi$setDisabledOverride(true);
 			}
 		}

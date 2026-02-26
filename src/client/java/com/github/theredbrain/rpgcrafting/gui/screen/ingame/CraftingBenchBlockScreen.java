@@ -441,7 +441,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 			}
 		}
 		this.craftButton.active = craftButtonActive;
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 9; i++) {
 			((SlotCustomization) this.handler.slots.get(97 + i)).slotcustomizationapi$setDisabledOverride(hideCraftingResultItemStacks);
 		}
 	}

@@ -176,7 +176,7 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 
 			craftButtonActive = craftingRecipeEntry.value().matches(this.handler.getCraftingInputInventory(), world);
 		} else {
-			for (int i = 0; i < 8; i++) {
+			for (int i = 0; i < 9; i++) {
 				((SlotCustomization) this.handler.slots.get(36 + i)).slotcustomizationapi$setDisabledOverride(true);
 			}
 		}

@@ -94,7 +94,7 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 		this.enderChestInventory = enderChestInventory;
 		this.stashInventory = stashInventory;
 		this.craftingResultInventory = new SimpleInventory(1);
-		this.craftingResultIngredientsInventory = new SimpleInventory(7);
+		this.craftingResultIngredientsInventory = new SimpleInventory(8);
 
 		if (this.playerInventory.player instanceof ServerPlayerEntity serverPlayerEntity) {
 			RPGCraftingHelper.triggerAdvancementCriterion(serverPlayerEntity, tabProvidersInReach, tabLevels);
@@ -145,7 +145,7 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 		// crafting result slots 97
 		this.addSlot(new RPGCraftingResultSlot(this.craftingResultInventory, 0, 135, 22));
 
-		// crafting ingredient slots 98 - 104
+		// crafting ingredient slots 98 - 105
 		for (i = 0; i < this.craftingResultIngredientsInventory.size(); ++i) {
 			this.addSlot(new RPGCraftingResultSlot(this.craftingResultIngredientsInventory, i, 135 + (i * 18), 92));
 		}

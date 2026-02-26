@@ -13,6 +13,7 @@
 - renamed "itemStackIngredients" into "rpg_item_stack_ingredients"
 - changed all fields in the RPGCraftingRecipe JSON files to "snake_case", following vanillas example
 - increased amount of visible ingredient stacks in RPG Crafting screens from 4 to 7
+- increased amount of visible ingredient stacks in RPG Crafting screens from 4 to 8
 
 # 1.3.0
 
