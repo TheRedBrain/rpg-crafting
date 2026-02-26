@@ -5,12 +5,15 @@ import com.github.theredbrain.rpgcrafting.block.AbstractCraftingTabProviderBlock
 import com.github.theredbrain.rpgcrafting.block.TabProvider;
 import com.github.theredbrain.rpgcrafting.config.ServerConfig;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
+import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
 import com.github.theredbrain.rpgcrafting.registry.Tags;
 import com.github.theredbrain.rpgcrafting.screen.CraftingBenchBlockScreenHandler;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -287,6 +290,46 @@ public class RPGCraftingHelper {
 		if ((tabProvidersInReach & 1 << 4) != 0 && tabLevels.length >= 4) {
 			RPGCrafting.INTERACTED_WITH_RPG_CRAFTING_STATION.trigger(serverPlayerEntity, 4, tabLevels[3]);
 		}
+	}
+
+	public static int removeItemStackIngredientFromInventory(Inventory inventory, int loopEndIndex, int loopIndexOffset, RPGCraftingRecipe.RPGItemStackIngredient itemStackIngredient, int itemStackIngredientCount) {
+
+		for (int j = 0; j < loopEndIndex; j++) {
+			if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, inventory.getStack(loopIndexOffset + j))) {
+				ItemStack itemStack = inventory.getStack(loopIndexOffset + j).copy();
+				int stackCount = itemStack.getCount();
+				if (stackCount > itemStackIngredientCount) {
+					itemStack.setCount(stackCount - itemStackIngredientCount);
+					itemStackIngredientCount = 0;
+					inventory.setStack(loopIndexOffset + j, itemStack);
+				} else {
+					itemStackIngredientCount -= stackCount;
+					inventory.setStack(loopIndexOffset + j, ItemStack.EMPTY);
+				}
+				if (itemStackIngredientCount <= 0) {
+					break;
+				}
+			}
+		}
+		return itemStackIngredientCount;
+	}
+
+	public static boolean removeRPGIngredientFromInventory(Inventory inventory, int loopEndIndex, int loopIndexOffset, RPGCraftingRecipe.RPGIngredient rpgIngredient) {
+
+		for (int j = 0; j < loopEndIndex; j++) {
+			if (rpgIngredient.ingredient().test(inventory.getStack(loopIndexOffset + j))) {
+				ItemStack itemStack = inventory.getStack(loopIndexOffset + j).copy();
+				int stackCount = itemStack.getCount();
+				if (stackCount >= 1) {
+					itemStack.setCount(stackCount - 1);
+					inventory.setStack(loopIndexOffset + j, itemStack);
+				} else {
+					inventory.setStack(loopIndexOffset + j, ItemStack.EMPTY);
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

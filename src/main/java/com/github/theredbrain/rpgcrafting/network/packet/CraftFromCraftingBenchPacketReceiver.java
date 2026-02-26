@@ -4,9 +4,8 @@ import com.github.theredbrain.rpgcrafting.RPGCrafting;
 import com.github.theredbrain.rpgcrafting.entity.player.DuckPlayerEntityMixin;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
 import com.github.theredbrain.rpgcrafting.screen.CraftingBenchBlockScreenHandler;
+import com.github.theredbrain.rpgcrafting.util.RPGCraftingHelper;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -47,305 +46,179 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 
 					int stash4InventorySize = useStorageInventory && craftingBenchBlockScreenHandler.isStorageArea4ProviderInReach() ? 21 : 0;
 
-					ItemStack itemStack;
-
 					boolean bl = true;
 
 					for (RPGCraftingRecipe.RPGItemStackIngredient itemStackIngredient : rpgCraftingRecipe.rpgItemStackIngredients) {
 
-						int j;
+						if (!itemStackIngredient.isConsumed()) {
+							continue;
+						}
+
 						int itemStackIngredientCount = itemStackIngredient.itemStack().getCount();
-						boolean bl1 = false;
 
 						// TODO play test which inventory normally contains the most crafting ingredients and should be checked first
 
-						for (j = 0; j < playerHotbarSize; j++) {
-							if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j))) {
-								itemStack = craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j).copy();
-								int stackCount = itemStack.getCount();
-								if (stackCount > itemStackIngredientCount) {
-									itemStack.setCount(stackCount - itemStackIngredientCount);
-									itemStackIngredientCount = 0;
-									craftingBenchBlockScreenHandler.getPlayerInventory().setStack(j, itemStack);
-								} else {
-									itemStackIngredientCount -= stackCount;
-									craftingBenchBlockScreenHandler.getPlayerInventory().setStack(j, ItemStack.EMPTY);
-								}
-								if (itemStackIngredientCount <= 0) {
-									bl1 = true;
-									break;
-								}
-							}
-						}
-						if (bl1) {
+						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
+								craftingBenchBlockScreenHandler.getPlayerInventory(),
+								playerHotbarSize,
+								0,
+								itemStackIngredient,
+								itemStackIngredientCount
+						);
+						if (itemStackIngredientCount <= 0) {
 							continue;
 						}
 
-						for (j = 9; j < playerInventorySize; j++) {
-							if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j))) {
-								itemStack = craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j).copy();
-								int stackCount = itemStack.getCount();
-								if (stackCount > itemStackIngredientCount) {
-									itemStack.setCount(stackCount - itemStackIngredientCount);
-									itemStackIngredientCount = 0;
-									craftingBenchBlockScreenHandler.getPlayerInventory().setStack(j, itemStack);
-								} else {
-									itemStackIngredientCount -= stackCount;
-									craftingBenchBlockScreenHandler.getPlayerInventory().setStack(j, ItemStack.EMPTY);
-								}
-								if (itemStackIngredientCount <= 0) {
-									bl1 = true;
-									break;
-								}
-							}
-						}
-						if (bl1) {
+						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
+								craftingBenchBlockScreenHandler.getPlayerInventory(),
+								playerInventorySize,
+								9,
+								itemStackIngredient,
+								itemStackIngredientCount
+						);
+						if (itemStackIngredientCount <= 0) {
 							continue;
 						}
 
-						for (j = 0; j < stash0InventorySize; j++) {
-							if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(j))) {
-								itemStack = craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(j).copy();
-								int stackCount = itemStack.getCount();
-								if (stackCount > itemStackIngredientCount) {
-									itemStack.setCount(stackCount - itemStackIngredientCount);
-									itemStackIngredientCount = 0;
-									craftingBenchBlockScreenHandler.getEnderChestInventory().setStack(j, itemStack);
-								} else {
-									itemStackIngredientCount -= stackCount;
-									craftingBenchBlockScreenHandler.getEnderChestInventory().setStack(j, ItemStack.EMPTY);
-								}
-								if (itemStackIngredientCount <= 0) {
-									bl1 = true;
-									break;
-								}
-							}
-						}
-						if (bl1) {
+						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
+								craftingBenchBlockScreenHandler.getEnderChestInventory(),
+								stash0InventorySize,
+								0,
+								itemStackIngredient,
+								itemStackIngredientCount
+						);
+						if (itemStackIngredientCount <= 0) {
 							continue;
 						}
 
-						for (j = 0; j < stash1InventorySize; j++) {
-							if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, craftingBenchBlockScreenHandler.getStashInventory().getStack(j))) {
-								itemStack = craftingBenchBlockScreenHandler.getStashInventory().getStack(j).copy();
-								int stackCount = itemStack.getCount();
-								if (stackCount > itemStackIngredientCount) {
-									itemStack.setCount(stackCount - itemStackIngredientCount);
-									itemStackIngredientCount = 0;
-									craftingBenchBlockScreenHandler.getStashInventory().setStack(j, itemStack);
-								} else {
-									itemStackIngredientCount -= stackCount;
-									craftingBenchBlockScreenHandler.getStashInventory().setStack(j, ItemStack.EMPTY);
-								}
-								if (itemStackIngredientCount <= 0) {
-									bl1 = true;
-									break;
-								}
-							}
-						}
-						if (bl1) {
+						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
+								craftingBenchBlockScreenHandler.getStashInventory(),
+								stash1InventorySize,
+								0,
+								itemStackIngredient,
+								itemStackIngredientCount
+						);
+						if (itemStackIngredientCount <= 0) {
 							continue;
 						}
 
-						for (j = 0; j < stash2InventorySize; j++) {
-							if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, craftingBenchBlockScreenHandler.getStashInventory().getStack(8 + j))) {
-								itemStack = craftingBenchBlockScreenHandler.getStashInventory().getStack(8 + j).copy();
-								int stackCount = itemStack.getCount();
-								if (stackCount > itemStackIngredientCount) {
-									itemStack.setCount(stackCount - itemStackIngredientCount);
-									itemStackIngredientCount = 0;
-									craftingBenchBlockScreenHandler.getStashInventory().setStack(8 + j, itemStack);
-								} else {
-									itemStackIngredientCount -= stackCount;
-									craftingBenchBlockScreenHandler.getStashInventory().setStack(8 + j, ItemStack.EMPTY);
-								}
-								if (itemStackIngredientCount <= 0) {
-									bl1 = true;
-									break;
-								}
-							}
-						}
-						if (bl1) {
+						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
+								craftingBenchBlockScreenHandler.getStashInventory(),
+								stash2InventorySize,
+								8,
+								itemStackIngredient,
+								itemStackIngredientCount
+						);
+						if (itemStackIngredientCount <= 0) {
 							continue;
 						}
 
-						for (j = 0; j < stash3InventorySize; j++) {
-							if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, craftingBenchBlockScreenHandler.getStashInventory().getStack(20 + j))) {
-								itemStack = craftingBenchBlockScreenHandler.getStashInventory().getStack(20 + j).copy();
-								int stackCount = itemStack.getCount();
-								if (stackCount > itemStackIngredientCount) {
-									itemStack.setCount(stackCount - itemStackIngredientCount);
-									itemStackIngredientCount = 0;
-									craftingBenchBlockScreenHandler.getStashInventory().setStack(20 + j, itemStack);
-								} else {
-									itemStackIngredientCount -= stackCount;
-									craftingBenchBlockScreenHandler.getStashInventory().setStack(20 + j, ItemStack.EMPTY);
-								}
-								if (itemStackIngredientCount <= 0) {
-									bl1 = true;
-									break;
-								}
-							}
-						}
-						if (bl1) {
+						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
+								craftingBenchBlockScreenHandler.getStashInventory(),
+								stash3InventorySize,
+								20,
+								itemStackIngredient,
+								itemStackIngredientCount
+						);
+						if (itemStackIngredientCount <= 0) {
 							continue;
 						}
 
-						for (j = 0; j < stash4InventorySize; j++) {
-							if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(6 + j))) {
-								itemStack = craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(6 + j).copy();
-								int stackCount = itemStack.getCount();
-								if (stackCount > itemStackIngredientCount) {
-									itemStack.setCount(stackCount - itemStackIngredientCount);
-									itemStackIngredientCount = 0;
-									craftingBenchBlockScreenHandler.getEnderChestInventory().setStack(6 + j, itemStack);
-								} else {
-									itemStackIngredientCount -= stackCount;
-									craftingBenchBlockScreenHandler.getEnderChestInventory().setStack(6 + j, ItemStack.EMPTY);
-								}
-								if (itemStackIngredientCount <= 0) {
-									bl1 = true;
-									break;
-								}
-							}
-						}
-						if (!bl1) {
+						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
+								craftingBenchBlockScreenHandler.getEnderChestInventory(),
+								stash4InventorySize,
+								6,
+								itemStackIngredient,
+								itemStackIngredientCount
+						);
+						if (itemStackIngredientCount <= 0) {
 							bl = false;
 							break;
 						}
 					}
 
-					for (RPGCraftingRecipe.RPGIngredient rpgIngredient : rpgCraftingRecipe.rpgIngredients) {
+					if (bl) {
 
-						int j;
-						boolean bl1 = false;
-						// TODO play test which inventory normally contains the most crafting ingredients and should be checked first
+						for (RPGCraftingRecipe.RPGIngredient rpgIngredient : rpgCraftingRecipe.rpgIngredients) {
 
-						for (j = 0; j < playerHotbarSize; j++) {
-							if (rpgIngredient.ingredient().test(craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j))) {
-								itemStack = craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j).copy();
-								int stackCount = itemStack.getCount();
-								if (stackCount >= 1) {
-									itemStack.setCount(stackCount - 1);
-									craftingBenchBlockScreenHandler.getPlayerInventory().setStack(j, itemStack);
-								} else {
-									craftingBenchBlockScreenHandler.getPlayerInventory().setStack(j, ItemStack.EMPTY);
-								}
-								bl1 = true;
+							if (!rpgIngredient.isConsumed()) {
+								continue;
+							}
+
+							boolean bl1;
+
+							// TODO play test which inventory normally contains the most crafting ingredients and should be checked first
+
+							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
+									craftingBenchBlockScreenHandler.getPlayerInventory(),
+									playerHotbarSize,
+									0,
+									rpgIngredient
+							);
+							if (bl1) {
+								continue;
+							}
+
+							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
+									craftingBenchBlockScreenHandler.getPlayerInventory(),
+									playerInventorySize,
+									9,
+									rpgIngredient
+							);
+							if (bl1) {
+								continue;
+							}
+
+							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
+									craftingBenchBlockScreenHandler.getEnderChestInventory(),
+									stash0InventorySize,
+									0,
+									rpgIngredient
+							);
+							if (bl1) {
+								continue;
+							}
+
+							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
+									craftingBenchBlockScreenHandler.getStashInventory(),
+									stash1InventorySize,
+									0,
+									rpgIngredient
+							);
+							if (bl1) {
+								continue;
+							}
+
+							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
+									craftingBenchBlockScreenHandler.getStashInventory(),
+									stash2InventorySize,
+									8,
+									rpgIngredient
+							);
+							if (bl1) {
+								continue;
+							}
+
+							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
+									craftingBenchBlockScreenHandler.getStashInventory(),
+									stash3InventorySize,
+									20,
+									rpgIngredient
+							);
+							if (bl1) {
+								continue;
+							}
+
+							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
+									craftingBenchBlockScreenHandler.getEnderChestInventory(),
+									stash4InventorySize,
+									6,
+									rpgIngredient
+							);
+							if (!bl1) {
+								bl = false;
 								break;
 							}
-						}
-						if (bl1) {
-							continue;
-						}
-
-						for (j = 9; j < playerInventorySize; j++) {
-							if (rpgIngredient.ingredient().test(craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j))) {
-								itemStack = craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j).copy();
-								int stackCount = itemStack.getCount();
-								if (stackCount >= 1) {
-									itemStack.setCount(stackCount - 1);
-									craftingBenchBlockScreenHandler.getPlayerInventory().setStack(j, itemStack);
-								} else {
-									craftingBenchBlockScreenHandler.getPlayerInventory().setStack(j, ItemStack.EMPTY);
-								}
-								bl1 = true;
-								break;
-							}
-						}
-						if (bl1) {
-							continue;
-						}
-
-						for (j = 0; j < stash0InventorySize; j++) {
-							if (rpgIngredient.ingredient().test(craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(j))) {
-								itemStack = craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(j).copy();
-								int stackCount = itemStack.getCount();
-								if (stackCount >= 1) {
-									itemStack.setCount(stackCount - 1);
-									craftingBenchBlockScreenHandler.getEnderChestInventory().setStack(j, itemStack);
-								} else {
-									craftingBenchBlockScreenHandler.getEnderChestInventory().setStack(j, ItemStack.EMPTY);
-								}
-								bl1 = true;
-								break;
-							}
-						}
-						if (bl1) {
-							continue;
-						}
-
-						for (j = 0; j < stash1InventorySize; j++) {
-							if (rpgIngredient.ingredient().test(craftingBenchBlockScreenHandler.getStashInventory().getStack(j))) {
-								itemStack = craftingBenchBlockScreenHandler.getStashInventory().getStack(j).copy();
-								int stackCount = itemStack.getCount();
-								if (stackCount >= 1) {
-									itemStack.setCount(stackCount - 1);
-									craftingBenchBlockScreenHandler.getStashInventory().setStack(j, itemStack);
-								} else {
-									craftingBenchBlockScreenHandler.getStashInventory().setStack(j, ItemStack.EMPTY);
-								}
-								bl1 = true;
-								break;
-							}
-						}
-						if (bl1) {
-							continue;
-						}
-
-						for (j = 0; j < stash2InventorySize; j++) {
-							if (rpgIngredient.ingredient().test(craftingBenchBlockScreenHandler.getStashInventory().getStack(8 + j))) {
-								itemStack = craftingBenchBlockScreenHandler.getStashInventory().getStack(8 + j).copy();
-								int stackCount = itemStack.getCount();
-								if (stackCount >= 1) {
-									itemStack.setCount(stackCount - 1);
-									craftingBenchBlockScreenHandler.getStashInventory().setStack(8 + j, itemStack);
-								} else {
-									craftingBenchBlockScreenHandler.getStashInventory().setStack(8 + j, ItemStack.EMPTY);
-								}
-								bl1 = true;
-								break;
-							}
-						}
-						if (bl1) {
-							continue;
-						}
-
-						for (j = 0; j < stash3InventorySize; j++) {
-							if (rpgIngredient.ingredient().test(craftingBenchBlockScreenHandler.getStashInventory().getStack(20 + j))) {
-								itemStack = craftingBenchBlockScreenHandler.getStashInventory().getStack(20 + j).copy();
-								int stackCount = itemStack.getCount();
-								if (stackCount >= 1) {
-									itemStack.setCount(stackCount - 1);
-									craftingBenchBlockScreenHandler.getStashInventory().setStack(20 + j, itemStack);
-								} else {
-									craftingBenchBlockScreenHandler.getStashInventory().setStack(20 + j, ItemStack.EMPTY);
-								}
-								bl1 = true;
-								break;
-							}
-						}
-						if (bl1) {
-							continue;
-						}
-
-						for (j = 0; j < stash4InventorySize; j++) {
-							if (rpgIngredient.ingredient().test(craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(6 + j))) {
-								itemStack = craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(6 + j).copy();
-								int stackCount = itemStack.getCount();
-								if (stackCount >= 1) {
-									itemStack.setCount(stackCount - 1);
-									craftingBenchBlockScreenHandler.getEnderChestInventory().setStack(6 + j, itemStack);
-								} else {
-									craftingBenchBlockScreenHandler.getEnderChestInventory().setStack(6 + j, ItemStack.EMPTY);
-								}
-								bl1 = true;
-								break;
-							}
-						}
-						if (!bl1) {
-							bl = false;
-							break;
 						}
 					}
 					if (bl) {

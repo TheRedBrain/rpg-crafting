@@ -3,9 +3,8 @@ package com.github.theredbrain.rpgcrafting.network.packet;
 import com.github.theredbrain.rpgcrafting.RPGCrafting;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
 import com.github.theredbrain.rpgcrafting.screen.HandCraftingScreenHandler;
+import com.github.theredbrain.rpgcrafting.util.RPGCraftingHelper;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -34,57 +33,35 @@ public class CraftFromHandCraftingPacketReceiver implements ServerPlayNetworking
 
 					int playerInventorySize = RPGCrafting.getActiveInventorySize(player);
 
-					ItemStack itemStack;
-
 					boolean bl = true;
 
 					for (RPGCraftingRecipe.RPGItemStackIngredient itemStackIngredient : rpgCraftingRecipe.rpgItemStackIngredients) {
 
-						int j;
-						int itemStackIngredientCount = itemStackIngredient.itemStack().getCount();
-						boolean bl1 = false;
-
-						for (j = 0; j < playerHotbarSize; j++) {
-							if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, handCraftingScreenHandler.getPlayerInventory().getStack(j))) {
-								itemStack = handCraftingScreenHandler.getPlayerInventory().getStack(j).copy();
-								int stackCount = itemStack.getCount();
-								if (stackCount > itemStackIngredientCount) {
-									itemStack.setCount(stackCount - itemStackIngredientCount);
-									itemStackIngredientCount = 0;
-									handCraftingScreenHandler.getPlayerInventory().setStack(j, itemStack);
-								} else {
-									itemStackIngredientCount -= stackCount;
-									handCraftingScreenHandler.getPlayerInventory().setStack(j, ItemStack.EMPTY);
-								}
-								if (itemStackIngredientCount <= 0) {
-									bl1 = true;
-									break;
-								}
-							}
-						}
-						if (bl1) {
+						if (!itemStackIngredient.isConsumed()) {
 							continue;
 						}
 
-						for (j = 9; j < playerInventorySize; j++) {
-							if (RPGCraftingRecipe.checkItemStackIngredient(itemStackIngredient, handCraftingScreenHandler.getPlayerInventory().getStack(j))) {
-								itemStack = handCraftingScreenHandler.getPlayerInventory().getStack(j).copy();
-								int stackCount = itemStack.getCount();
-								if (stackCount > itemStackIngredientCount) {
-									itemStack.setCount(stackCount - itemStackIngredientCount);
-									itemStackIngredientCount = 0;
-									handCraftingScreenHandler.getPlayerInventory().setStack(j, itemStack);
-								} else {
-									itemStackIngredientCount -= stackCount;
-									handCraftingScreenHandler.getPlayerInventory().setStack(j, ItemStack.EMPTY);
-								}
-								if (itemStackIngredientCount <= 0) {
-									bl1 = true;
-									break;
-								}
-							}
+						int itemStackIngredientCount = itemStackIngredient.itemStack().getCount();
+
+						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
+								handCraftingScreenHandler.getPlayerInventory(),
+								playerHotbarSize,
+								0,
+								itemStackIngredient,
+								itemStackIngredientCount
+						);
+						if (itemStackIngredientCount <= 0) {
+							continue;
 						}
-						if (!bl1) {
+
+						itemStackIngredientCount = RPGCraftingHelper.removeItemStackIngredientFromInventory(
+								handCraftingScreenHandler.getPlayerInventory(),
+								playerInventorySize,
+								9,
+								itemStackIngredient,
+								itemStackIngredientCount
+						);
+						if (itemStackIngredientCount <= 0) {
 							bl = false;
 							break;
 						}
@@ -93,41 +70,28 @@ public class CraftFromHandCraftingPacketReceiver implements ServerPlayNetworking
 
 						for (RPGCraftingRecipe.RPGIngredient rpgIngredient : rpgCraftingRecipe.rpgIngredients) {
 
-							int j;
-							boolean bl1 = false;
-
-							for (j = 0; j < playerHotbarSize; j++) {
-								if (rpgIngredient.ingredient().test(handCraftingScreenHandler.getPlayerInventory().getStack(j))) {
-									itemStack = handCraftingScreenHandler.getPlayerInventory().getStack(j).copy();
-									int stackCount = itemStack.getCount();
-									if (stackCount >= 1) {
-										itemStack.setCount(stackCount - 1);
-										handCraftingScreenHandler.getPlayerInventory().setStack(j, itemStack);
-									} else {
-										handCraftingScreenHandler.getPlayerInventory().setStack(j, ItemStack.EMPTY);
-									}
-									bl1 = true;
-									break;
-								}
+							if (!rpgIngredient.isConsumed()) {
+								continue;
 							}
+
+							boolean bl1;
+
+							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
+									handCraftingScreenHandler.getPlayerInventory(),
+									playerHotbarSize,
+									0,
+									rpgIngredient
+							);
 							if (bl1) {
 								continue;
 							}
 
-							for (j = 9; j < playerInventorySize; j++) {
-								if (rpgIngredient.ingredient().test(handCraftingScreenHandler.getPlayerInventory().getStack(j))) {
-									itemStack = handCraftingScreenHandler.getPlayerInventory().getStack(j).copy();
-									int stackCount = itemStack.getCount();
-									if (stackCount >= 1) {
-										itemStack.setCount(stackCount - 1);
-										handCraftingScreenHandler.getPlayerInventory().setStack(j, itemStack);
-									} else {
-										handCraftingScreenHandler.getPlayerInventory().setStack(j, ItemStack.EMPTY);
-									}
-									bl1 = true;
-									break;
-								}
-							}
+							bl1 = RPGCraftingHelper.removeRPGIngredientFromInventory(
+									handCraftingScreenHandler.getPlayerInventory(),
+									playerInventorySize,
+									9,
+									rpgIngredient
+							);
 							if (!bl1) {
 								bl = false;
 								break;
