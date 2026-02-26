@@ -36,7 +36,7 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 		this.playerInventory = playerInventory;
 		this.world = playerInventory.player.getWorld();
 		this.craftingResultInventory = new SimpleInventory(1);
-		this.craftingResultIngredientsInventory = new SimpleInventory(4);
+		this.craftingResultIngredientsInventory = new SimpleInventory(7);
 
 		this.updateRPGCraftingRecipesList();
 
@@ -52,9 +52,11 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 			}
 		}
 
-		// crafting result slots 36 - 40
+		// crafting result slots 36
 		this.addSlot(new RPGCraftingResultSlot(this.craftingResultInventory, 0, 135, 22));
-		for (i = 0; i < 4; ++i) {
+
+		// crafting ingredient slots 37 - 43
+		for (i = 0; i < this.craftingResultIngredientsInventory.size(); ++i) {
 			this.addSlot(new RPGCraftingResultSlot(this.craftingResultIngredientsInventory, i, 135 + (i * 18), 92));
 		}
 

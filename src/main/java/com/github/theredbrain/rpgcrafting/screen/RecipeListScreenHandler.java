@@ -39,7 +39,7 @@ public class RecipeListScreenHandler extends ScreenHandler {
 		this.world = playerInventory.player.getWorld();
 		this.input = new RecipeListInputInventory(1, this);
 		this.craftingResultInventory = new SimpleInventory(1);
-		this.craftingResultIngredientsInventory = new SimpleInventory(4);
+		this.craftingResultIngredientsInventory = new SimpleInventory(7);
 
 		this.updateRPGCraftingRecipesList();
 
@@ -57,9 +57,11 @@ public class RecipeListScreenHandler extends ScreenHandler {
 		// input 36
 		this.addSlot(new Slot(this.input, 0, 22, 62));
 
-		// crafting result slots 37 - 41
+		// crafting result slots 37
 		this.addSlot(new RPGCraftingResultSlot(this.craftingResultInventory, 0, 135, 22));
-		for (i = 0; i < 4; ++i) {
+
+		// crafting ingredient slots 38 - 44
+		for (i = 0; i < this.craftingResultIngredientsInventory.size(); ++i) {
 			this.addSlot(new RPGCraftingResultSlot(this.craftingResultIngredientsInventory, i, 135 + (i * 18), 92));
 		}
 
