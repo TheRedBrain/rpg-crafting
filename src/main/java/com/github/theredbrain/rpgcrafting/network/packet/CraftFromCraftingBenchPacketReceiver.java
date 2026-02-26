@@ -51,7 +51,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 
 					boolean bl = true;
 
-					for (RPGCraftingRecipe.ItemStackIngredient itemStackIngredient : rpgCraftingRecipe.itemStackIngredients) {
+					for (RPGCraftingRecipe.RPGItemStackIngredient itemStackIngredient : rpgCraftingRecipe.rpgItemStackIngredients) {
 
 						int j;
 						int itemStackIngredientCount = itemStackIngredient.itemStack().getCount();
@@ -215,14 +215,14 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 						}
 					}
 
-					for (Ingredient ingredient : rpgCraftingRecipe.ingredients) {
+					for (RPGCraftingRecipe.RPGIngredient rpgIngredient : rpgCraftingRecipe.rpgIngredients) {
 
 						int j;
 						boolean bl1 = false;
 						// TODO play test which inventory normally contains the most crafting ingredients and should be checked first
 
 						for (j = 0; j < playerHotbarSize; j++) {
-							if (ingredient.test(craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j))) {
+							if (rpgIngredient.ingredient().test(craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j))) {
 								itemStack = craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j).copy();
 								int stackCount = itemStack.getCount();
 								if (stackCount >= 1) {
@@ -240,7 +240,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 						}
 
 						for (j = 9; j < playerInventorySize; j++) {
-							if (ingredient.test(craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j))) {
+							if (rpgIngredient.ingredient().test(craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j))) {
 								itemStack = craftingBenchBlockScreenHandler.getPlayerInventory().getStack(j).copy();
 								int stackCount = itemStack.getCount();
 								if (stackCount >= 1) {
@@ -258,7 +258,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 						}
 
 						for (j = 0; j < stash0InventorySize; j++) {
-							if (ingredient.test(craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(j))) {
+							if (rpgIngredient.ingredient().test(craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(j))) {
 								itemStack = craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(j).copy();
 								int stackCount = itemStack.getCount();
 								if (stackCount >= 1) {
@@ -276,7 +276,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 						}
 
 						for (j = 0; j < stash1InventorySize; j++) {
-							if (ingredient.test(craftingBenchBlockScreenHandler.getStashInventory().getStack(j))) {
+							if (rpgIngredient.ingredient().test(craftingBenchBlockScreenHandler.getStashInventory().getStack(j))) {
 								itemStack = craftingBenchBlockScreenHandler.getStashInventory().getStack(j).copy();
 								int stackCount = itemStack.getCount();
 								if (stackCount >= 1) {
@@ -294,7 +294,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 						}
 
 						for (j = 0; j < stash2InventorySize; j++) {
-							if (ingredient.test(craftingBenchBlockScreenHandler.getStashInventory().getStack(8 + j))) {
+							if (rpgIngredient.ingredient().test(craftingBenchBlockScreenHandler.getStashInventory().getStack(8 + j))) {
 								itemStack = craftingBenchBlockScreenHandler.getStashInventory().getStack(8 + j).copy();
 								int stackCount = itemStack.getCount();
 								if (stackCount >= 1) {
@@ -312,7 +312,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 						}
 
 						for (j = 0; j < stash3InventorySize; j++) {
-							if (ingredient.test(craftingBenchBlockScreenHandler.getStashInventory().getStack(20 + j))) {
+							if (rpgIngredient.ingredient().test(craftingBenchBlockScreenHandler.getStashInventory().getStack(20 + j))) {
 								itemStack = craftingBenchBlockScreenHandler.getStashInventory().getStack(20 + j).copy();
 								int stackCount = itemStack.getCount();
 								if (stackCount >= 1) {
@@ -330,7 +330,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 						}
 
 						for (j = 0; j < stash4InventorySize; j++) {
-							if (ingredient.test(craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(6 + j))) {
+							if (rpgIngredient.ingredient().test(craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(6 + j))) {
 								itemStack = craftingBenchBlockScreenHandler.getEnderChestInventory().getStack(6 + j).copy();
 								int stackCount = itemStack.getCount();
 								if (stackCount >= 1) {

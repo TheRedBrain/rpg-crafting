@@ -405,14 +405,14 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 
 				this.handler.getCraftingResultInventory().addStack(craftingRecipeEntry.value().result.copy());
 
-				List<RPGCraftingRecipe.ItemStackIngredient> itemStackIngredients = craftingRecipeEntry.value().itemStackIngredients;
-				for (RPGCraftingRecipe.ItemStackIngredient itemStackIngredient : itemStackIngredients) {
+				List<RPGCraftingRecipe.RPGItemStackIngredient> itemStackIngredients = craftingRecipeEntry.value().rpgItemStackIngredients;
+				for (RPGCraftingRecipe.RPGItemStackIngredient itemStackIngredient : itemStackIngredients) {
 					this.handler.getCraftingResultIngredientsInventory().addStack(itemStackIngredient.itemStack().copy());
 				}
 
-				List<Ingredient> ingredients = craftingRecipeEntry.value().ingredients;
-				for (Ingredient ingredient : ingredients) {
-					ItemStack[] ingredientItemStacks = ingredient.getMatchingStacks();
+				List<RPGCraftingRecipe.RPGIngredient> rpgIngredients = craftingRecipeEntry.value().rpgIngredients;
+				for (RPGCraftingRecipe.RPGIngredient rpgIngredient : rpgIngredients) {
+					ItemStack[] ingredientItemStacks = rpgIngredient.ingredient().getMatchingStacks();
 					// TODO cycle through all itemStacks, eg ingredient is #minecraft:planks -> cycle through all plank types
 					this.handler.getCraftingResultIngredientsInventory().addStack(ingredientItemStacks[0].copy());
 				}

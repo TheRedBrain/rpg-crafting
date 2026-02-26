@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
-	public final List<ItemStackIngredient> itemStackIngredients;
-	public final List<Ingredient> ingredients;
+	public final List<RPGItemStackIngredient> rpgItemStackIngredients;
+	public final List<RPGIngredient> rpgIngredients;
 	public final ItemStack result;
 	public int level;
 	public int tab;
@@ -32,9 +32,9 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 	public final boolean showNotification;
 	public final boolean requiresUnlockAdvancement;
 
-	public RPGCraftingRecipe(List<ItemStackIngredient> itemStackIngredients, List<Ingredient> ingredients, ItemStack result, int level, int tab, String recipeType, boolean showNotification, boolean requiresUnlockAdvancement) {
-		this.itemStackIngredients = itemStackIngredients;
-		this.ingredients = ingredients;
+	public RPGCraftingRecipe(List<RPGItemStackIngredient> rpgItemStackIngredients, List<RPGIngredient> rpgIngredients, ItemStack result, int level, int tab, String recipeType, boolean showNotification, boolean requiresUnlockAdvancement) {
+		this.rpgItemStackIngredients = rpgItemStackIngredients;
+		this.rpgIngredients = rpgIngredients;
 		this.result = result;
 		this.level = level;
 		this.tab = tab;
@@ -55,7 +55,7 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 			playerInventoryCopy.setStack(j, input.getStackInSlot(j).copy());
 		}
 
-		for (ItemStackIngredient itemStackIngredient : this.itemStackIngredients) {
+		for (RPGItemStackIngredient itemStackIngredient : this.rpgItemStackIngredients) {
 			int ingredientCount = itemStackIngredient.itemStack.getCount();
 			for (j = 0; j < inputSize; j++) {
 				bl = false;
@@ -80,10 +80,10 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 				return false;
 			}
 		}
-		for (Ingredient ingredient : this.ingredients) {
+		for (RPGIngredient rpgIngredient : this.rpgIngredients) {
 			for (j = 0; j < inputSize; j++) {
 				bl = false;
-				if (ingredient.test(playerInventoryCopy.getStack(j))) {
+				if (rpgIngredient.ingredient().test(playerInventoryCopy.getStack(j))) {
 					itemStack = playerInventoryCopy.getStack(j).copy();
 					int stackCount = itemStack.getCount();
 					if (stackCount > 1) {
@@ -113,16 +113,16 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 			inputCopy.setStack(j, input.getStackInSlot(j).copy());
 		}
 
-		for (ItemStackIngredient itemStackIngredient : this.itemStackIngredients) {
+		for (RPGItemStackIngredient itemStackIngredient : this.rpgItemStackIngredients) {
 			for (j = 0; j < inputSize; j++) {
 				if (checkItemStackIngredient(itemStackIngredient, inputCopy.getStack(j))) {
 					return true;
 				}
 			}
 		}
-		for (Ingredient ingredient : this.ingredients) {
+		for (RPGIngredient rpgIngredient : this.rpgIngredients) {
 			for (j = 0; j < inputSize; j++) {
-				if (ingredient.test(inputCopy.getStack(j))) {
+				if (rpgIngredient.ingredient().test(inputCopy.getStack(j))) {
 					return true;
 				}
 			}
@@ -171,8 +171,8 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 
 		public static final MapCodec<RPGCraftingRecipe> CODEC = RecordCodecBuilder.mapCodec(
 				instance -> instance.group(
-						ItemStackIngredient.CODEC.listOf().fieldOf("itemStackIngredients").forGetter(recipe -> recipe.itemStackIngredients),
-						Ingredient.DISALLOW_EMPTY_CODEC.listOf().fieldOf("ingredients").forGetter(recipe -> recipe.ingredients),
+						RPGItemStackIngredient.CODEC.listOf().fieldOf("rpg_item_stack_ingredients").forGetter(recipe -> recipe.rpgItemStackIngredients),
+						RPGIngredient.CODEC.listOf().fieldOf("rpg_ingredients").forGetter(recipe -> recipe.rpgIngredients),
 						ItemStack.VALIDATED_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
 						Codec.INT.optionalFieldOf("level", 0).forGetter(recipe -> recipe.level),
 						Codec.INT.optionalFieldOf("tab", 0).forGetter(recipe -> recipe.tab),
@@ -197,14 +197,14 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 
 		private static RPGCraftingRecipe read(RegistryByteBuf buf) {
 			int itemStackIngredientsSize = buf.readInt();
-			List<ItemStackIngredient> itemStackIngredients = new ArrayList<>();
+			List<RPGItemStackIngredient> itemStackIngredients = new ArrayList<>();
 			for (int i = 0; i < itemStackIngredientsSize; i++) {
-				itemStackIngredients.add(ItemStackIngredient.PACKET_CODEC.decode(buf));
+				itemStackIngredients.add(RPGItemStackIngredient.PACKET_CODEC.decode(buf));
 			}
-			int ingredientsSize = buf.readInt();
-			List<Ingredient> ingredients = new ArrayList<>();
-			for (int i = 0; i < ingredientsSize; i++) {
-				ingredients.add(Ingredient.PACKET_CODEC.decode(buf));
+			int rpgIngredientsSize = buf.readInt();
+			List<RPGIngredient> rpgIngredients = new ArrayList<>();
+			for (int i = 0; i < rpgIngredientsSize; i++) {
+				rpgIngredients.add(RPGIngredient.PACKET_CODEC.decode(buf));
 			}
 			ItemStack result = ItemStack.PACKET_CODEC.decode(buf);
 			int level = buf.readInt();
@@ -212,17 +212,17 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 			String recipeType = buf.readString();
 			boolean showNotification = buf.readBoolean();
 			boolean requiresUnlockAdvancement = buf.readBoolean();
-			return new RPGCraftingRecipe(itemStackIngredients, ingredients, result, level, tab, recipeType, showNotification, requiresUnlockAdvancement);
+			return new RPGCraftingRecipe(itemStackIngredients, rpgIngredients, result, level, tab, recipeType, showNotification, requiresUnlockAdvancement);
 		}
 
 		private static void write(RegistryByteBuf buf, RPGCraftingRecipe recipe) {
-			buf.writeInt(recipe.itemStackIngredients.size());
-			for (ItemStackIngredient ingredient : recipe.itemStackIngredients) {
-				ItemStackIngredient.PACKET_CODEC.encode(buf, ingredient);
+			buf.writeInt(recipe.rpgItemStackIngredients.size());
+			for (RPGItemStackIngredient ingredient : recipe.rpgItemStackIngredients) {
+				RPGItemStackIngredient.PACKET_CODEC.encode(buf, ingredient);
 			}
-			buf.writeInt(recipe.ingredients.size());
-			for (Ingredient ingredient : recipe.ingredients) {
-				Ingredient.PACKET_CODEC.encode(buf, ingredient);
+			buf.writeInt(recipe.rpgIngredients.size());
+			for (RPGIngredient rpgIngredient : recipe.rpgIngredients) {
+				RPGIngredient.PACKET_CODEC.encode(buf, rpgIngredient);
 			}
 			ItemStack.PACKET_CODEC.encode(buf, recipe.result);
 			buf.writeInt(recipe.level);
@@ -233,14 +233,14 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 		}
 	}
 
-	public static boolean checkItemStackIngredient(ItemStackIngredient itemStackIngredient, ItemStack itemStack) {
-		if (itemStackIngredient.completeComponentMatch) {
-			return ItemStack.areItemsAndComponentsEqual(itemStackIngredient.itemStack, itemStack);
+	public static boolean checkItemStackIngredient(RPGItemStackIngredient rpgItemStackIngredient, ItemStack itemStack) {
+		if (rpgItemStackIngredient.completeComponentMatch) {
+			return ItemStack.areItemsAndComponentsEqual(rpgItemStackIngredient.itemStack, itemStack);
 		} else {
-			if (!itemStackIngredient.itemStack.isOf(itemStack.getItem())) {
+			if (!rpgItemStackIngredient.itemStack.isOf(itemStack.getItem())) {
 				return false;
 			} else {
-				return itemStackIngredient.itemStack.isEmpty() && itemStack.isEmpty() ? true : itemStack.getComponentChanges().entrySet().containsAll(itemStackIngredient.itemStack.getComponentChanges().entrySet());
+				return (rpgItemStackIngredient.itemStack.isEmpty() && itemStack.isEmpty()) || itemStack.getComponentChanges().entrySet().containsAll(rpgItemStackIngredient.itemStack.getComponentChanges().entrySet());
 			}
 		}
 	}
@@ -250,35 +250,73 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 		return this.showNotification;
 	}
 
-	public record ItemStackIngredient(
+	public record RPGItemStackIngredient(
 			ItemStack itemStack,
-			boolean completeComponentMatch
+			boolean completeComponentMatch,
+			boolean isConsumed
 	) {
 
-		public static final PacketCodec<RegistryByteBuf, ItemStackIngredient> PACKET_CODEC = new PacketCodec<RegistryByteBuf, ItemStackIngredient>() {
-			public ItemStackIngredient decode(RegistryByteBuf registryByteBuf) {
+		public static final PacketCodec<RegistryByteBuf, RPGItemStackIngredient> PACKET_CODEC = new PacketCodec<RegistryByteBuf, RPGItemStackIngredient>() {
+			public RPGItemStackIngredient decode(RegistryByteBuf registryByteBuf) {
 				ItemStack itemStack = ItemStack.PACKET_CODEC.decode(registryByteBuf);
 				boolean compareAllComponents = PacketCodecs.BOOL.decode(registryByteBuf);
-				return new ItemStackIngredient(itemStack, compareAllComponents);
+				boolean isConsumed = PacketCodecs.BOOL.decode(registryByteBuf);
+				return new RPGItemStackIngredient(itemStack, compareAllComponents, isConsumed);
 			}
 
-			public void encode(RegistryByteBuf registryByteBuf, ItemStackIngredient itemStackIngredient) {
+			public void encode(RegistryByteBuf registryByteBuf, RPGItemStackIngredient itemStackIngredient) {
 				ItemStack.PACKET_CODEC.encode(registryByteBuf, itemStackIngredient.itemStack);
 				PacketCodecs.BOOL.encode(registryByteBuf, itemStackIngredient.completeComponentMatch);
+				PacketCodecs.BOOL.encode(registryByteBuf, itemStackIngredient.isConsumed);
 			}
 		};
 
-		public static final Codec<ItemStackIngredient> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				ItemStack.VALIDATED_CODEC.fieldOf("itemStack").forGetter(x -> x.itemStack),
-				Codec.BOOL.optionalFieldOf("completeComponentMatch", true).forGetter(x -> x.completeComponentMatch)
-		).apply(instance, ItemStackIngredient::new));
+		public static final Codec<RPGItemStackIngredient> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				ItemStack.VALIDATED_CODEC.fieldOf("item_stack").forGetter(x -> x.itemStack),
+				Codec.BOOL.optionalFieldOf("complete_component_match", true).forGetter(x -> x.completeComponentMatch),
+				Codec.BOOL.optionalFieldOf("is_consumed", false).forGetter(x -> x.isConsumed)
+		).apply(instance, RPGItemStackIngredient::new));
 
-		public ItemStackIngredient(
+		public RPGItemStackIngredient(
 				ItemStack itemStack,
-				boolean completeComponentMatch
+				boolean completeComponentMatch,
+				boolean isConsumed
 		) {
 			this.itemStack = itemStack;
 			this.completeComponentMatch = completeComponentMatch;
+			this.isConsumed = isConsumed;
+		}
+	}
+
+	public record RPGIngredient(
+			Ingredient ingredient,
+			boolean isConsumed
+	) {
+
+		public static final PacketCodec<RegistryByteBuf, RPGIngredient> PACKET_CODEC = new PacketCodec<RegistryByteBuf, RPGIngredient>() {
+			public RPGIngredient decode(RegistryByteBuf registryByteBuf) {
+				Ingredient ingredient = Ingredient.PACKET_CODEC.decode(registryByteBuf);
+				boolean isConsumed = PacketCodecs.BOOL.decode(registryByteBuf);
+				return new RPGIngredient(ingredient, isConsumed);
+			}
+
+			public void encode(RegistryByteBuf registryByteBuf, RPGIngredient itemStackIngredient) {
+				Ingredient.PACKET_CODEC.encode(registryByteBuf, itemStackIngredient.ingredient);
+				PacketCodecs.BOOL.encode(registryByteBuf, itemStackIngredient.isConsumed);
+			}
+		};
+
+		public static final Codec<RPGIngredient> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Ingredient.DISALLOW_EMPTY_CODEC.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
+				Codec.BOOL.optionalFieldOf("is_consumed", false).forGetter(x -> x.isConsumed)
+		).apply(instance, RPGIngredient::new));
+
+		public RPGIngredient(
+				Ingredient ingredient,
+				boolean isConsumed
+		) {
+			this.ingredient = ingredient;
+			this.isConsumed = isConsumed;
 		}
 	}
 

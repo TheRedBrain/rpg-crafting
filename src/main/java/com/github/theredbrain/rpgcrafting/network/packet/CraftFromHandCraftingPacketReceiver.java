@@ -38,7 +38,7 @@ public class CraftFromHandCraftingPacketReceiver implements ServerPlayNetworking
 
 					boolean bl = true;
 
-					for (RPGCraftingRecipe.ItemStackIngredient itemStackIngredient : rpgCraftingRecipe.itemStackIngredients) {
+					for (RPGCraftingRecipe.RPGItemStackIngredient itemStackIngredient : rpgCraftingRecipe.rpgItemStackIngredients) {
 
 						int j;
 						int itemStackIngredientCount = itemStackIngredient.itemStack().getCount();
@@ -91,13 +91,13 @@ public class CraftFromHandCraftingPacketReceiver implements ServerPlayNetworking
 					}
 					if (bl) {
 
-						for (Ingredient ingredient : rpgCraftingRecipe.ingredients) {
+						for (RPGCraftingRecipe.RPGIngredient rpgIngredient : rpgCraftingRecipe.rpgIngredients) {
 
 							int j;
 							boolean bl1 = false;
 
 							for (j = 0; j < playerHotbarSize; j++) {
-								if (ingredient.test(handCraftingScreenHandler.getPlayerInventory().getStack(j))) {
+								if (rpgIngredient.ingredient().test(handCraftingScreenHandler.getPlayerInventory().getStack(j))) {
 									itemStack = handCraftingScreenHandler.getPlayerInventory().getStack(j).copy();
 									int stackCount = itemStack.getCount();
 									if (stackCount >= 1) {
@@ -115,7 +115,7 @@ public class CraftFromHandCraftingPacketReceiver implements ServerPlayNetworking
 							}
 
 							for (j = 9; j < playerInventorySize; j++) {
-								if (ingredient.test(handCraftingScreenHandler.getPlayerInventory().getStack(j))) {
+								if (rpgIngredient.ingredient().test(handCraftingScreenHandler.getPlayerInventory().getStack(j))) {
 									itemStack = handCraftingScreenHandler.getPlayerInventory().getStack(j).copy();
 									int stackCount = itemStack.getCount();
 									if (stackCount >= 1) {
