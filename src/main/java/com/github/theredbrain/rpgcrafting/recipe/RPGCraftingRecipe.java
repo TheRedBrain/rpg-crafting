@@ -176,9 +176,9 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 						ItemStack.VALIDATED_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
 						Codec.INT.optionalFieldOf("level", 0).forGetter(recipe -> recipe.level),
 						Codec.INT.optionalFieldOf("tab", 0).forGetter(recipe -> recipe.tab),
-						Codec.STRING.optionalFieldOf("recipeType", "").forGetter(recipe -> recipe.recipeType),
-						Codec.BOOL.optionalFieldOf("showNotification", true).forGetter(recipe -> recipe.showNotification),
-						Codec.BOOL.optionalFieldOf("requiresUnlockAdvancement", false).forGetter(recipe -> recipe.requiresUnlockAdvancement)
+						Codec.STRING.optionalFieldOf("recipe_type", "").forGetter(recipe -> recipe.recipeType),
+						Codec.BOOL.optionalFieldOf("show_notification", true).forGetter(recipe -> recipe.showNotification),
+						Codec.BOOL.optionalFieldOf("requires_unlock_advancement", false).forGetter(recipe -> recipe.requiresUnlockAdvancement)
 				).apply(instance, RPGCraftingRecipe::new)
 		);
 		public static final PacketCodec<RegistryByteBuf, RPGCraftingRecipe> PACKET_CODEC = PacketCodec.ofStatic(
@@ -274,7 +274,7 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 		public static final Codec<RPGItemStackIngredient> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				ItemStack.VALIDATED_CODEC.fieldOf("item_stack").forGetter(x -> x.itemStack),
 				Codec.BOOL.optionalFieldOf("complete_component_match", true).forGetter(x -> x.completeComponentMatch),
-				Codec.BOOL.optionalFieldOf("is_consumed", false).forGetter(x -> x.isConsumed)
+				Codec.BOOL.optionalFieldOf("is_consumed", true).forGetter(x -> x.isConsumed)
 		).apply(instance, RPGItemStackIngredient::new));
 
 		public RPGItemStackIngredient(
@@ -308,7 +308,7 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 
 		public static final Codec<RPGIngredient> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				Ingredient.DISALLOW_EMPTY_CODEC.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
-				Codec.BOOL.optionalFieldOf("is_consumed", false).forGetter(x -> x.isConsumed)
+				Codec.BOOL.optionalFieldOf("is_consumed", true).forGetter(x -> x.isConsumed)
 		).apply(instance, RPGIngredient::new));
 
 		public RPGIngredient(
