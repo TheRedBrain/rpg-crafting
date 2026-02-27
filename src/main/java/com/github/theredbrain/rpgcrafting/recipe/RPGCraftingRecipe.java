@@ -163,6 +163,10 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 		return Type.INSTANCE;
 	}
 
+	public interface RecipeFactory {
+		RPGCraftingRecipe create(List<RPGItemStackIngredient> rpgItemStackIngredients, List<RPGIngredient> rpgIngredients, ItemStack result, int level, int tab, String recipeType, boolean showNotification, boolean requiresUnlockAdvancement);
+	}
+
 	public static class Serializer implements RecipeSerializer<RPGCraftingRecipe> {
 
 		public static final Serializer INSTANCE = new Serializer();

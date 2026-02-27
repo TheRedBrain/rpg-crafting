@@ -107,6 +107,12 @@ dependencies {
 	testmod_clientImplementation sourceSets.testmod.output
 }
 
+fabricApi {
+	configureDataGeneration() {
+		client = true
+	}
+}
+
 processResources {
 	inputs.property "version", project.version
 	filteringCharset "UTF-8"

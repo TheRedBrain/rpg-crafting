@@ -426,7 +426,7 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 			RPGCraftingRecipe rpgCraftingRecipe = rpgCraftingRecipeEntry.value();
 			int tab = rpgCraftingRecipe.tab;
 			int level = rpgCraftingRecipe.level;
-			RecipeType recipeType = RecipeType.valueOf(rpgCraftingRecipe.recipeType);
+			RecipeType recipeType = RecipeType.byName(rpgCraftingRecipe.recipeType);
 			if ((!this.isolated || this.currentTab == 1) && tab == TAB_1 && this.tabLevels[0] >= level) {
 				if (recipeType == RecipeType.STANDARD) {
 					this.tab1StandardCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
@@ -501,8 +501,8 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 
 		public static final Codec<RecipeType> CODEC = Codec.STRING.xmap(RecipeType::valueOf, Enum::name);
 
-		public static Optional<RecipeType> byName(String name) {
-			return Arrays.stream(RecipeType.values()).filter(recipeType -> recipeType.asString().equals(name)).findFirst();
+		public static RecipeType byName(String name) {
+			return Arrays.stream(RecipeType.values()).filter(recipeType -> recipeType.asString().equals(name)).findFirst().orElse(STANDARD);
 		}
 
 		public Text asText() {
