@@ -161,7 +161,7 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 					ingredientAmount++;
 				}
 			}
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < 8; i++) {
 				((SlotCustomization) this.handler.slots.get(37 + i)).slotcustomizationapi$setDisabledOverride(i >= ingredientAmount);
 			}
 

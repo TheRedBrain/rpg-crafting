@@ -423,11 +423,10 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 					}
 				}
 				// TODO scrollable list of ingredients?
-				for (int i = 0; i < 4; i++) {
+				for (int i = 0; i < 8; i++) {
 					((SlotCustomization) this.handler.slots.get(98 + i)).slotcustomizationapi$setDisabledOverride(i >= ingredientAmount);
 				}
 
-				// TODO add support for item descriptions https://modrinth.com/mod/item-descriptions
 				// recipe description
 				Identifier id = craftingRecipeEntry.id();
 				String craftingResultDescriptionString = "recipe." + id.getNamespace() + "." + id.getPath() + ".description";
