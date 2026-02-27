@@ -110,7 +110,7 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 		List<RecipeEntry<RPGCraftingRecipe>> newList = this.handler.getCurrentCraftingRecipesList();
 		if (this.playerEntity instanceof ClientPlayerEntity clientPlayerEntity) {
 			for (RecipeEntry<RPGCraftingRecipe> recipeEntry : newList) {
-				if (clientPlayerEntity.getRecipeBook().shouldDisplay(recipeEntry) || !recipeEntry.value().requiresUnlockAdvancement || RPGCrafting.SERVER_CONFIG.show_locked_recipes_in_crafting_screens.get()) {
+				if (clientPlayerEntity.getRecipeBook().shouldDisplay(recipeEntry) || !recipeEntry.value().requiresUnlockAdvancement || RPGCrafting.SERVER_CONFIG.show_locked_recipes_in_hand_crafting_screen.get()) {
 					this.recipeList.add(recipeEntry);
 				}
 			}
