@@ -15,18 +15,24 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -37,6 +43,7 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
 public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockScreenHandler> {
@@ -372,7 +379,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 		boolean craftButtonActive = false;
 		boolean hideCraftingResultItemStacks = true;
 		if (this.currentTab >= 1) {
-			World world = this.handler.getPlayerInventory().player.getWorld();
+			World world = this.handler.getPlayerInventory().player.getEntityWorld();
 			List<RecipeEntry<RPGCraftingRecipe>> activeRecipeList = this.recipeList;
 			int selectedRecipe = this.handler.getSelectedRecipe();
 
@@ -396,9 +403,12 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 
 				List<Ingredient> ingredients = craftingRecipeEntry.value().ingredients;
 				for (Ingredient ingredient : ingredients) {
-					ItemStack[] ingredientItemStacks = ingredient.getMatchingStacks();
+//					ItemStack[] ingredientItemStacks = ingredient.getMatchingItems().findFirst();
 					// TODO cycle through all itemStacks, eg ingredient is #minecraft:planks -> cycle through all plank types
-					this.handler.getCraftingResultIngredientsInventory().addStack(ingredientItemStacks[0].copy());
+					Optional<RegistryEntry<Item>> optionalItem = ingredient.getMatchingItems().findFirst();
+					if (optionalItem.isPresent()) {
+						this.handler.getCraftingResultIngredientsInventory().addStack(optionalItem.get().value().getDefaultStack().copy());
+					}
 				}
 				int ingredientAmount = 0;
 				for (ItemStack itemStack : this.handler.getCraftingResultIngredientsInventory().heldStacks) {
@@ -413,7 +423,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 
 				// TODO add support for item descriptions https://modrinth.com/mod/item-descriptions
 				// recipe description
-				Identifier id = craftingRecipeEntry.id();
+				Identifier id = craftingRecipeEntry.id().getValue();
 				String craftingResultDescriptionString = "recipe." + id.getNamespace() + "." + id.getPath() + ".description";
 				MutableText newCraftingResultDescription = Text.translatable(craftingResultDescriptionString);
 				if (newCraftingResultDescription.getString().equals(craftingResultDescriptionString)) {
@@ -438,7 +448,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 	}
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+	public boolean mouseClicked(Click click, boolean doubled) {
 		this.mouseClicked = false;
 		if (this.currentTab >= 1) {
 			int i = this.x + 62;
@@ -447,8 +457,8 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 
 			for (int l = this.scrollPosition; l < k; ++l) {
 				int m = l - this.scrollPosition;
-				double d = mouseX - (double) (i + m % RECIPE_FIELD_WIDTH * 18);
-				double e = mouseY - (double) (j + m / RECIPE_FIELD_WIDTH * 18);
+				double d = click.x() - (double) (i + m % RECIPE_FIELD_WIDTH * 18);
+				double e = click.y() - (double) (j + m / RECIPE_FIELD_WIDTH * 18);
 				if (d >= 0.0 && e >= 0.0 && d < 18.0 && e < 18.0 && this.client != null && this.client.interactionManager != null && this.handler.onButtonClick(this.client.player, l)) {
 					MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_STONECUTTER_SELECT_RECIPE, 1.0F));
 					if (this.isInBounds(l - this.scrollPosition)) {
@@ -466,25 +476,25 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 
 			i = this.x + 119;
 			j = this.y + 63;
-			if (mouseX >= (double) i && mouseX < (double) (i + 6) && mouseY >= (double) j && mouseY < (double) (j + 72)) {
+			if (click.x() >= (double) i && click.x() < (double) (i + 6) && click.y() >= (double) j && click.y() < (double) (j + 72)) {
 				this.mouseClicked = true;
 			}
 		}
 
-		return super.mouseClicked(mouseX, mouseY, button);
+		return super.mouseClicked(click, doubled);
 	}
 
 	@Override
-	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+	public boolean mouseDragged(Click click, double offsetX, double offsetY) {
 		if (this.mouseClicked && this.shouldScroll()) {
 			int i = this.y + 62;
 			int j = i + 54;
-			this.scrollAmount = ((float) mouseY - (float) i - 7.5F) / ((float) (j - i) - 15.0F);
+			this.scrollAmount = ((float) offsetY - (float) i - 7.5F) / ((float) (j - i) - 15.0F);
 			this.scrollAmount = MathHelper.clamp(this.scrollAmount, 0.0F, 1.0F);
 			this.scrollPosition = (int) ((double) (this.scrollAmount * (float) this.getMaxScroll()) + 0.5) * 3;
 			return true;
 		} else {
-			return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+			return super.mouseDragged(click, offsetX, offsetY);
 		}
 	}
 
@@ -509,24 +519,24 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 		boolean showInactiveSlots = RPGCraftingClient.showInactiveInventorySlots();
 
 		if (this.currentTab == -1) {
-			context.drawTexture(STORAGE_TAB_BACKGROUND_TEXTURE, x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, STORAGE_TAB_BACKGROUND_TEXTURE, x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 			if (this.isStorageArea0ProviderInReach) {
-				context.drawTexture(STASH_AREA_0_BACKGROUND_TEXTURE, x + 169, y + 18, 0, 0, 108, 18, 108, 18);
+				context.drawTexture(RenderPipelines.GUI_TEXTURED, STASH_AREA_0_BACKGROUND_TEXTURE, x + 169, y + 18, 0, 0, 108, 18, 108, 18);
 			}
 			if (this.isStorageArea1ProviderInReach) {
-				context.drawTexture(STASH_AREA_1_BACKGROUND_TEXTURE, x + 205, y + 41, 0, 0, 72, 36, 72, 36);
+				context.drawTexture(RenderPipelines.GUI_TEXTURED, STASH_AREA_1_BACKGROUND_TEXTURE, x + 205, y + 41, 0, 0, 72, 36, 72, 36);
 			}
 			if (this.isStorageArea2ProviderInReach) {
-				context.drawTexture(STASH_AREA_2_BACKGROUND_TEXTURE, x + 205, y + 82, 0, 0, 72, 54, 72, 54);
+				context.drawTexture(RenderPipelines.GUI_TEXTURED, STASH_AREA_2_BACKGROUND_TEXTURE, x + 205, y + 82, 0, 0, 72, 54, 72, 54);
 			}
 			if (this.isStorageArea3ProviderInReach) {
-				context.drawTexture(STASH_AREA_3_BACKGROUND_TEXTURE, x + 68, y + 41, 0, 0, 126, 36, 126, 36);
+				context.drawTexture(RenderPipelines.GUI_TEXTURED, STASH_AREA_3_BACKGROUND_TEXTURE, x + 68, y + 41, 0, 0, 126, 36, 126, 36);
 			}
 			if (this.isStorageArea4ProviderInReach) {
-				context.drawTexture(STASH_AREA_4_BACKGROUND_TEXTURE, x + 68, y + 82, 0, 0, 126, 54, 126, 54);
+				context.drawTexture(RenderPipelines.GUI_TEXTURED, STASH_AREA_4_BACKGROUND_TEXTURE, x + 68, y + 82, 0, 0, 126, 54, 126, 54);
 			}
 		} else {
-			context.drawTexture(RPGCrafting.identifier("textures/gui/container/crafting_bench/tab_" + this.currentTab + "_background.png"), x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, RPGCrafting.identifier("textures/gui/container/crafting_bench/tab_" + this.currentTab + "_background.png"), x, y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 			int index = 0;
 			List<RecipeEntry<RPGCraftingRecipe>> recipeList = this.recipeList;
 			int recipeCounter = recipeList.size();
@@ -549,9 +559,9 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 					} else {
 						identifier = RECIPE_TEXTURE;
 					}
-					context.drawGuiTexture(identifier, x, y, 18, 18);
+					context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, identifier, x, y, 18, 18);
 					context.drawItemWithoutEntity(resultItemStack, x + 1, y + 1);
-					context.drawItemInSlot(this.textRenderer, resultItemStack, x + 1, y + 1);
+					context.drawItemTooltip(this.textRenderer, resultItemStack, x + 1, y + 1);
 
 					index++;
 				}
@@ -560,7 +570,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 			y = this.y;
 			k = (int) (65.0F * this.scrollAmount);
 			Identifier identifier = this.shouldScroll() ? SCROLLER_VERTICAL_6_7_TEXTURE : SCROLLER_VERTICAL_6_7_DISABLED_TEXTURE;
-			context.drawGuiTexture(identifier, x + 119, y + 63 + k, 6, 7);
+			context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, identifier, x + 119, y + 63 + k, 6, 7);
 
 			int selectedRecipe = this.handler.getSelectedRecipe();
 			if (selectedRecipe != -1 && this.client != null && this.client.world != null && selectedRecipe < recipeList.size()) {
@@ -577,7 +587,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 				context.drawText(this.textRenderer, resultName, x + 155, y + 26, color != null ? color : 16777215, false);
 
 				if (this.craftingResultDescription != Text.EMPTY) {
-					context.drawTextWrapped(this.textRenderer, this.craftingResultDescription, x + 139, y + 42, 132, 16777215);
+					context.drawWrappedText(this.textRenderer, this.craftingResultDescription, x + 139, y + 42, 132, 16777215, false);
 				}
 
 				if (!this.handler.getCraftingResultIngredientsInventory().isEmpty()) {
@@ -591,10 +601,10 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 		y = this.y;
 		for (k = 0; k < (showInactiveSlots ? 27 : Math.min(this.inventorySize, 27)); ++k) {
 			m = (k / 9);
-			context.drawTexture(SLOT_TEXTURE, x + 61 + (k - (m * 9)) * 18, y + 150 + (m * 18), 0, 0, 18, 18, 18, 18);
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, SLOT_TEXTURE, x + 61 + (k - (m * 9)) * 18, y + 150 + (m * 18), 0, 0, 18, 18, 18, 18);
 		}
 		for (k = 0; k < (showInactiveSlots ? 9 : Math.min(this.hotbarSize, 9)); ++k) {
-			context.drawTexture(SLOT_TEXTURE, x + 61 + k * 18, y + 208, 0, 0, 18, 18, 18, 18);
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, SLOT_TEXTURE, x + 61 + k * 18, y + 208, 0, 0, 18, 18, 18, 18);
 		}
 
 	}

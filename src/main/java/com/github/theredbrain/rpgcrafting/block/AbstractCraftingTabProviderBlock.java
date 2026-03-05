@@ -39,7 +39,7 @@ public abstract class AbstractCraftingTabProviderBlock extends Block implements 
 
 	@Override
 	protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-		if (world.isClient) {
+		if (world.isClient()) {
 			return ActionResult.SUCCESS;
 		}
 		player.openHandledScreen(createCraftingTabProviderBlockScreenHandlerFactory(state, world, pos, player, this.openedTab));

@@ -9,6 +9,8 @@ import com.github.theredbrain.rpgcrafting.registry.ScreenHandlerTypesRegistry;
 import com.github.theredbrain.rpgcrafting.screen.slot.RPGCraftingResultSlot;
 import com.github.theredbrain.slotcustomizationapi.api.SlotCustomization;
 import com.mojang.serialization.Codec;
+import net.fabricmc.fabric.api.recipe.v1.FabricRecipeManager;
+import net.fabricmc.fabric.api.recipe.v1.sync.RecipeSynchronization;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EnderChestInventory;
@@ -77,7 +79,7 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 	public CraftingBenchBlockScreenHandler(int syncId, PlayerInventory playerInventory, EnderChestInventory enderChestInventory, SimpleInventory stashInventory, BlockPos blockPos, int initialTab, byte tabProvidersInReach, byte storageProvidersInReach, int[] tabLevels) {
 		super(ScreenHandlerTypesRegistry.CRAFTING_BENCH_BLOCK_SCREEN_HANDLER, syncId);
 		this.playerInventory = playerInventory;
-		this.world = playerInventory.player.getWorld();
+		this.world = playerInventory.player.getEntityWorld();
 		this.blockPos = blockPos;
 		this.currentTab = initialTab;
 		this.currentRecipeType = RecipeType.STANDARD;
@@ -400,7 +402,7 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 
 	public void updateRPGCraftingRecipesList() {
 		this.rpgCraftingRecipesList.clear();
-		List<RecipeEntry<RPGCraftingRecipe>> newRecipeEntryList = this.world.getRecipeManager().listAllOfType(RPGCraftingRecipe.Type.INSTANCE);
+		List<RecipeEntry<RPGCraftingRecipe>> newRecipeEntryList = this.world.getRecipeManager().getSynchronizedRecipes().getAllOfType(RPGCraftingRecipe.Type.INSTANCE).stream().toList();
 		this.rpgCraftingRecipesList.addAll(newRecipeEntryList);
 	}
 
@@ -453,7 +455,8 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 			int initialTab,
 			byte tabProvidersInReach,
 			byte storageProvidersInReach,
-			int[] tabLevels
+			int[] tabLevels,
+			List<RecipeEntry<RPGCraftingRecipe>> recipeEntryList
 	) {
 
 		public static final PacketCodec<RegistryByteBuf, CraftingBenchBlockData> PACKET_CODEC = PacketCodec.of(CraftingBenchBlockData::write, CraftingBenchBlockData::new);
@@ -468,6 +471,7 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 			registryByteBuf.writeByte(tabProvidersInReach);
 			registryByteBuf.writeByte(storageProvidersInReach);
 			registryByteBuf.writeIntArray(tabLevels);
+//			registryByteBuf.writeCollection(this.recipeEntryList, RecipeEntry<RPGCraftingRecipe>.PACKET_CODEC);
 		}
 	}
 

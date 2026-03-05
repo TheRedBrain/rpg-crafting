@@ -7,18 +7,26 @@ import com.github.theredbrain.rpgcrafting.recipe.input.MultipleStackRecipeInput;
 import com.github.theredbrain.rpgcrafting.registry.ScreenHandlerTypesRegistry;
 import com.github.theredbrain.rpgcrafting.screen.slot.RPGCraftingResultSlot;
 import com.github.theredbrain.slotcustomizationapi.api.SlotCustomization;
+import com.mojang.serialization.Codec;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.screen.Property;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.text.Text;
+import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class HandCraftingScreenHandler extends ScreenHandler {
 
@@ -34,7 +42,7 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 	public HandCraftingScreenHandler(int syncId, PlayerInventory playerInventory) {
 		super(ScreenHandlerTypesRegistry.HAND_CRAFTING_SCREEN_HANDLER, syncId);
 		this.playerInventory = playerInventory;
-		this.world = playerInventory.player.getWorld();
+		this.world = playerInventory.player.getEntityWorld();
 		this.craftingResultInventory = new SimpleInventory(1);
 		this.craftingResultIngredientsInventory = new SimpleInventory(4);
 
@@ -174,7 +182,10 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 
 	public void updateRPGCraftingRecipesList() {
 		this.rpgCraftingRecipesList.clear();
-		List<RecipeEntry<RPGCraftingRecipe>> newRecipeEntryList = this.world.getRecipeManager().listAllOfType(RPGCraftingRecipe.Type.INSTANCE);
+		List<RecipeEntry<RPGCraftingRecipe>> newRecipeEntryList = this.world.getRecipeManager().getSynchronizedRecipes().getAllOfType(RPGCraftingRecipe.Type.INSTANCE).stream().toList();
+//		for (RecipeEntry<RPGCraftingRecipe> entry : newRecipeEntryList) {
+//			this.playerInventory. entry
+//		}
 		this.rpgCraftingRecipesList.addAll(newRecipeEntryList);
 	}
 
@@ -189,6 +200,29 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 					this.handCraftingRecipesIdentifierList.add(rpgCraftingRecipeEntry);
 				}
 			}
+		}
+	}
+
+	public record CraftingBenchBlockData(
+			BlockPos blockPos,
+			int initialTab,
+			byte tabProvidersInReach,
+			byte storageProvidersInReach,
+			int[] tabLevels
+	) {
+
+		public static final PacketCodec<RegistryByteBuf, CraftingBenchBlockScreenHandler.CraftingBenchBlockData> PACKET_CODEC = PacketCodec.of(CraftingBenchBlockScreenHandler.CraftingBenchBlockData::write, CraftingBenchBlockScreenHandler.CraftingBenchBlockData::new);
+
+		public CraftingBenchBlockData(RegistryByteBuf registryByteBuf) {
+			this(registryByteBuf.readBlockPos(), registryByteBuf.readInt(), registryByteBuf.readByte(), registryByteBuf.readByte(), registryByteBuf.readIntArray());
+		}
+
+		private void write(RegistryByteBuf registryByteBuf) {
+			registryByteBuf.writeBlockPos(blockPos);
+			registryByteBuf.writeInt(initialTab);
+			registryByteBuf.writeByte(tabProvidersInReach);
+			registryByteBuf.writeByte(storageProvidersInReach);
+			registryByteBuf.writeIntArray(tabLevels);
 		}
 	}
 }

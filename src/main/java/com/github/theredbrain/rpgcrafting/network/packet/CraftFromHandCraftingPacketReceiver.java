@@ -24,11 +24,11 @@ public class CraftFromHandCraftingPacketReceiver implements ServerPlayNetworking
 
 		ScreenHandler screenHandler = player.currentScreenHandler;
 
-		Optional<RecipeEntry<?>> rpgCraftingRecipeEntryOptional = player.getWorld().getRecipeManager().get(Identifier.of(recipeIdentifier));
+		Optional<RecipeEntry<?>> rpgCraftingRecipeEntryOptional = player.getEntityWorld().getRecipeManager().get(Identifier.of(recipeIdentifier));
 
 		if (rpgCraftingRecipeEntryOptional.isPresent() && screenHandler instanceof HandCraftingScreenHandler handCraftingScreenHandler) {
 			if (rpgCraftingRecipeEntryOptional.get().value() instanceof RPGCraftingRecipe rpgCraftingRecipe) {
-				if (rpgCraftingRecipe.matches(handCraftingScreenHandler.getCraftingInputInventory(), context.player().getWorld())) {
+				if (rpgCraftingRecipe.matches(handCraftingScreenHandler.getCraftingInputInventory(), context.player().getEntityWorld())) {
 
 					int playerHotbarSize = RPGCrafting.getActiveHotbarSize(player);
 
