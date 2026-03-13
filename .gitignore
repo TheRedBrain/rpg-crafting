@@ -32,6 +32,9 @@ bin/
 
 run/
 
+# data gen
+src/main/generated
+
 # java
 
 hs_err_*.log
