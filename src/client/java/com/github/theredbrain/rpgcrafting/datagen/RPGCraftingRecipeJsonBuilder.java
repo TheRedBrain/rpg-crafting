@@ -183,6 +183,11 @@ public class RPGCraftingRecipeJsonBuilder implements CraftingRecipeJsonBuilder {
 		return this;
 	}
 
+	public RPGCraftingRecipeJsonBuilder requiresUnlockAdvancement(boolean requiresUnlockAdvancement) {
+		this.requiresUnlockAdvancement = requiresUnlockAdvancement;
+		return this;
+	}
+
 	@Override
 	public CraftingRecipeJsonBuilder group(@Nullable String group) {
 		return null;
