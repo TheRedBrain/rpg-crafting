@@ -1,7 +1,5 @@
 package com.github.theredbrain.rpgcrafting.datagen;
 
-import com.github.theredbrain.rpgcrafting.RPGCrafting;
-import com.github.theredbrain.rpgcrafting.advancement.criterion.InteractWithRPGCraftingStationCriterion;
 import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
 import com.github.theredbrain.rpgcrafting.screen.CraftingBenchBlockScreenHandler;
 import net.minecraft.advancement.Advancement;
@@ -35,7 +33,8 @@ public class RPGCraftingRecipeJsonBuilder implements CraftingRecipeJsonBuilder {
 	private boolean showNotification;
 	private boolean requiresUnlockAdvancement;
 	private boolean hasTabAndLevelCriterion;
-	private String recipeId;
+	private String recipeNamespace;
+	private String recipePath;
 	private final Map<String, AdvancementCriterion<?>> criteria = new LinkedHashMap<>();
 	private final RPGCraftingRecipe.RecipeFactory recipeFactory;
 
@@ -50,7 +49,7 @@ public class RPGCraftingRecipeJsonBuilder implements CraftingRecipeJsonBuilder {
 			boolean showNotification,
 			boolean requiresUnlockAdvancement,
 			boolean hasTabAndLevelCriterion,
-			String recipeId
+			String recipePath
 	) {
 		this.recipeFactory = recipeFactory;
 		this.rpgItemStackIngredients = rpgItemStackIngredients;
@@ -62,7 +61,7 @@ public class RPGCraftingRecipeJsonBuilder implements CraftingRecipeJsonBuilder {
 		this.showNotification = showNotification;
 		this.requiresUnlockAdvancement = requiresUnlockAdvancement;
 		this.hasTabAndLevelCriterion = hasTabAndLevelCriterion;
-		this.recipeId = recipeId;
+		this.recipePath = recipePath;
 	}
 
 	public static RPGCraftingRecipeJsonBuilder createRPGCrafting(ItemStack result) {
@@ -167,8 +166,13 @@ public class RPGCraftingRecipeJsonBuilder implements CraftingRecipeJsonBuilder {
 		return this;
 	}
 
-	public RPGCraftingRecipeJsonBuilder recipeId(String recipeId) {
-		this.recipeId = recipeId;
+	public RPGCraftingRecipeJsonBuilder recipeNamespace(String recipeNamespace) {
+		this.recipeNamespace = recipeNamespace;
+		return this;
+	}
+
+	public RPGCraftingRecipeJsonBuilder recipePath(String recipePath) {
+		this.recipePath = recipePath;
 		return this;
 	}
 
@@ -191,17 +195,23 @@ public class RPGCraftingRecipeJsonBuilder implements CraftingRecipeJsonBuilder {
 
 	@Override
 	public void offerTo(RecipeExporter exporter) {
-		if (this.recipeId.isEmpty()) {
-			this.offerTo(exporter, CraftingRecipeJsonBuilder.getItemId(this.getOutputItem()));
+		String recipePath = this.recipePath;
+		String recipeNamespace = this.recipeNamespace;
+		if (recipePath.isEmpty() && recipeNamespace.isEmpty()) {
+			this.offerTo(exporter, getTabLevelRecipeTypePrefixedIdentifier(CraftingRecipeJsonBuilder.getItemId(this.getOutputItem())));
+		} else if (recipePath.isEmpty()) {
+			this.offerTo(exporter, getTabLevelRecipeTypePrefixedIdentifier(Identifier.of(recipeNamespace, CraftingRecipeJsonBuilder.getItemId(this.getOutputItem()).getPath())));
+		} else if (recipeNamespace.isEmpty()) {
+			this.offerTo(exporter, recipePath);
 		} else {
-			this.offerTo(exporter, this.recipeId);
+			this.offerTo(exporter, getTabLevelRecipeTypePrefixedIdentifier(Identifier.of(recipeNamespace, recipePath)));
 		}
 	}
 
 	@Override
 	public void offerTo(RecipeExporter exporter, String recipePath) {
-		Identifier identifier = CraftingRecipeJsonBuilder.getItemId(this.getOutputItem()).withPrefixedPath("rpg_crafting/tab_" + this.tab + "/level_" + this.level + "/" + CraftingBenchBlockScreenHandler.RecipeType.byName(this.recipeType).asString() + "/");
-		Identifier identifier2 = Identifier.of(recipePath).withPrefixedPath("rpg_crafting/tab_" + this.tab + "/level_" + this.level + "/" + CraftingBenchBlockScreenHandler.RecipeType.byName(this.recipeType).asString() + "/");
+		Identifier identifier = getTabLevelRecipeTypePrefixedIdentifier(CraftingRecipeJsonBuilder.getItemId(this.getOutputItem()));
+		Identifier identifier2 = getTabLevelRecipeTypePrefixedIdentifier(Identifier.of(recipePath));
 		if (identifier2.equals(identifier)) {
 			throw new IllegalStateException("Recipe " + recipePath + " should remove its 'save' argument as it is equal to default one");
 		} else {
@@ -236,15 +246,19 @@ public class RPGCraftingRecipeJsonBuilder implements CraftingRecipeJsonBuilder {
 //				RPGCrafting.info("advancementRequirements: " + advancementRequirements);
 //				builder.requirements(advancementRequirements);
 //			} else {
-				builder.criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
-				this.criteria.forEach(builder::criterion);
+			builder.criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
+			this.criteria.forEach(builder::criterion);
 //			}
 
-			advancementEntry = builder.build(recipeId.withPrefixedPath("recipes/rpg_crafting/tab_" + this.tab + "/level_" + this.level + "/" + CraftingBenchBlockScreenHandler.RecipeType.byName(this.recipeType).asString() + "/"));
+			advancementEntry = builder.build(recipeId);
 		}
 		RPGCraftingRecipe rpgCraftingRecipe = this.recipeFactory
 				.create(this.rpgItemStackIngredients, this.rpgIngredients, this.result, this.level, this.tab, this.recipeType, this.showNotification, this.requiresUnlockAdvancement);
 		exporter.accept(recipeId, rpgCraftingRecipe, advancementEntry);
+	}
+
+	private Identifier getTabLevelRecipeTypePrefixedIdentifier(Identifier identifier) {
+		return identifier.withPrefixedPath("recipes/rpg_crafting/tab_" + this.tab + "/level_" + this.level + "/" + CraftingBenchBlockScreenHandler.RecipeType.byName(this.recipeType).asString() + "/");
 	}
 
 	private void validate(Identifier recipeId) {
