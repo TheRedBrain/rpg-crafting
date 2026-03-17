@@ -50,9 +50,9 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
 
 	private MutableText craftingResultDescription = Text.empty();
 
-	private float scrollAmount;
-	private boolean mouseClicked;
-	private int scrollPosition;
+	private float scrollAmount = 0.0f;
+	private boolean mouseClicked = false;
+	private int scrollPosition = 0;
 
 	public RecipeListScreen(RecipeListScreenHandler handler, PlayerInventory inventory, Text title) {
 		super(handler, inventory, title);
@@ -92,6 +92,8 @@ public class RecipeListScreen extends HandledScreen<RecipeListScreenHandler> {
 			int newSelectedRecipe = oldSelectedRecipe;
 			if (oldRecipeListHash != this.recipeList.hashCode()) {
 				newSelectedRecipe = -1;
+				this.scrollPosition = 0;
+				this.scrollAmount = 0.0f;
 			}
 			ClientPlayNetworking.send(new UpdateRecipeListScreenHandlerSelectedRecipePacket(
 					newSelectedRecipe

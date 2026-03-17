@@ -24,7 +24,6 @@ import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvents;
@@ -100,15 +99,15 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 
 	private MutableText craftingResultDescription = Text.empty();
 
-	private float scrollAmount;
-	private boolean mouseClicked;
+	private float scrollAmount = 0.0f;
+	private boolean mouseClicked = false;
 	private boolean useStashForCrafting;
 	private boolean isStorageArea0ProviderInReach;
 	private boolean isStorageArea1ProviderInReach;
 	private boolean isStorageArea2ProviderInReach;
 	private boolean isStorageArea3ProviderInReach;
 	private boolean isStorageArea4ProviderInReach;
-	private int scrollPosition;
+	private int scrollPosition = 0;;
 	private final PlayerEntity playerEntity;
 
 	public CraftingBenchBlockScreen(CraftingBenchBlockScreenHandler handler, PlayerInventory inventory, Text title) {
@@ -187,6 +186,8 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 			int newSelectedRecipe = oldSelectedRecipe;
 			if (oldRecipeListHash != this.recipeList.hashCode()) {
 				newSelectedRecipe = -1;
+				this.scrollPosition = 0;
+				this.scrollAmount = 0.0f;
 			}
 			ClientPlayNetworking.send(new UpdateCraftingBenchScreenHandlerSelectedRecipePacket(
 					newSelectedRecipe
@@ -340,8 +341,8 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 
 		}
 
-		this.scrollPosition = 0;
-		this.scrollAmount = 0.0f;
+//		this.scrollPosition = 0;
+//		this.scrollAmount = 0.0f;
 	}
 
 	private void toggleUseStorageForCrafting() {

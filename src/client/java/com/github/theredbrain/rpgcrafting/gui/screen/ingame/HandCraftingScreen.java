@@ -54,9 +54,9 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 
 	private MutableText craftingResultDescription = Text.empty();
 
-	private float scrollAmount;
-	private boolean mouseClicked;
-	private int scrollPosition;
+	private float scrollAmount = 0.0f;
+	private boolean mouseClicked = false;
+	private int scrollPosition = 0;
 	private final PlayerEntity playerEntity;
 
 	public HandCraftingScreen(HandCraftingScreenHandler handler, PlayerInventory inventory, Text title) {
@@ -96,6 +96,8 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 			int newSelectedRecipe = oldSelectedRecipe;
 			if (oldRecipeListHash != this.recipeList.hashCode()) {
 				newSelectedRecipe = -1;
+				this.scrollPosition = 0;
+				this.scrollAmount = 0.0f;
 			}
 			if (oldSelectedRecipe != newSelectedRecipe) {
 				ClientPlayNetworking.send(new UpdateHandCraftingScreenHandlerSelectedRecipePacket(
