@@ -176,6 +176,16 @@ public class HandCraftingScreen extends HandledScreen<HandCraftingScreenHandler>
 			}
 			this.craftingResultDescription = newCraftingResultDescription;
 
+			if (craftingRecipeEntry.value().upgradedItemStackIngredient.isPresent()) {
+				this.craftButton.setX(this.x + 150);
+				this.craftButton.setWidth(127);
+				((SlotCustomization) this.handler.slots.get(45)).slotcustomizationapi$setDisabledOverride(false);
+			} else {
+				this.craftButton.setX(this.x + 130);
+				this.craftButton.setWidth(147);
+				((SlotCustomization) this.handler.slots.get(45)).slotcustomizationapi$setDisabledOverride(true);
+			}
+
 			craftButtonActive = craftingRecipeEntry.value().matches(this.handler.getCraftingInputInventory(), world);
 		} else {
 			for (int i = 0; i < 9; i++) {

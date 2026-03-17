@@ -233,7 +233,7 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 		this.currentTab = handler.getCurrentTab();
 		boolean isCurrentRecipeTypeStandard = handler.getCurrentRecipeType() == CraftingBenchBlockScreenHandler.RecipeType.STANDARD;
 
-		for (int i = 36; i < this.handler.slots.size(); i++) {
+		for (int i = 36; i < 97; i++) {
 			boolean showStorageSlots = this.currentTab == -1;
 			if (i < 42) {
 				((SlotCustomization) this.handler.slots.get(i)).slotcustomizationapi$setDisabledOverride(!(showStorageSlots && this.isStorageArea0ProviderInReach));
@@ -436,6 +436,16 @@ public class CraftingBenchBlockScreen extends HandledScreen<CraftingBenchBlockSc
 					newCraftingResultDescription = Text.empty();
 				}
 				this.craftingResultDescription = newCraftingResultDescription;
+
+				if (craftingRecipeEntry.value().upgradedItemStackIngredient.isPresent()) {
+					this.craftButton.setX(this.x + 150);
+					this.craftButton.setWidth(127);
+					((SlotCustomization) this.handler.slots.get(106)).slotcustomizationapi$setDisabledOverride(false);
+				} else {
+					this.craftButton.setX(this.x + 130);
+					this.craftButton.setWidth(147);
+					((SlotCustomization) this.handler.slots.get(106)).slotcustomizationapi$setDisabledOverride(true);
+				}
 
 				craftButtonActive = craftingRecipeEntry.value().matches(this.handler.getCraftingInputInventory(((DuckPlayerEntityMixin) this.handler.getPlayerInventory().player).rpgcrafting$useStashForCrafting()), world);
 			}

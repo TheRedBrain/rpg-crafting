@@ -9,6 +9,7 @@ import com.github.theredbrain.rpgcrafting.screen.slot.RPGCraftingResultSlot;
 import com.github.theredbrain.slotcustomizationapi.api.SlotCustomization;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeEntry;
@@ -28,6 +29,7 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 	private List<RecipeEntry<RPGCraftingRecipe>> rpgCraftingRecipesList = new ArrayList<>(List.of());
 	private List<RecipeEntry<RPGCraftingRecipe>> handCraftingRecipesIdentifierList = new ArrayList<>(List.of());
 	private final PlayerInventory playerInventory;
+	private final SimpleInventory upgradedItemInventory;
 	private final SimpleInventory craftingResultInventory;
 	private final SimpleInventory craftingResultIngredientsInventory;
 
@@ -35,6 +37,7 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 		super(ScreenHandlerTypesRegistry.HAND_CRAFTING_SCREEN_HANDLER, syncId);
 		this.playerInventory = playerInventory;
 		this.world = playerInventory.player.getWorld();
+		this.upgradedItemInventory = new SimpleInventory(1);
 		this.craftingResultInventory = new SimpleInventory(1);
 		this.craftingResultIngredientsInventory = new SimpleInventory(8);
 
@@ -59,6 +62,9 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 		for (i = 0; i < this.craftingResultIngredientsInventory.size(); ++i) {
 			this.addSlot(new RPGCraftingResultSlot(this.craftingResultIngredientsInventory, i, 135 + (i * 18), 92));
 		}
+
+		// upgraded item slot 45
+		this.addSlot(new RPGCraftingResultSlot(this.upgradedItemInventory, 0, 131, 117));
 
 		// Inventory Size Attributes compatibility
 		int activeHotbarSize = RPGCrafting.getActiveHotbarSize(playerInventory.player);
@@ -107,6 +113,13 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 	}
 
 	@Override
+	public void onContentChanged(Inventory inventory) {
+		if (inventory == this.upgradedItemInventory && !this.upgradedItemInventory.getStack(0).isEmpty()) {
+			this.shouldScreenCalculateCraftingStatus.set(1);
+		}
+	}
+
+	@Override
 	public boolean canUse(PlayerEntity player) {
 		return true;
 	}
@@ -115,6 +128,14 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 	public boolean onButtonClick(PlayerEntity player, int id) {
 		this.selectedRecipe.set(id);
 		return true;
+	}
+
+	@Override
+	public void onClosed(PlayerEntity player) {
+		super.onClosed(player);
+		if (!player.getWorld().isClient) {
+			this.dropInventory(player, this.getUpgradedItemInventory());
+		}
 	}
 
 	public int getSelectedRecipe() {
@@ -127,6 +148,10 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 
 	public PlayerInventory getPlayerInventory() {
 		return this.playerInventory;
+	}
+
+	public SimpleInventory getUpgradedItemInventory() {
+		return this.upgradedItemInventory;
 	}
 
 	public SimpleInventory getCraftingResultInventory() {
@@ -156,11 +181,13 @@ public class HandCraftingScreenHandler extends ScreenHandler {
 		int playerInventorySize = RPGCrafting.getActiveInventorySize(playerInventory.player);
 
 		SimpleInventory craftingInputInventory = new SimpleInventory(
-				playerHotbarSize
+				1
+						+ playerHotbarSize
 						+ playerInventorySize
 		);
 
-		int k = 0;
+		craftingInputInventory.setStack(0, this.getUpgradedItemInventory().getStack(0).copy());
+		int k = 1;
 		int j;
 		for (j = 0; j < playerHotbarSize; j++) {
 			craftingInputInventory.setStack(k + j, this.getPlayerInventory().getStack(j).copy());

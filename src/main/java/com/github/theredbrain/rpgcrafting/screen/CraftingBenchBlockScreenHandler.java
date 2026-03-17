@@ -12,6 +12,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EnderChestInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
@@ -28,7 +29,6 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 
@@ -64,6 +64,7 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 	private RecipeType currentRecipeType;
 	private final PlayerInventory playerInventory;
 	private final EnderChestInventory enderChestInventory;
+	private final SimpleInventory upgradedItemInventory;
 	private final SimpleInventory stashInventory;
 	private final SimpleInventory craftingResultInventory;
 	private final SimpleInventory craftingResultIngredientsInventory;
@@ -93,6 +94,7 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 		this.isolated = isolated;
 		this.enderChestInventory = enderChestInventory;
 		this.stashInventory = stashInventory;
+		this.upgradedItemInventory = new SimpleInventory(1);
 		this.craftingResultInventory = new SimpleInventory(1);
 		this.craftingResultIngredientsInventory = new SimpleInventory(8);
 
@@ -149,6 +151,9 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 		for (i = 0; i < this.craftingResultIngredientsInventory.size(); ++i) {
 			this.addSlot(new RPGCraftingResultSlot(this.craftingResultIngredientsInventory, i, 135 + (i * 18), 92));
 		}
+
+		// upgraded item slot 106
+		this.addSlot(new RPGCraftingResultSlot(this.upgradedItemInventory, 0, 131, 117));
 
 		// Inventory Size Attributes compatibility
 		int activeHotbarSize = RPGCrafting.getActiveHotbarSize(playerInventory.player);
@@ -219,6 +224,13 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 	}
 
 	@Override
+	public void onContentChanged(Inventory inventory) {
+		if (inventory == this.upgradedItemInventory && !this.upgradedItemInventory.getStack(0).isEmpty()) {
+			this.shouldScreenCalculateCraftingStatus.set(1);
+		}
+	}
+
+	@Override
 	public boolean canUse(PlayerEntity player) {
 		return true;
 	}
@@ -227,6 +239,14 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 	public boolean onButtonClick(PlayerEntity player, int id) {
 		this.selectedRecipe.set(id);
 		return true;
+	}
+
+	@Override
+	public void onClosed(PlayerEntity player) {
+		super.onClosed(player);
+		if (!player.getWorld().isClient) {
+			this.dropInventory(player, this.getUpgradedItemInventory());
+		}
 	}
 
 	//region getter/setter
@@ -245,6 +265,10 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 
 	public EnderChestInventory getEnderChestInventory() {
 		return this.enderChestInventory;
+	}
+
+	public SimpleInventory getUpgradedItemInventory() {
+		return this.upgradedItemInventory;
 	}
 
 	public SimpleInventory getStashInventory() {
@@ -355,7 +379,8 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 		int stash4InventorySize = useStashForCrafting && this.isStorageArea4ProviderInReach ? 21 : 0;
 
 		SimpleInventory craftingInputInventory = new SimpleInventory(
-				playerHotbarSize
+				1
+						+ playerHotbarSize
 						+ playerInventorySize
 						+ stash0InventorySize
 						+ stash1InventorySize
@@ -364,7 +389,8 @@ public class CraftingBenchBlockScreenHandler extends ScreenHandler {
 						+ stash4InventorySize
 		);
 
-		int k = 0;
+		craftingInputInventory.setStack(0, this.getUpgradedItemInventory().getStack(0).copy());
+		int k = 1;
 		int j;
 		for (j = 0; j < playerHotbarSize; j++) {
 			craftingInputInventory.setStack(k + j, this.getPlayerInventory().getStack(j).copy());

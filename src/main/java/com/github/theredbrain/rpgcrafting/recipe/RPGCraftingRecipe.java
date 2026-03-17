@@ -16,13 +16,20 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.StringIdentifiable;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
+	public final Optional<RPGItemStackIngredient> upgradedItemStackIngredient;
+	public final String upgradeType;
 	public final List<RPGItemStackIngredient> rpgItemStackIngredients;
 	public final List<RPGIngredient> rpgIngredients;
 	public final ItemStack result;
@@ -32,7 +39,9 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 	public final boolean showNotification;
 	public final boolean requiresUnlockAdvancement;
 
-	public RPGCraftingRecipe(List<RPGItemStackIngredient> rpgItemStackIngredients, List<RPGIngredient> rpgIngredients, ItemStack result, int level, int tab, String recipeType, boolean showNotification, boolean requiresUnlockAdvancement) {
+	public RPGCraftingRecipe(Optional<RPGItemStackIngredient> upgradedItemStackIngredient, String upgradeType, List<RPGItemStackIngredient> rpgItemStackIngredients, List<RPGIngredient> rpgIngredients, ItemStack result, int level, int tab, String recipeType, boolean showNotification, boolean requiresUnlockAdvancement) {
+		this.upgradedItemStackIngredient = upgradedItemStackIngredient;
+		this.upgradeType = upgradeType;
 		this.rpgItemStackIngredients = rpgItemStackIngredients;
 		this.rpgIngredients = rpgIngredients;
 		this.result = result;
@@ -55,9 +64,14 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 			playerInventoryCopy.setStack(j, input.getStackInSlot(j).copy());
 		}
 
+		Optional<RPGItemStackIngredient> optionalRPGItemStackIngredient = this.upgradedItemStackIngredient;
+		if (optionalRPGItemStackIngredient.isPresent() && !checkItemStackIngredient(optionalRPGItemStackIngredient.get(), playerInventoryCopy.getStack(0))) {
+			return false;
+		}
+
 		for (RPGItemStackIngredient itemStackIngredient : this.rpgItemStackIngredients) {
 			int ingredientCount = itemStackIngredient.itemStack.getCount();
-			for (j = 0; j < inputSize; j++) {
+			for (j = 1; j < inputSize; j++) {
 				bl = false;
 				if (checkItemStackIngredient(itemStackIngredient, playerInventoryCopy.getStack(j))) {
 					itemStack = playerInventoryCopy.getStack(j).copy();
@@ -81,7 +95,7 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 			}
 		}
 		for (RPGIngredient rpgIngredient : this.rpgIngredients) {
-			for (j = 0; j < inputSize; j++) {
+			for (j = 1; j < inputSize; j++) {
 				bl = false;
 				if (rpgIngredient.ingredient().test(playerInventoryCopy.getStack(j))) {
 					itemStack = playerInventoryCopy.getStack(j).copy();
@@ -164,7 +178,7 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 	}
 
 	public interface RecipeFactory {
-		RPGCraftingRecipe create(List<RPGItemStackIngredient> rpgItemStackIngredients, List<RPGIngredient> rpgIngredients, ItemStack result, int level, int tab, String recipeType, boolean showNotification, boolean requiresUnlockAdvancement);
+		RPGCraftingRecipe create(Optional<RPGItemStackIngredient> upgradedItemStackIngredient, String upgradeType, List<RPGItemStackIngredient> rpgItemStackIngredients, List<RPGIngredient> rpgIngredients, ItemStack result, int level, int tab, String recipeType, boolean showNotification, boolean requiresUnlockAdvancement);
 	}
 
 	public static class Serializer implements RecipeSerializer<RPGCraftingRecipe> {
@@ -175,6 +189,8 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 
 		public static final MapCodec<RPGCraftingRecipe> CODEC = RecordCodecBuilder.mapCodec(
 				instance -> instance.group(
+						RPGItemStackIngredient.CODEC.optionalFieldOf("upgraded_item_stack_ingredient").forGetter(recipe -> recipe.upgradedItemStackIngredient),
+						Codec.STRING.optionalFieldOf("upgrade_type", "none").forGetter(recipe -> recipe.recipeType),
 						RPGItemStackIngredient.CODEC.listOf().fieldOf("rpg_item_stack_ingredients").forGetter(recipe -> recipe.rpgItemStackIngredients),
 						RPGIngredient.CODEC.listOf().fieldOf("rpg_ingredients").forGetter(recipe -> recipe.rpgIngredients),
 						ItemStack.VALIDATED_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
@@ -200,6 +216,8 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 		}
 
 		private static RPGCraftingRecipe read(RegistryByteBuf buf) {
+			Optional<RPGItemStackIngredient> upgradedItemStackIngredient = RPGItemStackIngredient.PACKET_CODEC.collect(PacketCodecs::optional).decode(buf);
+			String upgradeType = buf.readString();
 			int itemStackIngredientsSize = buf.readInt();
 			List<RPGItemStackIngredient> itemStackIngredients = new ArrayList<>();
 			for (int i = 0; i < itemStackIngredientsSize; i++) {
@@ -216,10 +234,12 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 			String recipeType = buf.readString();
 			boolean showNotification = buf.readBoolean();
 			boolean requiresUnlockAdvancement = buf.readBoolean();
-			return new RPGCraftingRecipe(itemStackIngredients, rpgIngredients, result, level, tab, recipeType, showNotification, requiresUnlockAdvancement);
+			return new RPGCraftingRecipe(upgradedItemStackIngredient, upgradeType, itemStackIngredients, rpgIngredients, result, level, tab, recipeType, showNotification, requiresUnlockAdvancement);
 		}
 
 		private static void write(RegistryByteBuf buf, RPGCraftingRecipe recipe) {
+			RPGItemStackIngredient.PACKET_CODEC.collect(PacketCodecs::optional).encode(buf, recipe.upgradedItemStackIngredient);
+			buf.writeString(recipe.upgradeType);
 			buf.writeInt(recipe.rpgItemStackIngredients.size());
 			for (RPGItemStackIngredient ingredient : recipe.rpgItemStackIngredients) {
 				RPGItemStackIngredient.PACKET_CODEC.encode(buf, ingredient);
@@ -324,4 +344,29 @@ public class RPGCraftingRecipe implements Recipe<MultipleStackRecipeInput> {
 		}
 	}
 
+	public static enum UpgradeType implements StringIdentifiable {
+		NONE("none"),
+		COPY_COMPONENTS("copy_components");
+
+		private final String name;
+
+		private UpgradeType(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String asString() {
+			return this.name;
+		}
+
+		public static final Codec<UpgradeType> CODEC = Codec.STRING.xmap(UpgradeType::valueOf, Enum::name);
+
+		public static UpgradeType byName(String name) {
+			return Arrays.stream(UpgradeType.values()).filter(upgradeType -> upgradeType.asString().equals(name)).findFirst().orElse(NONE);
+		}
+
+		public Text asText() {
+			return Text.translatable("gui.rpg_crafting_recipe.upgradeType." + this.name);
+		}
+	}
 }

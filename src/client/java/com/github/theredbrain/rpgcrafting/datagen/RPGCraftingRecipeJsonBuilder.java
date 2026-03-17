@@ -22,8 +22,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class RPGCraftingRecipeJsonBuilder implements CraftingRecipeJsonBuilder {
+	private Optional<RPGCraftingRecipe.RPGItemStackIngredient> upgradedItemStackIngredient;
+	private String upgradeType;
 	private List<RPGCraftingRecipe.RPGItemStackIngredient> rpgItemStackIngredients;
 	private final List<RPGCraftingRecipe.RPGIngredient> rpgIngredients;
 	private ItemStack result;
@@ -40,6 +44,8 @@ public class RPGCraftingRecipeJsonBuilder implements CraftingRecipeJsonBuilder {
 
 	public RPGCraftingRecipeJsonBuilder(
 			RPGCraftingRecipe.RecipeFactory recipeFactory,
+			Optional<RPGCraftingRecipe.RPGItemStackIngredient> upgradedItemStackIngredient,
+			String upgradeType,
 			List<RPGCraftingRecipe.RPGItemStackIngredient> rpgItemStackIngredients,
 			List<RPGCraftingRecipe.RPGIngredient> rpgIngredients,
 			ItemStack result,
@@ -52,6 +58,8 @@ public class RPGCraftingRecipeJsonBuilder implements CraftingRecipeJsonBuilder {
 			String recipePath
 	) {
 		this.recipeFactory = recipeFactory;
+		this.upgradedItemStackIngredient = upgradedItemStackIngredient;
+		this.upgradeType = upgradeType;
 		this.rpgItemStackIngredients = rpgItemStackIngredients;
 		this.rpgIngredients = rpgIngredients;
 		this.result = result;
@@ -65,11 +73,21 @@ public class RPGCraftingRecipeJsonBuilder implements CraftingRecipeJsonBuilder {
 	}
 
 	public static RPGCraftingRecipeJsonBuilder createRPGCrafting(ItemStack result) {
-		return new RPGCraftingRecipeJsonBuilder(RPGCraftingRecipe::new, new ArrayList<>(), new ArrayList<>(), result, 1, 1, "standard", false, false, false, "");
+		return new RPGCraftingRecipeJsonBuilder(RPGCraftingRecipe::new, Optional.empty(), "", new ArrayList<>(), new ArrayList<>(), result, 1, 1, "standard", false, false, false, "");
 	}
 
-	public static RPGCraftingRecipeJsonBuilder createRPGCrafting(List<RPGCraftingRecipe.RPGItemStackIngredient> rpgItemStackIngredients, List<RPGCraftingRecipe.RPGIngredient> rpgIngredients, ItemStack result, int level, int tab, String recipeType, boolean showNotification, boolean requiresUnlockAdvancement, boolean hasTabAndLevelCriterion, String recipeId) {
-		return new RPGCraftingRecipeJsonBuilder(RPGCraftingRecipe::new, rpgItemStackIngredients, rpgIngredients, result, level, tab, recipeType, showNotification, requiresUnlockAdvancement, hasTabAndLevelCriterion, recipeId);
+	public static RPGCraftingRecipeJsonBuilder createRPGCrafting(Optional<RPGCraftingRecipe.RPGItemStackIngredient> upgradedItemStackIngredient, String upgradeType, List<RPGCraftingRecipe.RPGItemStackIngredient> rpgItemStackIngredients, List<RPGCraftingRecipe.RPGIngredient> rpgIngredients, ItemStack result, int level, int tab, String recipeType, boolean showNotification, boolean requiresUnlockAdvancement, boolean hasTabAndLevelCriterion, String recipeId) {
+		return new RPGCraftingRecipeJsonBuilder(RPGCraftingRecipe::new, upgradedItemStackIngredient, upgradeType, rpgItemStackIngredients, rpgIngredients, result, level, tab, recipeType, showNotification, requiresUnlockAdvancement, hasTabAndLevelCriterion, recipeId);
+	}
+
+	public RPGCraftingRecipeJsonBuilder upgradedItemStackIngredient(Optional<RPGCraftingRecipe.RPGItemStackIngredient> upgradedItemStackIngredient) {
+		this.upgradedItemStackIngredient = upgradedItemStackIngredient;
+		return this;
+	}
+
+	public RPGCraftingRecipeJsonBuilder upgradeType(RPGCraftingRecipe.UpgradeType upgradeType) {
+		this.upgradeType = upgradeType.asString();
+		return this;
 	}
 
 	public RPGCraftingRecipeJsonBuilder rpgItemStackIngredient(RPGCraftingRecipe.RPGItemStackIngredient rpgItemStackIngredient) {
@@ -258,7 +276,7 @@ public class RPGCraftingRecipeJsonBuilder implements CraftingRecipeJsonBuilder {
 			advancementEntry = builder.build(recipeId);
 		}
 		RPGCraftingRecipe rpgCraftingRecipe = this.recipeFactory
-				.create(this.rpgItemStackIngredients, this.rpgIngredients, this.result, this.level, this.tab, this.recipeType, this.showNotification, this.requiresUnlockAdvancement);
+				.create(this.upgradedItemStackIngredient, this.upgradeType, this.rpgItemStackIngredients, this.rpgIngredients, this.result, this.level, this.tab, this.recipeType, this.showNotification, this.requiresUnlockAdvancement);
 		exporter.accept(recipeId, rpgCraftingRecipe, advancementEntry);
 	}
 

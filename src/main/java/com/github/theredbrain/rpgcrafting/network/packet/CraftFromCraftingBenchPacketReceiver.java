@@ -6,6 +6,7 @@ import com.github.theredbrain.rpgcrafting.recipe.RPGCraftingRecipe;
 import com.github.theredbrain.rpgcrafting.screen.CraftingBenchBlockScreenHandler;
 import com.github.theredbrain.rpgcrafting.util.RPGCraftingHelper;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -47,6 +48,17 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 					int stash4InventorySize = useStorageInventory && craftingBenchBlockScreenHandler.isStorageArea4ProviderInReach() ? 21 : 0;
 
 					boolean bl = true;
+
+					ItemStack craftingResult = rpgCraftingRecipe.result.copy();
+
+					Optional<RPGCraftingRecipe.RPGItemStackIngredient> optionalRPGItemStackIngredient = rpgCraftingRecipe.upgradedItemStackIngredient;
+					if (optionalRPGItemStackIngredient.isPresent() && RPGCraftingRecipe.checkItemStackIngredient(optionalRPGItemStackIngredient.get(), craftingBenchBlockScreenHandler.getUpgradedItemInventory().getStack(0))) {
+						if (RPGCraftingRecipe.UpgradeType.byName(rpgCraftingRecipe.upgradeType) == RPGCraftingRecipe.UpgradeType.COPY_COMPONENTS) {
+							ItemStack itemStack = optionalRPGItemStackIngredient.get().itemStack().copyComponentsToNewStack(craftingResult.getItem(), craftingResult.getCount());
+							itemStack.applyUnvalidatedChanges(rpgCraftingRecipe.result.getComponentChanges());
+							craftingResult = itemStack;
+						}
+					}
 
 					for (RPGCraftingRecipe.RPGItemStackIngredient itemStackIngredient : rpgCraftingRecipe.rpgItemStackIngredients) {
 
@@ -236,7 +248,7 @@ public class CraftFromCraftingBenchPacketReceiver implements ServerPlayNetworkin
 						}
 					}
 					if (bl) {
-						player.getInventory().offerOrDrop(rpgCraftingRecipe.result.copy());
+						player.getInventory().offerOrDrop(craftingResult);
 					}
 				} else {
 					player.sendMessage(Text.translatable("hud.message.not_all_crafting_ingredients_were_found"));
