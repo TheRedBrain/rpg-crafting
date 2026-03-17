@@ -2,17 +2,21 @@ package com.github.theredbrain.rpgcrafting;
 
 import com.github.theredbrain.rpgcrafting.advancement.criterion.InteractWithRPGCraftingStationCriterion;
 import com.github.theredbrain.rpgcrafting.compatibility.InventorySizeAttributesCompat;
+import com.github.theredbrain.rpgcrafting.component.type.OpensRPGCraftingScreenComponent;
 import com.github.theredbrain.rpgcrafting.config.ServerConfig;
 import com.github.theredbrain.rpgcrafting.registry.AdvancementCriteriaRegistry;
 import com.github.theredbrain.rpgcrafting.registry.BlockRegistry;
+import com.github.theredbrain.rpgcrafting.registry.DataComponentRegistry;
 import com.github.theredbrain.rpgcrafting.registry.ItemGroupRegistry;
 import com.github.theredbrain.rpgcrafting.registry.RecipeRegistry;
 import com.github.theredbrain.rpgcrafting.registry.ScreenHandlerTypesRegistry;
+import com.github.theredbrain.rpgcrafting.registry.ServerEventRegistry;
 import com.github.theredbrain.rpgcrafting.registry.ServerPacketRegistry;
 import me.fzzyhmstrs.fzzy_config.api.ConfigApiJava;
 import me.fzzyhmstrs.fzzy_config.api.RegisterType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.component.ComponentType;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -32,6 +36,8 @@ public class RPGCrafting implements ModInitializer {
 	public static RegistryEntry<EntityAttribute> CRAFTING_TAB_4_LEVEL;
 
 	public static InteractWithRPGCraftingStationCriterion INTERACTED_WITH_RPG_CRAFTING_STATION;
+
+	public static ComponentType<OpensRPGCraftingScreenComponent> OPENS_RPG_CRAFTING_SCREEN_COMPONENT;
 
 	public static final boolean isInventorySizeAttributesLoaded = FabricLoader.getInstance().isModLoaded("inventorysizeattributes");
 
@@ -60,9 +66,11 @@ public class RPGCrafting implements ModInitializer {
 		// Registry
 		AdvancementCriteriaRegistry.init();
 		BlockRegistry.init();
+		DataComponentRegistry.init();
 		ItemGroupRegistry.init();
 		RecipeRegistry.init();
 		ScreenHandlerTypesRegistry.registerAll();
+		ServerEventRegistry.initializeServerEvents();
 		ServerPacketRegistry.init();
 	}
 

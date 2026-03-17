@@ -36,6 +36,26 @@ public class RPGCraftingHelper {
 		return true;
 	}
 
+	public static NamedScreenHandlerFactory supplyRPGCraftingScreenHandlerFactoryFromItem(World world, PlayerEntity player, int initialTab) {
+
+		int[] tabLevels = new int[CRAFTING_TAB_AMOUNT];
+		byte tabProvidersInReach = 0;
+		byte storageProvidersInReach = 0;
+
+		tabLevels[0] = ((DuckPlayerEntityMixin) player).rpgcrafting$getCraftingTab1Level();
+		tabLevels[1] = ((DuckPlayerEntityMixin) player).rpgcrafting$getCraftingTab2Level();
+		tabLevels[2] = ((DuckPlayerEntityMixin) player).rpgcrafting$getCraftingTab3Level();
+		tabLevels[3] = ((DuckPlayerEntityMixin) player).rpgcrafting$getCraftingTab4Level();
+
+		tabProvidersInReach = (byte) (initialTab == -1 ? tabProvidersInReach | 1 << 0 : tabProvidersInReach & ~(1 << 0));
+		tabProvidersInReach = (byte) (initialTab == 1 ? tabProvidersInReach | 1 << 1 : tabProvidersInReach & ~(1 << 1));
+		tabProvidersInReach = (byte) (initialTab == 2 ? tabProvidersInReach | 1 << 2 : tabProvidersInReach & ~(1 << 2));
+		tabProvidersInReach = (byte) (initialTab == 3 ? tabProvidersInReach | 1 << 3 : tabProvidersInReach & ~(1 << 3));
+		tabProvidersInReach = (byte) (initialTab == 4 ? tabProvidersInReach | 1 << 4 : tabProvidersInReach & ~(1 << 4));
+
+		return new CraftingBenchBlockScreenHandlerFactory(initialTab, tabProvidersInReach, storageProvidersInReach, tabLevels, true);
+	}
+
 	public static NamedScreenHandlerFactory supplyCraftingTabProviderBlockScreenHandlerFactoryFromBlockPos(BlockState state, World world, BlockPos pos, PlayerEntity player, int initialTab, boolean isolated) {
 		int posX = pos.getX();
 		int posY = pos.getY();
