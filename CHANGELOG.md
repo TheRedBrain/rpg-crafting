@@ -1,20 +1,27 @@
 # 1.4.0
 
+> Important! Existing recipe files need to be updated!
+
 ## Additions
 
 - added server config option to show locked handcrafted recipes
-- added server config option to isolate crafting tabs (remove the buttons to switch to another crafting tab)
+- added server config option to isolate crafting tabs. This will remove the buttons to switch to another crafting tab and populate the free space with an expanded recipe list.
 - add "is_consumed" boolean to (itemStack)ingredients ("true" by default). If set to "false", the ingredient is not consumed upon crafting.
+- added optional "upgraded_item_stack_ingredient" and "upgrade_type" fields to RPGCraftingRecipe. They can be used to craft with a specific itemStack for recipes similar to smithing table upgrades. This system is quite limited right now, possible expansions are being considered.
 - RPGCraftingRecipes now return recipe remainders to the players inventory
 - added server config options for default crafting level attribute values
+- added "rpgcrafting:opens_rpg_crafting_screen" data component. Items with this component open the specified (isolated) crafting tab screen when used. The level is determined exclusively by the corresponding crafting level attribute value
 
 ## Changes
 
 - reworked normal ingredients to "rpg_ingredients"
 - renamed "itemStackIngredients" into "rpg_item_stack_ingredients"
 - changed all fields in the RPGCraftingRecipe JSON files to "snake_case", following vanillas example
-- increased amount of visible ingredient stacks in RPG Crafting screens from 4 to 7
 - increased amount of visible ingredient stacks in RPG Crafting screens from 4 to 8
+
+## Fixes
+
+- fixed several issues with crafting where ingredients were not consumed or results were not given out. If you still encounter issues, please let me know! :)
 
 # 1.3.0
 
