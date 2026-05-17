@@ -37,8 +37,6 @@ public class RPGCrafting implements ModInitializer {
 
 	public static InteractWithRPGCraftingStationCriterion INTERACTED_WITH_RPG_CRAFTING_STATION;
 
-	public static ComponentType<OpensRPGCraftingScreenComponent> OPENS_RPG_CRAFTING_SCREEN_COMPONENT;
-
 	public static final boolean isInventorySizeAttributesLoaded = FabricLoader.getInstance().isModLoaded("inventorysizeattributes");
 
 	public static int getActiveInventorySize(PlayerEntity player) {
